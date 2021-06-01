@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>计网 on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/categories/%E8%AE%A1%E7%BD%91/</link>
+    <description>Recent content in 计网 on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Mon, 31 May 2021 23:04:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/categories/%E8%AE%A1%E7%BD%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络 应用层</title>
+      <link>https://winterorch.github.io/posts/computer_network-application_layer/</link>
+      <pubDate>Mon, 31 May 2021 23:04:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/computer_network-application_layer/</guid>
+      <description>常用端口及协议    应用 协议 端口号 传输层 备注     域名解析 DNS 53 UDP/TCP 长度超过 512 字节时使用 TCP   动态主机配置协议 DHCP 67/68 UDP    简单网络管理协议 SNMP 161/162 UDP    文件传送协议 FTP 20/21 TCP 控制连接 21，数据连接 20   远程终端协议 TELNET 23 TCP    超文本传送协议 HTTP 80 TCP    简单邮件传送协议 SMTP 25 TCP    邮件读取协议 POP3 110 TCP    网际报文存取协议 IMAP 143 TCP    超文本传送协议 HTTPS 443 TCP      域名系统 DNS ( Domain Name System ) 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。</description>
+    </item>
+    
+  </channel>
+</rss>

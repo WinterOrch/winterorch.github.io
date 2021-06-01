@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JVM on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/jvm/</link>
+    <description>Recent content in JVM on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Wed, 17 Mar 2021 22:03:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/jvm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JVM GC</title>
+      <link>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</link>
+      <pubDate>Wed, 17 Mar 2021 22:03:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</guid>
+      <description>一、垃圾收集算法  下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现
+ 跟据 Object 生命周期分为三个层次
+ Young Generation Old Generation Permanent Generation  Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 s0 或 s1 ，清理 Eden 和使用过的一块 Survivor。
+ HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。
+ Eden 区满时执行 Minor GC 清理可销毁对象，将不可销毁的迁移至其中一个存活区，而将另一个存活区直接清空，下一次 GC 时两个存活区角色交换，交换次数超过 15 （MaxTenuringThreshold）的进入 Old Generation。
+ 复制算法（young代GC算法）
+该算法会将内存区域分为两个大小一样的区域。GC回收时，遍历当前使用区域，只将正在引用的对象复制到另一个区域，因此复制成本较低，且复制过程中还会进行内存整理，不会出现“碎片”问题。缺点就是：需要两个大小一样的内存区域和生命周期短的对象。所以该算法不适合大内存对象和长生命周期的对象，适用于young代的SO/S1
+  Hotspot 的动态年龄阈值
+Hotspot遍历对象时按年龄从小到大对其所占用大小进行累积，当累积的某个年龄大小超过了 survivor 区一半，取年龄与 MaxTenuringThreshold 中更小的作为新年龄阈值</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/posts/</link>
+    <description>Recent content in Posts on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Mon, 31 May 2021 23:04:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络 应用层</title>
+      <link>https://winterorch.github.io/posts/computer_network-application_layer/</link>
+      <pubDate>Mon, 31 May 2021 23:04:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/computer_network-application_layer/</guid>
+      <description>常用端口及协议    应用 协议 端口号 传输层 备注     域名解析 DNS 53 UDP/TCP 长度超过 512 字节时使用 TCP   动态主机配置协议 DHCP 67/68 UDP    简单网络管理协议 SNMP 161/162 UDP    文件传送协议 FTP 20/21 TCP 控制连接 21，数据连接 20   远程终端协议 TELNET 23 TCP    超文本传送协议 HTTP 80 TCP    简单邮件传送协议 SMTP 25 TCP    邮件读取协议 POP3 110 TCP    网际报文存取协议 IMAP 143 TCP    超文本传送协议 HTTPS 443 TCP      域名系统 DNS ( Domain Name System ) 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。</description>
+    </item>
+    
+    <item>
+      <title>Java 抽象类</title>
+      <link>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</link>
+      <pubDate>Sun, 30 May 2021 20:01:58 +0530</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</guid>
+      <description>语法 抽象类中可以存在
+ 构造方法 抽象方法 非抽象方法 成员变量 静态成员变量  总结：除了不能被实例化，抽象类几乎具有普通类的所有特性。
+ 注意点   抽象类不能被实例化，如果试图实例化抽象类，编译无法通过
+  抽象类中可以有构造方法，但是构造方法不能为抽象方法，其中原因见 [为什么构造函数不能为抽象]
+ 抽象类及其实现的构造方法也必须遵循一般继承中的构造方法规范，包括：
+ 子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 super() 子类要使用父类有参构造方法，使用 super(...) 形式，且 super() 必须是子类构造方法中第一行语句 父类没有不带参构造方法（只定义了有参构造方法而没有定义无参的），子类构造方法中必须显示调用父类其它构造方法，否则编译不过     抽象类中的静态方法也不能为抽象方法
+  抽象类中的抽象方法只能声明，不能有具体实现，这与接口不同（接口方法在 JDK 1.8 后也可以有默认实现），具体原因见 [为什么抽象方法不能有实现而接口方法可以]
+   有端联想 抽象类总结了几个比较有嚼劲的问题
+1. 为什么构造函数不能为抽象 Java 抽象函数 和 C++ 虚函数 是等价概念，因此这里直接从 C++ 的角度找答案了。结论就是——构造函数从语言和逻辑来看都不能为虚函数。
+  从内存结构角度来看
+虚函数对应虚函数表 vtable ，表为类所有，但虚函数表指针为每个对象所有，在构造函数运行时进行空间分配，因此构造函数无法在未创建虚表指针的情况下调用虚表。
+  从语言逻辑角度来看
+构造函数目的是初始化实例，我们知道抽象类和虚基类都没有实例化的需求，将构造函数定义为虚函数是没有意义的。
+可以先回顾一下虚函数的作用过程——通过指针或者引用来调用虚函数的时候能够调用到子类的对应成员函数。而构造函数是在创建对象时自动调用的，调用这一函数的指针或引用所对应的对象还不存在，也就决定了构造函数不能是虚函数。
+  2.</description>
+    </item>
+    
+    <item>
+      <title>JVM GC</title>
+      <link>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</link>
+      <pubDate>Wed, 17 Mar 2021 22:03:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</guid>
+      <description>一、垃圾收集算法  下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现
+ 跟据 Object 生命周期分为三个层次
+ Young Generation Old Generation Permanent Generation  Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 s0 或 s1 ，清理 Eden 和使用过的一块 Survivor。
+ HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。
+ Eden 区满时执行 Minor GC 清理可销毁对象，将不可销毁的迁移至其中一个存活区，而将另一个存活区直接清空，下一次 GC 时两个存活区角色交换，交换次数超过 15 （MaxTenuringThreshold）的进入 Old Generation。
+ 复制算法（young代GC算法）
+该算法会将内存区域分为两个大小一样的区域。GC回收时，遍历当前使用区域，只将正在引用的对象复制到另一个区域，因此复制成本较低，且复制过程中还会进行内存整理，不会出现“碎片”问题。缺点就是：需要两个大小一样的内存区域和生命周期短的对象。所以该算法不适合大内存对象和长生命周期的对象，适用于young代的SO/S1
+  Hotspot 的动态年龄阈值
+Hotspot遍历对象时按年龄从小到大对其所占用大小进行累积，当累积的某个年龄大小超过了 survivor 区一半，取年龄与 MaxTenuringThreshold 中更小的作为新年龄阈值</description>
+    </item>
+    
+    <item>
+      <title>中文文本测试</title>
+      <link>https://winterorch.github.io/posts/chinese/</link>
+      <pubDate>Thu, 14 Nov 2019 11:25:05 -0400</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/chinese/</guid>
+      <description>这样看来， 邓拓在不经意间这样说过，越是没有本领的就越加自命不凡。这不禁令我深思。 我们不得不面对一个非常尴尬的事实，那就是， 一般来说， 所谓中午吃什么，关键是中午吃什么需要如何写。 伏尔泰说过一句富有哲理的话，坚持意志伟大的事业需要始终不渝的精神。这启发了我， 那么， 对我个人而言，中午吃什么不仅仅是一个重大的事件，还可能会改变我的人生。 这样看来， 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 一般来讲，我们都必须务必慎重的考虑考虑。 黑格尔说过一句富有哲理的话，只有永远躺在泥坑里的人，才不会再掉进坑里。这启发了我， 我们不得不面对一个非常尴尬的事实，那就是， 既然如何， 在这种困难的抉择下，本人思来想去，寝食难安。
+　我认为， 而这些并不是完全重要，更加重要的问题是， 了解清楚中午吃什么到底是一种怎么样的存在，是解决一切问题的关键。 中午吃什么因何而发生？ 而这些并不是完全重要，更加重要的问题是， 卢梭在不经意间这样说过，浪费时间是一桩大罪过。这启发了我， 既然如此， 从这个角度来看， 歌德在不经意间这样说过，意志坚强的人能把世界放在手中像泥块一样任意揉捏。我希望诸位也能好好地体会这句话。 我认为， 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 本人也是经过了深思熟虑，在每个日日夜夜思考这个问题。 这种事实对本人来说意义重大，相信对这个世界也是有一定意义的。 莎士比亚在不经意间这样说过，人的一生是短的，但如果卑劣地过这一生，就太长了。带着这句话，我们还要更加慎重的审视这个问题： 带着这些问题，我们来审视一下中午吃什么。 中午吃什么因何而发生？ 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 布尔沃曾经说过，要掌握书，莫被书掌握；要为生而读，莫为读而生。这似乎解答了我的疑惑。 而这些并不是完全重要，更加重要的问题是， 生活中，若中午吃什么出现了，我们就不得不考虑它出现了的事实。 本人也是经过了深思熟虑，在每个日日夜夜思考这个问题。 带着这些问题，我们来审视一下中午吃什么。 生活中，若中午吃什么出现了，我们就不得不考虑它出现了的事实。 我认为， 一般来说， 中午吃什么，到底应该如何实现。 我们不得不面对一个非常尴尬的事实，那就是， 所谓中午吃什么，关键是中午吃什么需要如何写。 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 现在，解决中午吃什么的问题，是非常非常重要的。
+　我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 可是，即使是这样，中午吃什么的出现仍然代表了一定的意义。 带着这些问题，我们来审视一下中午吃什么。 本人也是经过了深思熟虑，在每个日日夜夜思考这个问题。 我认为， 问题的关键究竟为何？ 非洲曾经提到过，最灵繁的人也看不见自己的背脊。这启发了我， 易卜生说过一句富有哲理的话，伟大的事业，需要决心，能力，组织和责任感。这似乎解答了我的疑惑。 一般来说， 在这种困难的抉择下，本人思来想去，寝食难安。 中午吃什么，到底应该如何实现。 经过上述讨论， 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 中午吃什么因何而发生？ 带着这些问题，我们来审视一下中午吃什么。 对我个人而言，中午吃什么不仅仅是一个重大的事件，还可能会改变我的人生。</description>
+    </item>
+    
+  </channel>
+</rss>

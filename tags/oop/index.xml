@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>OOP on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/oop/</link>
+    <description>Recent content in OOP on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Sun, 30 May 2021 20:01:58 +0530</lastBuildDate><atom:link href="https://winterorch.github.io/tags/oop/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java 抽象类</title>
+      <link>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</link>
+      <pubDate>Sun, 30 May 2021 20:01:58 +0530</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</guid>
+      <description>语法 抽象类中可以存在
+ 构造方法 抽象方法 非抽象方法 成员变量 静态成员变量  总结：除了不能被实例化，抽象类几乎具有普通类的所有特性。
+ 注意点   抽象类不能被实例化，如果试图实例化抽象类，编译无法通过
+  抽象类中可以有构造方法，但是构造方法不能为抽象方法，其中原因见 [为什么构造函数不能为抽象]
+ 抽象类及其实现的构造方法也必须遵循一般继承中的构造方法规范，包括：
+ 子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 super() 子类要使用父类有参构造方法，使用 super(...) 形式，且 super() 必须是子类构造方法中第一行语句 父类没有不带参构造方法（只定义了有参构造方法而没有定义无参的），子类构造方法中必须显示调用父类其它构造方法，否则编译不过     抽象类中的静态方法也不能为抽象方法
+  抽象类中的抽象方法只能声明，不能有具体实现，这与接口不同（接口方法在 JDK 1.8 后也可以有默认实现），具体原因见 [为什么抽象方法不能有实现而接口方法可以]
+   有端联想 抽象类总结了几个比较有嚼劲的问题
+1. 为什么构造函数不能为抽象 Java 抽象函数 和 C++ 虚函数 是等价概念，因此这里直接从 C++ 的角度找答案了。结论就是——构造函数从语言和逻辑来看都不能为虚函数。
+  从内存结构角度来看
+虚函数对应虚函数表 vtable ，表为类所有，但虚函数表指针为每个对象所有，在构造函数运行时进行空间分配，因此构造函数无法在未创建虚表指针的情况下调用虚表。
+  从语言逻辑角度来看
+构造函数目的是初始化实例，我们知道抽象类和虚基类都没有实例化的需求，将构造函数定义为虚函数是没有意义的。
+可以先回顾一下虚函数的作用过程——通过指针或者引用来调用虚函数的时候能够调用到子类的对应成员函数。而构造函数是在创建对象时自动调用的，调用这一函数的指针或引用所对应的对象还不存在，也就决定了构造函数不能是虚函数。
+  2.</description>
+    </item>
+    
+  </channel>
+</rss>
