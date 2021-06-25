@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<title>Java 基础</title>
+<title>Spring 依赖注入注解的区分</title>
 
 
 
@@ -10,16 +10,18 @@
 <meta name="google-site-verification" content="">
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 <meta content="telephone=no" name="format-detection">
-<meta name="description" content="">
+<meta name="description" content="DI Annotations">
 <meta name="renderer" content="webkit">
 <meta name="theme-color" content="#ffffff">
 
 
 
-<meta property="og:title" content="Java 基础" />
-<meta property="og:description" content="My HomePage Description" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://winterorch.github.io/categories/java-%E5%9F%BA%E7%A1%80/" /><meta property="og:site_name" content="My Blog" />
+<meta property="og:title" content="Spring 依赖注入注解的区分" />
+<meta property="og:description" content="DI Annotations" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://winterorch.github.io/posts/java-spring-annotation-di_methods/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-24T19:03:58&#43;05:30" />
+<meta property="article:modified_time" content="2021-06-24T19:03:58&#43;05:30" /><meta property="og:site_name" content="My Blog" />
 
 
 
@@ -27,8 +29,8 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Java 基础"/>
-<meta name="twitter:description" content="My HomePage Description"/>
+<meta name="twitter:title" content="Spring 依赖注入注解的区分"/>
+<meta name="twitter:description" content="DI Annotations"/>
 
 
 
@@ -61,6 +63,10 @@
 
 
 
+
+  
+    <script src="/js/toc.js"></script>
+  
 
 
 
@@ -100,9 +106,11 @@
             
             
             
+                
             
             
-            <a class="a-block nav-link-item false" href="/posts">
+            
+            <a class="a-block nav-link-item active" href="/posts">
                 归档
             </a>
             
@@ -110,11 +118,9 @@
             
             
             
-                
             
             
-            
-            <a class="a-block nav-link-item active" href="/categories">
+            <a class="a-block nav-link-item false" href="/categories">
                 分类
             </a>
             
@@ -160,6 +166,88 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
 </div><div ref="extraContainer" class="extra-container">
     
     
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#autowired" onclick="onNavClick(`#autowired-nav`)" id="autowired-nav">
+									@Autowired
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#inject" onclick="onNavClick(`#inject-nav`)" id="inject-nav">
+									@Inject
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#resource" onclick="onNavClick(`#resource-nav`)" id="resource-nav">
+									@Resource
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
     <div class="pagination">
         <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
             <i class="material-icons pagination-action-icon">
@@ -177,8 +265,6 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
         </a>
         
         
-        
-        
     </div>
 </div>
 <div class="single-column-drawer-container" ref="drawer"
@@ -191,9 +277,11 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 
                 
                 
+                    
                 
                 
-                <a class="a-block drawer-menu-item false" href="/posts">
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
                     归档
                 </a>
                 
@@ -201,11 +289,9 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 
                 
                 
-                    
                 
                 
-                
-                <a class="a-block drawer-menu-item active" href="/categories">
+                <a class="a-block drawer-menu-item false" href="/categories">
                     分类
                 </a>
                 
@@ -230,6 +316,88 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 </a>
                 
             
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#autowired" onclick="onNavClick(`#autowired-nav`)" id="autowired-nav">
+									@Autowired
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#inject" onclick="onNavClick(`#inject-nav`)" id="inject-nav">
+									@Inject
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#resource" onclick="onNavClick(`#resource-nav`)" id="resource-nav">
+									@Resource
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
             
         </div>
     </div>
@@ -274,81 +442,149 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">
-        <div class="post-item-wrapper post-item-wrapper-no-hover">
-            <div class="post-item post-item-no-gaps">
-                <div class="post-item-info-wrapper">
-                    <div class="post-item-title  post-item-title-small">
-                        <a href="https://winterorch.github.io/">图拉国营噄茶馆</a> / Java 基础
+        <div class="post">
+            
+            
+            
+                
+            
+
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://winterorch.github.io/images/feature/scenes/Arctic.jpg')"
+                    
+                
+            >
+                <div class="post-title">
+                    Spring 依赖注入注解的区分
+                    
+                    <div class="post-subtitle">
+                        DI Annotations
+                    </div>
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2021-06-24 19:03
+                        </time>
+                        
+
+                        
+                            <i class="material-icons" style="">folder</i>
+                                <a href="/categories/java-spring">Java Spring</a>
+                                &nbsp;
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/java">Java</a>
+                                &nbsp;
+                            
+                                <a href="/tags/spring">Spring</a>
+                                &nbsp;
+                            
+                        
+                        
                     </div>
                 </div>
             </div>
-        </div><a href="/posts/java-oop-polymorphism-interface_and_abstract/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            接口与抽象类的区别
-                        </div>
-                        <div class="post-item-meta">
-    2021-06-02
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>Spring 支持的依赖注入有 <code>@Autowired</code> <code>@Resource</code> <code>@Inject</code> 三种</p>
+<h3 id="autowired">@Autowired</h3>
+<p>来自 <code>org.springframwork.beans.factory.annotation.Autowired</code> ，装配顺序为：</p>
+<ul>
+<li>按 <code>type</code> 在上下文中查找匹配的 bean</li>
+<li>如果有多个 bean，则按照 <code>name</code> 进行匹配
+<ul>
+<li>如有 <code>@Qualifier</code> ，则按指定的 name 进行匹配</li>
+<li>如没有，则按变量名进行匹配</li>
+</ul>
+</li>
+<li>匹配不到就报错</li>
+</ul>
+<p><code>@Autowired(required=false)</code> 则注入失败不抛异常</p>
+<h3 id="inject">@Inject</h3>
+<p>Spring 环境下和 <code>@Autowired</code> 相同，都依赖 <code>AutowiredAnnotationBeanPostProcess</code> 进行处理，但不能 <code>(required=false)</code>。<code>@Inject</code> 由 JSR-330 定义，可以切换到谷歌的 DI 框架——Guice。</p>
+<p><code>@Inject</code> 在 Java EE 包内，SE 环境需要单独引入。</p>
+<h3 id="resource">@Resource</h3>
+<p>JSR-250 定义。在 <code>CommonAnnotationBeanPostProcessor</code> 实现处理。同样有 <code>name</code> 和 <code>type</code>。装配顺序：</p>
+<ul>
+<li>如同时指定 <code>name</code> 和 <code>type</code> ，从上下文找到唯一匹配 bean 进行装配，找不到抛异常</li>
+<li>如指定 <code>name</code> ，则到上下文找 <code>id</code> 匹配的 bean 进行装配，找不到抛异常</li>
+<li>如指定 <code>type</code> ，则到上下文找类型匹配的唯一 bean 进行装配，找不到或找到不唯一都会抛异常</li>
+<li>如果都没有指定，则默认按 <code>byName</code> 方式装配，找不到再按 <code>byType</code> 进行装配</li>
+</ul>
+<hr>
+<p>IDEA 使用 <code>@Autowired</code> 时很常见警告 Field injection is not recommended。</p>
+<p>Spring 团队建议永远使用构造方法，也就是 <code>c-args</code> 进行依赖注入。IDEA 对这一警告的默认修改方式也是——创建一个构造器进行依赖注入。并且，跟据 Spring 团队建议，对必须的依赖，应当使用断言进行确认</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Assert.<span style="color:#658b00">notNull</span>(svc, <span style="color:#cd5555">&#34;svc must not be null&#34;</span>);
+</code></pre></div><p>为什么不能用成员依赖注入呢？</p>
+<p>field 注入虽然简洁，但存在问题：</p>
+<ol>
+<li>由于添加依赖过于简单（加个注释），我们很容易无意识地向一个类注入大量依赖，这违反了单一职责原理，因为我们过去通过构造器进行注入，而要是你的构造器出现大量入参，那很容易意识到自己的代码结构不对劲。打个比方——原本要数着钞票买东西的，一下子变成移动支付，点一下付钱了，就容易到了月底为账单发愁，因为我们金钱意识变薄弱了。解决方法就是——继续用构造器注入，因此对于强制依赖，Spring推荐用 <code>c-args</code> 注入。</li>
+<li>依赖注入与容器本身耦合了，即——类唯一的正常工作方式就是通过容器反射进行实例化，这就像是集成测试一样，不像个健康的类，就像一个人原本你把饭给他就能自己吃，现在非要注射进去一样。为了让类能在容器外使用，自然还是要用 <code>c-args</code> 和 <code>s-args</code>。</li>
+<li>属性注入不能用来注入 <code>final</code> 变量。</li>
+</ol>
+<hr>
+<p>因此 Spring 给出建议：<code>constructor-based</code> 和 <code>setter-based</code> DI 可以混用，</p>
+<ul>
+<li>
+<p>强制依赖就用 <code>constructor-based</code></p>
+<p>很好理解，类离开强制依赖就无法工作，这和构造方法职能相吻合，也能注入 <code>final</code> 变量。构造器可以保证这些变量的值不会是 null 。</p>
+</li>
+<li>
+<p>可选、可变依赖用 <code>setter-based</code></p>
+<p><code>setter</code> 值应被用于注入非必须依赖，这些依赖可以很方便地被改变或重新注入，否则会需要大量的 null 检查。</p>
+</li>
+</ul>
 
-                    </div>
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">最后修改于 2021-06-24</p>
+                    
                 </div>
             </div>
-        </a><a href="/posts/java-oop-polymorphism-abstract_class/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            Java 抽象类
-                        </div>
-                        <div class="post-item-meta">
-    2021-05-30
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+            
+            
+            <nav class="post-pagination">
 
-                    </div>
-                </div>
-            </div>
-        </a><a href="/posts/java-jvm-ram_and_gc/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            JVM GC
-                        </div>
-                        <div class="post-item-meta">
-    2021-03-17
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+                
+                <a class="newer-posts">
+			下回<br>已经到头啦。
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://winterorch.github.io/posts/leetcode-752-open_the_lock/">
+			上回<br>LeetCode 752 - 打开转盘锁
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
 
-                    </div>
-                </div>
-            </div>
-        </a></div>
-</div>
+
+
+
+
+
+
+
+
 
             </div>
+        </div>
+    </div>
+</div>
 
-
-<div id="single-column-footer">
+            </div><div id="single-column-footer">
 Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
 <br>
 移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
@@ -615,6 +851,9 @@ app = new Vue({
             elem.classList.add("table-hover");
         })
 
+        
+        spy();
+        window.addEventListener('scroll', this.debounce(spy, 250, { 'maxWait': 250 }), false);
         
         
     },

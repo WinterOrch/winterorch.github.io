@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<title>Java 基础</title>
+<title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
 
 
 
@@ -10,16 +10,18 @@
 <meta name="google-site-verification" content="">
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 <meta content="telephone=no" name="format-detection">
-<meta name="description" content="">
+<meta name="description" content="找出出现重复数字中只出现过一次的两个">
 <meta name="renderer" content="webkit">
 <meta name="theme-color" content="#ffffff">
 
 
 
-<meta property="og:title" content="Java 基础" />
-<meta property="og:description" content="My HomePage Description" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://winterorch.github.io/categories/java-%E5%9F%BA%E7%A1%80/" /><meta property="og:site_name" content="My Blog" />
+<meta property="og:title" content="剑指 Offer 56 - I. 数组中数字出现的次数" />
+<meta property="og:description" content="找出出现重复数字中只出现过一次的两个" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://winterorch.github.io/posts/leetcode-jianzhi-056/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-20T21:03:58&#43;06:30" />
+<meta property="article:modified_time" content="2021-06-20T21:03:58&#43;06:30" /><meta property="og:site_name" content="My Blog" />
 
 
 
@@ -27,8 +29,8 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Java 基础"/>
-<meta name="twitter:description" content="My HomePage Description"/>
+<meta name="twitter:title" content="剑指 Offer 56 - I. 数组中数字出现的次数"/>
+<meta name="twitter:description" content="找出出现重复数字中只出现过一次的两个"/>
 
 
 
@@ -61,6 +63,10 @@
 
 
 
+
+  
+    <script src="/js/toc.js"></script>
+  
 
 
 
@@ -100,9 +106,11 @@
             
             
             
+                
             
             
-            <a class="a-block nav-link-item false" href="/posts">
+            
+            <a class="a-block nav-link-item active" href="/posts">
                 归档
             </a>
             
@@ -110,11 +118,9 @@
             
             
             
-                
             
             
-            
-            <a class="a-block nav-link-item active" href="/categories">
+            <a class="a-block nav-link-item false" href="/categories">
                 分类
             </a>
             
@@ -160,6 +166,70 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
 </div><div ref="extraContainer" class="extra-container">
     
     
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e5%89%91%e6%8c%87-offer-56---i-%e6%95%b0%e7%bb%84%e4%b8%ad%e6%95%b0%e5%ad%97%e5%87%ba%e7%8e%b0%e7%9a%84%e6%ac%a1%e6%95%b0httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof" onclick="onNavClick(`#剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof-nav`)" id="剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof-nav">
+									剑指 Offer 56 - I. 数组中数字出现的次数
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e9%a2%98%e8%a7%a3" onclick="onNavClick(`#题解-nav`)" id="题解-nav">
+									题解
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
     <div class="pagination">
         <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
             <i class="material-icons pagination-action-icon">
@@ -177,8 +247,6 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
         </a>
         
         
-        
-        
     </div>
 </div>
 <div class="single-column-drawer-container" ref="drawer"
@@ -191,9 +259,11 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 
                 
                 
+                    
                 
                 
-                <a class="a-block drawer-menu-item false" href="/posts">
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
                     归档
                 </a>
                 
@@ -201,11 +271,9 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 
                 
                 
-                    
                 
                 
-                
-                <a class="a-block drawer-menu-item active" href="/categories">
+                <a class="a-block drawer-menu-item false" href="/categories">
                     分类
                 </a>
                 
@@ -230,6 +298,70 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 </a>
                 
             
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e5%89%91%e6%8c%87-offer-56---i-%e6%95%b0%e7%bb%84%e4%b8%ad%e6%95%b0%e5%ad%97%e5%87%ba%e7%8e%b0%e7%9a%84%e6%ac%a1%e6%95%b0httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof" onclick="onNavClick(`#剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof-nav`)" id="剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof-nav">
+									剑指 Offer 56 - I. 数组中数字出现的次数
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e9%a2%98%e8%a7%a3" onclick="onNavClick(`#题解-nav`)" id="题解-nav">
+									题解
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
             
         </div>
     </div>
@@ -274,81 +406,140 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">
-        <div class="post-item-wrapper post-item-wrapper-no-hover">
-            <div class="post-item post-item-no-gaps">
-                <div class="post-item-info-wrapper">
-                    <div class="post-item-title  post-item-title-small">
-                        <a href="https://winterorch.github.io/">图拉国营噄茶馆</a> / Java 基础
+        <div class="post">
+            
+            
+            
+                
+            
+
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://winterorch.github.io/images/feature/scenes/TrafficLights.jpg')"
+                    
+                
+            >
+                <div class="post-title">
+                    剑指 Offer 56 - I. 数组中数字出现的次数
+                    
+                    <div class="post-subtitle">
+                        找出出现重复数字中只出现过一次的两个
+                    </div>
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2021-06-20 21:03
+                        </time>
+                        
+
+                        
+                            <i class="material-icons" style="">folder</i>
+                                <a href="/categories/leetcode">Leetcode</a>
+                                &nbsp;
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97">位运算</a>
+                                &nbsp;
+                            
+                                <a href="/tags/leetcode">Leetcode</a>
+                                &nbsp;
+                            
+                        
+                        
                     </div>
                 </div>
             </div>
-        </div><a href="/posts/java-oop-polymorphism-interface_and_abstract/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            接口与抽象类的区别
-                        </div>
-                        <div class="post-item-meta">
-    2021-06-02
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
-
-                    </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <h1 id="剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof"><a href="https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/">剑指 Offer 56 - I. 数组中数字出现的次数</a></h1>
+<p>一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。</p>
+<p>示例 1：</p>
+<blockquote>
+<p>输入：nums = [4,1,4,6]
+输出：[1,6] 或 [6,1]</p>
+</blockquote>
+<p>示例 2：</p>
+<blockquote>
+<p>输入：nums = [1,2,10,4,1,4,3,3]
+输出：[2,10] 或 [10,2]</p>
+</blockquote>
+<p>限制：</p>
+<blockquote>
+<p>2 &lt;= nums.length &lt;= 10000</p>
+</blockquote>
+<hr>
+<h3 id="题解">题解</h3>
+<p>时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8b008b;font-weight:bold">for</span>(<span style="color:#00688b;font-weight:bold">int</span> num : nums)
+    n ^= num;
+</code></pre></div><p>如果只有一个出现一次的数字，那答案已经出来了。然而这题有两个数字 <code>x, y</code>，得到的 <code>n</code> 是两者的异或 <code>n = x ^ y</code> 。因为 <code>x != y</code> ，<code>n</code> 必定有至少一个非零位，接下来肯定得围绕着这个非零位作文章。</p>
+<p>而这个非零位有什么用呢？它告诉我们，<code>x</code> 和 <code>y</code> 中有一个 (<code>x</code>) 在该比特位上非零，另一个 (<code>y</code>) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 <code>n</code> 最低非零位上是否为零。</p>
+<p>因此，接下来要做的就是——再遍历一遍原数组，在 <code>n</code> 最低非零位上跟据是否为零放到两个 <code>int</code> 上去异或。</p>
+<p>完整答案</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8b008b;font-weight:bold">public</span> <span style="color:#00688b;font-weight:bold">int</span>[] <span style="color:#008b45">singleNumbers</span>(<span style="color:#00688b;font-weight:bold">int</span>[] nums) {
+    <span style="color:#00688b;font-weight:bold">int</span> x = 0, y = 0, n = 0, m = 1;
+    <span style="color:#8b008b;font-weight:bold">for</span>(<span style="color:#00688b;font-weight:bold">int</span> num : nums)               <span style="color:#228b22">// 1. 遍历异或
+</span><span style="color:#228b22"></span>        n ^= num;
+    <span style="color:#8b008b;font-weight:bold">while</span>((n &amp; m) == 0)               <span style="color:#228b22">// 2. 循环左移，计算 m
+</span><span style="color:#228b22"></span>        m &lt;&lt;= 1;
+    <span style="color:#8b008b;font-weight:bold">for</span>(<span style="color:#00688b;font-weight:bold">int</span> num: nums) {              <span style="color:#228b22">// 3. 遍历 nums 分组
+</span><span style="color:#228b22"></span>        <span style="color:#8b008b;font-weight:bold">if</span>((num &amp; m) != 0)
+            x ^= num;                 <span style="color:#228b22">// 4. 当 num &amp; m != 0
+</span><span style="color:#228b22"></span>        <span style="color:#8b008b;font-weight:bold">else</span>
+            y ^= num;                 <span style="color:#228b22">// 4. 当 num &amp; m == 0
+</span><span style="color:#228b22"></span>    }
+    <span style="color:#8b008b;font-weight:bold">return</span> <span style="color:#8b008b;font-weight:bold">new</span> <span style="color:#00688b;font-weight:bold">int</span>[] {x, y};          <span style="color:#228b22">// 5. 返回出现一次的数字
+</span><span style="color:#228b22"></span>}
+</code></pre></div>
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">最后修改于 2021-06-20</p>
+                    
                 </div>
             </div>
-        </a><a href="/posts/java-oop-polymorphism-abstract_class/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            Java 抽象类
-                        </div>
-                        <div class="post-item-meta">
-    2021-05-30
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+            
+            
+            <nav class="post-pagination">
 
-                    </div>
-                </div>
-            </div>
-        </a><a href="/posts/java-jvm-ram_and_gc/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            JVM GC
-                        </div>
-                        <div class="post-item-meta">
-    2021-03-17
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+                
+                <a class="newer-posts" href="https://winterorch.github.io/posts/leetcode-752-open_the_lock/">
+			下回<br>LeetCode 752 - 打开转盘锁
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/">
+			上回<br>接口与抽象类的区别
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
 
-                    </div>
-                </div>
-            </div>
-        </a></div>
-</div>
+
+
+
+
+
+
+
+
 
             </div>
+        </div>
+    </div>
+</div>
 
-
-<div id="single-column-footer">
+            </div><div id="single-column-footer">
 Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
 <br>
 移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
@@ -615,6 +806,9 @@ app = new Vue({
             elem.classList.add("table-hover");
         })
 
+        
+        spy();
+        window.addEventListener('scroll', this.debounce(spy, 250, { 'maxWait': 250 }), false);
         
         
     },

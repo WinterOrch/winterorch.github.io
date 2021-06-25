@@ -7,7 +7,72 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Wed, 02 Jun 2021 09:14:28 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Jun 2021 19:03:58 +0530</lastBuildDate><atom:link href="https://winterorch.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Spring 依赖注入注解的区分</title>
+      <link>https://winterorch.github.io/posts/java-spring-annotation-di_methods/</link>
+      <pubDate>Thu, 24 Jun 2021 19:03:58 +0530</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-spring-annotation-di_methods/</guid>
+      <description>Spring 支持的依赖注入有 @Autowired @Resource @Inject 三种
+@Autowired 来自 org.springframwork.beans.factory.annotation.Autowired ，装配顺序为：
+ 按 type 在上下文中查找匹配的 bean 如果有多个 bean，则按照 name 进行匹配  如有 @Qualifier ，则按指定的 name 进行匹配 如没有，则按变量名进行匹配   匹配不到就报错  @Autowired(required=false) 则注入失败不抛异常
+@Inject Spring 环境下和 @Autowired 相同，都依赖 AutowiredAnnotationBeanPostProcess 进行处理，但不能 (required=false)。@Inject 由 JSR-330 定义，可以切换到谷歌的 DI 框架——Guice。
+@Inject 在 Java EE 包内，SE 环境需要单独引入。
+@Resource JSR-250 定义。在 CommonAnnotationBeanPostProcessor 实现处理。同样有 name 和 type。装配顺序：
+ 如同时指定 name 和 type ，从上下文找到唯一匹配 bean 进行装配，找不到抛异常 如指定 name ，则到上下文找 id 匹配的 bean 进行装配，找不到抛异常 如指定 type ，则到上下文找类型匹配的唯一 bean 进行装配，找不到或找到不唯一都会抛异常 如果都没有指定，则默认按 byName 方式装配，找不到再按 byType 进行装配   IDEA 使用 @Autowired 时很常见警告 Field injection is not recommended。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 752 - 打开转盘锁</title>
+      <link>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</link>
+      <pubDate>Thu, 24 Jun 2021 15:11:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</guid>
+      <description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;. The wheels can rotate freely and wrap around: for example we can turn &#39;9&#39; to be &#39;0&#39;, or &#39;0&#39; to be &#39;9&#39;. Each move consists of turning one wheel one slot.
+The lock initially starts at &#39;0000&#39;, a string representing the state of the 4 wheels.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
+      <link>https://winterorch.github.io/posts/leetcode-jianzhi-056/</link>
+      <pubDate>Sun, 20 Jun 2021 21:03:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-056/</guid>
+      <description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+示例 1：
+ 输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]
+ 示例 2：
+ 输入：nums = [1,2,10,4,1,4,3,3] 输出：[2,10] 或 [10,2]
+ 限制：
+ 2 &amp;lt;= nums.length &amp;lt;= 10000
+  题解 时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字
+for(int num : nums) n ^= num; 如果只有一个出现一次的数字，那答案已经出来了。然而这题有两个数字 x, y，得到的 n 是两者的异或 n = x ^ y 。因为 x != y ，n 必定有至少一个非零位，接下来肯定得围绕着这个非零位作文章。
+而这个非零位有什么用呢？它告诉我们，x 和 y 中有一个 (x) 在该比特位上非零，另一个 (y) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 n 最低非零位上是否为零。</description>
+    </item>
+    
+    <item>
+      <title>接口与抽象类的区别</title>
+      <link>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</link>
+      <pubDate>Wed, 02 Jun 2021 20:04:58 +0130</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</guid>
+      <description>先简单过一下接口语法中的注意点。
+注意点   接口中的变量隐式指定为 public static final
+  接口中的方法会被隐式指定为 public abstract （JDK 1.9 后允许 private，其它修饰符会报错）
+ 这也决定了接口中所有方法都必须被实现，当然这一要求有两种特殊的满足方式——抽象类实现接口，那么接口方法不一定要实现，可以由抽象类的子类实现；JDK 1.8 后有默认实现的接口方法也不必被实现类显式实现。
+   接口不能有构造方法
+  JDK 1.8 后，接口可以有静态方法和方法体
+  JDK 1.8 后，接口方法可以有默认方法，用 default 关键字修饰
+  与抽象类语法上的区别   一个类可以实现多个接口
+  一个接口可以继承多个其它接口
+Java 接口是对行为的抽象，一个行为本身可以看作多个行为的耦合
+public interface Hockey extends Sports, Event    接口与抽象类区别 接口和抽象类语法上的不同在之前两个文档中都已经接释清楚了，这里主要看两者思想上的不同。
+摘取一些《Effective Java》中的说法
+ 接口是对行为的抽象，达到 API 定义与实现分类 的目的，因此支持多实现。甚至可以用没有任何方法的接口，作为 Marker Interface，目的仅仅是进行声明。但是用接口导出常量是不合适的使用，接口应当尽量减少细节泄露，常量应当由类保管。
+相较之下，抽象类的主要目的是 代码重用，本质是不能实例化的类。</description>
+    </item>
+    
     <item>
       <title>计算机网络 传输层</title>
       <link>https://winterorch.github.io/posts/computer_network-transport_layer/</link>
@@ -18,6 +83,19 @@
  TCP 与 UDP 协议区别     连接 传输可靠性 传输形式 传输效率 所需资源 应用场景 首部字节     TCP 面向连接 可靠 字节流 低 多 要求数据可靠性 20 - 60   UDP 无连接 不可靠 数据报文段 高 少 要求通信效率 8     TCP（Transmission Control Protocol） TCP 提供面向连接的服务。在传送数据之前必须先建立连接，数据传送结束后要释放连接。 TCP 不提供广播或多播服务。由于 TCP 要提供可靠的，面向连接的传输服务（TCP的可靠体现在TCP在传递数据之前，会有三次握手来建立连接，而且在数据传递时，有确认、窗口、重传、拥塞控制机制，在数据传完后，还会断开连接用来节约系统资源），这一难以避免增加了许多开销，如确认，流量控制，计时器以及连接管理等。这不仅使协议数据单元的首部增大很多，还要占用许多处理机资源。TCP 一般用于文件传输、发送和接收邮件、远程登录等场景。
   序号 ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。
   确认号 ：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 59 - I. 滑动窗口的最大值</title>
+      <link>https://winterorch.github.io/posts/leetcode-jianzhi-059/</link>
+      <pubDate>Tue, 01 Jun 2021 17:45:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-059/</guid>
+      <description>剑指 Offer 59 - I. 滑动窗口的最大值 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+示例 1：
+ 输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3 输出: [3,3,5,5,6,7] 解释:
+滑动窗口的位置 最大值
+ [1 3 -1] -3 5 3 6 7 3 1 [3 -1 -3] 5 3 6 7 3 1 3 [-1 -3 5] 3 6 7 5 1 3 -1 [-3 5 3] 6 7 5 1 3 -1 -3 [5 3 6] 7 6 1 3 -1 -3 5 [3 6 7] 7</description>
     </item>
     
     <item>

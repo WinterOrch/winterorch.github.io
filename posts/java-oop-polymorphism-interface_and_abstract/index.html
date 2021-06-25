@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<title>Java 基础</title>
+<title>接口与抽象类的区别</title>
 
 
 
@@ -10,16 +10,18 @@
 <meta name="google-site-verification" content="">
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 <meta content="telephone=no" name="format-detection">
-<meta name="description" content="">
+<meta name="description" content="接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题">
 <meta name="renderer" content="webkit">
 <meta name="theme-color" content="#ffffff">
 
 
 
-<meta property="og:title" content="Java 基础" />
-<meta property="og:description" content="My HomePage Description" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://winterorch.github.io/categories/java-%E5%9F%BA%E7%A1%80/" /><meta property="og:site_name" content="My Blog" />
+<meta property="og:title" content="接口与抽象类的区别" />
+<meta property="og:description" content="接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-02T20:04:58&#43;01:30" />
+<meta property="article:modified_time" content="2021-06-02T20:04:58&#43;01:30" /><meta property="og:site_name" content="My Blog" />
 
 
 
@@ -27,8 +29,8 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Java 基础"/>
-<meta name="twitter:description" content="My HomePage Description"/>
+<meta name="twitter:title" content="接口与抽象类的区别"/>
+<meta name="twitter:description" content="接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题"/>
 
 
 
@@ -61,6 +63,10 @@
 
 
 
+
+  
+    <script src="/js/toc.js"></script>
+  
 
 
 
@@ -100,9 +106,11 @@
             
             
             
+                
             
             
-            <a class="a-block nav-link-item false" href="/posts">
+            
+            <a class="a-block nav-link-item active" href="/posts">
                 归档
             </a>
             
@@ -110,11 +118,9 @@
             
             
             
-                
             
             
-            
-            <a class="a-block nav-link-item active" href="/categories">
+            <a class="a-block nav-link-item false" href="/categories">
                 分类
             </a>
             
@@ -160,6 +166,156 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
 </div><div ref="extraContainer" class="extra-container">
     
     
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e6%b3%a8%e6%84%8f%e7%82%b9" onclick="onNavClick(`#注意点-nav`)" id="注意点-nav">
+									注意点
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%b8%8e%e6%8a%bd%e8%b1%a1%e7%b1%bb%e8%af%ad%e6%b3%95%e4%b8%8a%e7%9a%84%e5%8c%ba%e5%88%ab" onclick="onNavClick(`#与抽象类语法上的区别-nav`)" id="与抽象类语法上的区别-nav">
+									与抽象类语法上的区别
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#%e6%8e%a5%e5%8f%a3%e4%b8%8e%e6%8a%bd%e8%b1%a1%e7%b1%bb%e5%8c%ba%e5%88%ab" onclick="onNavClick(`#接口与抽象类区别-nav`)" id="接口与抽象类区别-nav">
+									接口与抽象类区别
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e6%9c%ac%e8%b4%a8" onclick="onNavClick(`#本质-nav`)" id="本质-nav">
+									本质
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e7%9b%ae%e7%9a%84" onclick="onNavClick(`#目的-nav`)" id="目的-nav">
+									目的
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#java-%e7%bb%a7%e6%89%bf%e4%b8%8e%e9%87%8c%e6%b0%8f%e6%9b%bf%e6%8d%a2%e5%8e%9f%e5%88%99" onclick="onNavClick(`#java-继承与里氏替换原则-nav`)" id="java-继承与里氏替换原则-nav">
+									Java 继承与里氏替换原则
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
     <div class="pagination">
         <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
             <i class="material-icons pagination-action-icon">
@@ -177,8 +333,6 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
         </a>
         
         
-        
-        
     </div>
 </div>
 <div class="single-column-drawer-container" ref="drawer"
@@ -191,9 +345,11 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 
                 
                 
+                    
                 
                 
-                <a class="a-block drawer-menu-item false" href="/posts">
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
                     归档
                 </a>
                 
@@ -201,11 +357,9 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 
                 
                 
-                    
                 
                 
-                
-                <a class="a-block drawer-menu-item active" href="/categories">
+                <a class="a-block drawer-menu-item false" href="/categories">
                     分类
                 </a>
                 
@@ -230,6 +384,156 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
                 </a>
                 
             
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e6%b3%a8%e6%84%8f%e7%82%b9" onclick="onNavClick(`#注意点-nav`)" id="注意点-nav">
+									注意点
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%b8%8e%e6%8a%bd%e8%b1%a1%e7%b1%bb%e8%af%ad%e6%b3%95%e4%b8%8a%e7%9a%84%e5%8c%ba%e5%88%ab" onclick="onNavClick(`#与抽象类语法上的区别-nav`)" id="与抽象类语法上的区别-nav">
+									与抽象类语法上的区别
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#%e6%8e%a5%e5%8f%a3%e4%b8%8e%e6%8a%bd%e8%b1%a1%e7%b1%bb%e5%8c%ba%e5%88%ab" onclick="onNavClick(`#接口与抽象类区别-nav`)" id="接口与抽象类区别-nav">
+									接口与抽象类区别
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e6%9c%ac%e8%b4%a8" onclick="onNavClick(`#本质-nav`)" id="本质-nav">
+									本质
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e7%9b%ae%e7%9a%84" onclick="onNavClick(`#目的-nav`)" id="目的-nav">
+									目的
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#java-%e7%bb%a7%e6%89%bf%e4%b8%8e%e9%87%8c%e6%b0%8f%e6%9b%bf%e6%8d%a2%e5%8e%9f%e5%88%99" onclick="onNavClick(`#java-继承与里氏替换原则-nav`)" id="java-继承与里氏替换原则-nav">
+									Java 继承与里氏替换原则
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
             
         </div>
     </div>
@@ -274,81 +578,169 @@ Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> b
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">
-        <div class="post-item-wrapper post-item-wrapper-no-hover">
-            <div class="post-item post-item-no-gaps">
-                <div class="post-item-info-wrapper">
-                    <div class="post-item-title  post-item-title-small">
-                        <a href="https://winterorch.github.io/">图拉国营噄茶馆</a> / Java 基础
+        <div class="post">
+            
+            
+            
+                
+            
+
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://winterorch.github.io/images/feature/abyss/05.jpg')"
+                    
+                
+            >
+                <div class="post-title">
+                    接口与抽象类的区别
+                    
+                    <div class="post-subtitle">
+                        接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题
+                    </div>
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2021-06-02 20:04
+                        </time>
+                        
+
+                        
+                            <i class="material-icons" style="">folder</i>
+                                <a href="/categories/java-%E5%9F%BA%E7%A1%80">Java 基础</a>
+                                &nbsp;
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/java">Java</a>
+                                &nbsp;
+                            
+                                <a href="/tags/oop">OOP</a>
+                                &nbsp;
+                            
+                        
+                        
                     </div>
                 </div>
             </div>
-        </div><a href="/posts/java-oop-polymorphism-interface_and_abstract/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            接口与抽象类的区别
-                        </div>
-                        <div class="post-item-meta">
-    2021-06-02
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>先简单过一下接口语法中的注意点。</p>
+<h3 id="注意点"><strong>注意点</strong></h3>
+<ul>
+<li>
+<p>接口中的变量隐式指定为 <code>public static final</code></p>
+</li>
+<li>
+<p>接口中的方法会被隐式指定为 <code>public abstract</code> （JDK 1.9 后允许 private，其它修饰符会报错）</p>
+<blockquote>
+<p>这也决定了接口中所有方法都必须被实现，当然这一要求有两种特殊的满足方式——抽象类实现接口，那么接口方法不一定要实现，可以由抽象类的子类实现；JDK 1.8 后有默认实现的接口方法也不必被实现类显式实现。</p>
+</blockquote>
+</li>
+<li>
+<p>接口不能有构造方法</p>
+</li>
+<li>
+<p>JDK 1.8 后，接口可以有静态方法和方法体</p>
+</li>
+<li>
+<p>JDK 1.8 后，接口方法可以有默认方法，用 <code>default</code> 关键字修饰</p>
+</li>
+</ul>
+<h3 id="与抽象类语法上的区别">与抽象类语法上的区别</h3>
+<ul>
+<li>
+<p>一个类可以实现多个接口</p>
+</li>
+<li>
+<p>一个接口可以继承多个其它接口</p>
+<p>Java 接口是对行为的抽象，一个行为本身可以看作多个行为的耦合</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8b008b;font-weight:bold">public</span> <span style="color:#8b008b;font-weight:bold">interface</span> <span style="color:#008b45;font-weight:bold">Hockey</span> <span style="color:#8b008b;font-weight:bold">extends</span> Sports, Event
+</code></pre></div></li>
+</ul>
+<hr>
+<h2 id="接口与抽象类区别">接口与抽象类区别</h2>
+<p>接口和抽象类语法上的不同在之前两个文档中都已经接释清楚了，这里主要看两者思想上的不同。</p>
+<p>摘取一些《Effective Java》中的说法</p>
+<blockquote>
+<p>接口是对行为的抽象，达到 <strong>API 定义与实现分类</strong> 的目的，因此支持多实现。甚至可以用没有任何方法的接口，作为 Marker Interface，目的仅仅是进行声明。但是用接口导出常量是不合适的使用，接口应当尽量减少细节泄露，常量应当由类保管。</p>
+<p>相较之下，抽象类的主要目的是 <strong>代码重用</strong>，本质是不能实例化的类。</p>
+</blockquote>
+<p>重点有两个——抽象类和接口的本质、目的都不同。</p>
+<h3 id="本质">本质</h3>
+<p>抽象类本质是类，因此不能多继承。C++ 允许多继承而 Java 不允许，这体现两者多态思想上的差别。我们知道 Java 继承其实叫 <code>extends</code> ，严格来讲不叫“继承”，因为在 Java 中，继承首先是一种 <code>is-a</code> 关系，即 <code>Student</code> 要继承 <code>Person</code> ，首先要满足 “<code>Student</code> <code>is a</code> <code>Person</code>” 。这很好理解，按照里氏替换原则 (Liskov Substitution)，进行继承关系抽象时，凡是可以用父类或者基类的地方，都可以用子类进行替换。因此这显然不是中文里面继承的语义，因为中文里“儿子继承父亲”，但儿子不可能是父亲，两者有本质区别。</p>
+<p>然后，Java 为什么只允许单继承就很好理解了。如果我想让 A 同时继承 B 和 C，那说明 A is B, A is C，那 B 和 C 之间自然应当满足某种继承关系，三者应当是一个继承链的关系而非继承树的关系，通过单继承也可以表示清楚，并不需要让 A 同时继承 B 和 C。更不用说 C++ 为了实现多继承，其实也带来菱形继承问题，可能造成内存浪费和数据冗余。</p>
+<blockquote>
+<p>C++中因为允许多继承，可能会因为<strong>菱形继承</strong>造成内存浪费和数据冗余（如两个类BC分别继承同一基类A，再从这两个类派生出一个类D时会有冗余成员），因此最好使用虚继承。虚继承下，D实例内存地址中，BC虚继承来的A部分会通过一个指针分别指向一张虚基表（准确来讲是指向其中的虚基表偏移指针的存储地址，然后通过该指针取出偏移量），从虚基表中取出从基类A虚继承来成员在D内存中的偏移地址。</p>
+</blockquote>
+<p>曾看到有博客认为 C++ 多继承机制较为合理，给出的理由是“人可以有父母，那类也应当可以多继承”。结合前文内容，这个理由显然没有什么道理，但是我认为却很好地反映了 Java 中接口的思想。我们知道，对于生物而言，父和母显然是不等价的，母完成了作为母的职责，父完成了作为父的职责，然后才有“子”，因此与其类比为继承，不如类比为接口实现更妥当，因为父、母实际上在这里归根结底是<strong>行为的抽象</strong>，父类必须实现接口 <code>CanBeFather</code>，母类必须实现接口 <code>CanBeMother</code>，这是一种行为关系。这一接口在使用过程中屏蔽了其它底层细节，无论父母是什么学历、有什么资产，这一过程中都不关注，也没有影响，这便是类功能上的解耦，通过一个用来将行为抽象化的接口完成了。</p>
+<h3 id="目的">目的</h3>
+<p>目的上面其实也说了，《Effective Java》总结的很到位，接口是对行为的抽象，达到 <strong>API 定义与实现分类</strong> 的目的。如果一个类可以有多个行为、实现多个功能，那它当然可以实现多个接口。</p>
+<p>而抽象类更多还是用来减少冗余代码，换句话说——提高代码质量、提高可读性、降低维护难度……</p>
+<hr>
+<h2 id="java-继承与里氏替换原则">Java 继承与里氏替换原则</h2>
+<p>Java中子类重写父类方法时<!-- raw HTML omitted -->不能抛出父类中没有抛出的异常<!-- raw HTML omitted -->，编译会不过，不抛是完全可以的。同时，该方法在子类中的访问级别也不能低于超类中的访问级别。<!-- raw HTML omitted -->这两项规则确保可使用超类实例的地方也能使用子类实例，符合<strong>里氏替换原则</strong><!-- raw HTML omitted -->。</p>
+<ul>
+<li><strong>变量</strong>只能被隐藏（静态及非静态），不能被覆盖</li>
+<li><strong>静态方法</strong>只能被隐藏，不能覆盖</li>
+<li><strong>静态方法</strong>只能用静态方法隐藏，<strong>非静态方法</strong>只能用非静态方法覆盖（否则编译不过）</li>
+<li><strong>最终方法</strong>不能覆盖。私有方法（private）实际会被隐式指定为 final ，所以同样不能覆盖。</li>
+<li><strong>抽象方法</strong>必须覆盖</li>
+</ul>
+<p>同时要注意的是关于构造方法的内容</p>
+<ul>
+<li>子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 <code>super()</code></li>
+<li>子类要使用父类有参构造方法，使用 <code>super(...)</code> 形式，且 <code>super()</code> 必须是子类构造方法中第一行语句</li>
+<li>父类没有不带参构造方法，子类构造方法中必须显示调用父类其它构造方法，否则编译不过</li>
+</ul>
 
-                    </div>
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">最后修改于 2021-06-02</p>
+                    
                 </div>
             </div>
-        </a><a href="/posts/java-oop-polymorphism-abstract_class/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            Java 抽象类
-                        </div>
-                        <div class="post-item-meta">
-    2021-05-30
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+            
+            
+            <nav class="post-pagination">
 
-                    </div>
-                </div>
-            </div>
-        </a><a href="/posts/java-jvm-ram_and_gc/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            JVM GC
-                        </div>
-                        <div class="post-item-meta">
-    2021-03-17
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+                
+                <a class="newer-posts" href="https://winterorch.github.io/posts/leetcode-jianzhi-056/">
+			下回<br>剑指 Offer 56 - I. 数组中数字出现的次数
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://winterorch.github.io/posts/computer_network-transport_layer/">
+			上回<br>计算机网络 传输层
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
 
-                    </div>
-                </div>
-            </div>
-        </a></div>
-</div>
+
+
+
+
+
+
+
+
 
             </div>
+        </div>
+    </div>
+</div>
 
-
-<div id="single-column-footer">
+            </div><div id="single-column-footer">
 Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
 <br>
 移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
@@ -615,6 +1007,9 @@ app = new Vue({
             elem.classList.add("table-hover");
         })
 
+        
+        spy();
+        window.addEventListener('scroll', this.debounce(spy, 250, { 'maxWait': 250 }), false);
         
         
     },

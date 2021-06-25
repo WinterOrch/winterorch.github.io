@@ -7,7 +7,29 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Sun, 30 May 2021 20:01:58 +0530</lastBuildDate><atom:link href="https://winterorch.github.io/categories/java-%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 02 Jun 2021 20:04:58 +0130</lastBuildDate><atom:link href="https://winterorch.github.io/categories/java-%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>接口与抽象类的区别</title>
+      <link>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</link>
+      <pubDate>Wed, 02 Jun 2021 20:04:58 +0130</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</guid>
+      <description>先简单过一下接口语法中的注意点。
+注意点   接口中的变量隐式指定为 public static final
+  接口中的方法会被隐式指定为 public abstract （JDK 1.9 后允许 private，其它修饰符会报错）
+ 这也决定了接口中所有方法都必须被实现，当然这一要求有两种特殊的满足方式——抽象类实现接口，那么接口方法不一定要实现，可以由抽象类的子类实现；JDK 1.8 后有默认实现的接口方法也不必被实现类显式实现。
+   接口不能有构造方法
+  JDK 1.8 后，接口可以有静态方法和方法体
+  JDK 1.8 后，接口方法可以有默认方法，用 default 关键字修饰
+  与抽象类语法上的区别   一个类可以实现多个接口
+  一个接口可以继承多个其它接口
+Java 接口是对行为的抽象，一个行为本身可以看作多个行为的耦合
+public interface Hockey extends Sports, Event    接口与抽象类区别 接口和抽象类语法上的不同在之前两个文档中都已经接释清楚了，这里主要看两者思想上的不同。
+摘取一些《Effective Java》中的说法
+ 接口是对行为的抽象，达到 API 定义与实现分类 的目的，因此支持多实现。甚至可以用没有任何方法的接口，作为 Marker Interface，目的仅仅是进行声明。但是用接口导出常量是不合适的使用，接口应当尽量减少细节泄露，常量应当由类保管。
+相较之下，抽象类的主要目的是 代码重用，本质是不能实例化的类。</description>
+    </item>
+    
     <item>
       <title>Java 抽象类</title>
       <link>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</link>

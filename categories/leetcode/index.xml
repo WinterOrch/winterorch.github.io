@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Leetcode on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/categories/leetcode/</link>
+    <description>Recent content in Leetcode on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Thu, 24 Jun 2021 15:11:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 752 - 打开转盘锁</title>
+      <link>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</link>
+      <pubDate>Thu, 24 Jun 2021 15:11:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</guid>
+      <description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;. The wheels can rotate freely and wrap around: for example we can turn &#39;9&#39; to be &#39;0&#39;, or &#39;0&#39; to be &#39;9&#39;. Each move consists of turning one wheel one slot.
+The lock initially starts at &#39;0000&#39;, a string representing the state of the 4 wheels.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
+      <link>https://winterorch.github.io/posts/leetcode-jianzhi-056/</link>
+      <pubDate>Sun, 20 Jun 2021 21:03:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-056/</guid>
+      <description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+示例 1：
+ 输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]
+ 示例 2：
+ 输入：nums = [1,2,10,4,1,4,3,3] 输出：[2,10] 或 [10,2]
+ 限制：
+ 2 &amp;lt;= nums.length &amp;lt;= 10000
+  题解 时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字
+for(int num : nums) n ^= num; 如果只有一个出现一次的数字，那答案已经出来了。然而这题有两个数字 x, y，得到的 n 是两者的异或 n = x ^ y 。因为 x != y ，n 必定有至少一个非零位，接下来肯定得围绕着这个非零位作文章。
+而这个非零位有什么用呢？它告诉我们，x 和 y 中有一个 (x) 在该比特位上非零，另一个 (y) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 n 最低非零位上是否为零。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 59 - I. 滑动窗口的最大值</title>
+      <link>https://winterorch.github.io/posts/leetcode-jianzhi-059/</link>
+      <pubDate>Tue, 01 Jun 2021 17:45:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-059/</guid>
+      <description>剑指 Offer 59 - I. 滑动窗口的最大值 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+示例 1：
+ 输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3 输出: [3,3,5,5,6,7] 解释:
+滑动窗口的位置 最大值
+ [1 3 -1] -3 5 3 6 7 3 1 [3 -1 -3] 5 3 6 7 3 1 3 [-1 -3 5] 3 6 7 5 1 3 -1 [-3 5 3] 6 7 5 1 3 -1 -3 [5 3 6] 7 6 1 3 -1 -3 5 [3 6 7] 7</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,9 +6,429 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Wed, 02 Jun 2021 09:14:28 +0630</lastBuildDate>
+    <lastBuildDate>Thu, 24 Jun 2021 19:03:58 +0530</lastBuildDate>
     
         <atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>Spring 依赖注入注解的区分</title>
+        <link>https://winterorch.github.io/posts/java-spring-annotation-di_methods/</link>
+        <pubDate>Thu, 24 Jun 2021 19:03:58 +0530</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/java-spring-annotation-di_methods/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/java-spring-annotation-di_methods/ -&lt;p&gt;Spring 支持的依赖注入有 &lt;code&gt;@Autowired&lt;/code&gt; &lt;code&gt;@Resource&lt;/code&gt; &lt;code&gt;@Inject&lt;/code&gt; 三种&lt;/p&gt;
+&lt;h3 id=&#34;autowired&#34;&gt;@Autowired&lt;/h3&gt;
+&lt;p&gt;来自 &lt;code&gt;org.springframwork.beans.factory.annotation.Autowired&lt;/code&gt; ，装配顺序为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;按 &lt;code&gt;type&lt;/code&gt; 在上下文中查找匹配的 bean&lt;/li&gt;
+&lt;li&gt;如果有多个 bean，则按照 &lt;code&gt;name&lt;/code&gt; 进行匹配
+&lt;ul&gt;
+&lt;li&gt;如有 &lt;code&gt;@Qualifier&lt;/code&gt; ，则按指定的 name 进行匹配&lt;/li&gt;
+&lt;li&gt;如没有，则按变量名进行匹配&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;匹配不到就报错&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;@Autowired(required=false)&lt;/code&gt; 则注入失败不抛异常&lt;/p&gt;
+&lt;h3 id=&#34;inject&#34;&gt;@Inject&lt;/h3&gt;
+&lt;p&gt;Spring 环境下和 &lt;code&gt;@Autowired&lt;/code&gt; 相同，都依赖 &lt;code&gt;AutowiredAnnotationBeanPostProcess&lt;/code&gt; 进行处理，但不能 &lt;code&gt;(required=false)&lt;/code&gt;。&lt;code&gt;@Inject&lt;/code&gt; 由 JSR-330 定义，可以切换到谷歌的 DI 框架——Guice。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;@Inject&lt;/code&gt; 在 Java EE 包内，SE 环境需要单独引入。&lt;/p&gt;
+&lt;h3 id=&#34;resource&#34;&gt;@Resource&lt;/h3&gt;
+&lt;p&gt;JSR-250 定义。在 &lt;code&gt;CommonAnnotationBeanPostProcessor&lt;/code&gt; 实现处理。同样有 &lt;code&gt;name&lt;/code&gt; 和 &lt;code&gt;type&lt;/code&gt;。装配顺序：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如同时指定 &lt;code&gt;name&lt;/code&gt; 和 &lt;code&gt;type&lt;/code&gt; ，从上下文找到唯一匹配 bean 进行装配，找不到抛异常&lt;/li&gt;
+&lt;li&gt;如指定 &lt;code&gt;name&lt;/code&gt; ，则到上下文找 &lt;code&gt;id&lt;/code&gt; 匹配的 bean 进行装配，找不到抛异常&lt;/li&gt;
+&lt;li&gt;如指定 &lt;code&gt;type&lt;/code&gt; ，则到上下文找类型匹配的唯一 bean 进行装配，找不到或找到不唯一都会抛异常&lt;/li&gt;
+&lt;li&gt;如果都没有指定，则默认按 &lt;code&gt;byName&lt;/code&gt; 方式装配，找不到再按 &lt;code&gt;byType&lt;/code&gt; 进行装配&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;IDEA 使用 &lt;code&gt;@Autowired&lt;/code&gt; 时很常见警告 Field injection is not recommended。&lt;/p&gt;
+&lt;p&gt;Spring 团队建议永远使用构造方法，也就是 &lt;code&gt;c-args&lt;/code&gt; 进行依赖注入。IDEA 对这一警告的默认修改方式也是——创建一个构造器进行依赖注入。并且，跟据 Spring 团队建议，对必须的依赖，应当使用断言进行确认&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;Assert.&lt;span style=&#34;color:#658b00&#34;&gt;notNull&lt;/span&gt;(svc, &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;svc must not be null&amp;#34;&lt;/span&gt;);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;为什么不能用成员依赖注入呢？&lt;/p&gt;
+&lt;p&gt;field 注入虽然简洁，但存在问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;由于添加依赖过于简单（加个注释），我们很容易无意识地向一个类注入大量依赖，这违反了单一职责原理，因为我们过去通过构造器进行注入，而要是你的构造器出现大量入参，那很容易意识到自己的代码结构不对劲。打个比方——原本要数着钞票买东西的，一下子变成移动支付，点一下付钱了，就容易到了月底为账单发愁，因为我们金钱意识变薄弱了。解决方法就是——继续用构造器注入，因此对于强制依赖，Spring推荐用 &lt;code&gt;c-args&lt;/code&gt; 注入。&lt;/li&gt;
+&lt;li&gt;依赖注入与容器本身耦合了，即——类唯一的正常工作方式就是通过容器反射进行实例化，这就像是集成测试一样，不像个健康的类，就像一个人原本你把饭给他就能自己吃，现在非要注射进去一样。为了让类能在容器外使用，自然还是要用 &lt;code&gt;c-args&lt;/code&gt; 和 &lt;code&gt;s-args&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;属性注入不能用来注入 &lt;code&gt;final&lt;/code&gt; 变量。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;因此 Spring 给出建议：&lt;code&gt;constructor-based&lt;/code&gt; 和 &lt;code&gt;setter-based&lt;/code&gt; DI 可以混用，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;强制依赖就用 &lt;code&gt;constructor-based&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;很好理解，类离开强制依赖就无法工作，这和构造方法职能相吻合，也能注入 &lt;code&gt;final&lt;/code&gt; 变量。构造器可以保证这些变量的值不会是 null 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可选、可变依赖用 &lt;code&gt;setter-based&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;setter&lt;/code&gt; 值应被用于注入非必须依赖，这些依赖可以很方便地被改变或重新注入，否则会需要大量的 null 检查。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+- https://winterorch.github.io/posts/java-spring-annotation-di_methods/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>LeetCode 752 - 打开转盘锁</title>
+        <link>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</link>
+        <pubDate>Thu, 24 Jun 2021 15:11:58 +0630</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/leetcode-752-open_the_lock/ -&lt;h1 id=&#34;leetcode-752-open-the-lock&#34;&gt;[LeetCode] 752. Open the Lock&lt;/h1&gt;
+&lt;p&gt;You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &lt;code&gt;&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;&lt;/code&gt;. The wheels can rotate freely and wrap around: for example we can turn &lt;code&gt;&#39;9&#39;&lt;/code&gt; to be &lt;code&gt;&#39;0&#39;&lt;/code&gt;, or &lt;code&gt;&#39;0&#39;&lt;/code&gt; to be &lt;code&gt;&#39;9&#39;&lt;/code&gt;. Each move consists of turning one wheel one slot.&lt;/p&gt;
+&lt;p&gt;The lock initially starts at &lt;code&gt;&#39;0000&#39;&lt;/code&gt;, a string representing the state of the 4 wheels.&lt;/p&gt;
+&lt;p&gt;You are given a list of &lt;code&gt;deadends&lt;/code&gt; dead ends, meaning if the lock displays any of these codes, the wheels of the lock will stop turning and you will be unable to open it.&lt;/p&gt;
+&lt;p&gt;Given a &lt;code&gt;target&lt;/code&gt; representing the value of the wheels that will unlock the lock, return the minimum total number of turns required to open the lock, or -1 if it is impossible.&lt;/p&gt;
+&lt;p&gt;Example 1:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input: deadends = [&amp;quot;0201&amp;quot;,&amp;quot;0101&amp;quot;,&amp;quot;0102&amp;quot;,&amp;quot;1212&amp;quot;,&amp;quot;2002&amp;quot;], target = &amp;quot;0202&amp;quot;
+Output: 6
+Explanation:
+A sequence of valid moves would be &amp;quot;0000&amp;quot; -&amp;gt; &amp;quot;1000&amp;quot; -&amp;gt; &amp;quot;1100&amp;quot; -&amp;gt; &amp;quot;1200&amp;quot; -&amp;gt; &amp;quot;1201&amp;quot; -&amp;gt; &amp;quot;1202&amp;quot; -&amp;gt; &amp;quot;0202&amp;quot;.
+Note that a sequence like &amp;quot;0000&amp;quot; -&amp;gt; &amp;quot;0001&amp;quot; -&amp;gt; &amp;quot;0002&amp;quot; -&amp;gt; &amp;quot;0102&amp;quot; -&amp;gt; &amp;quot;0202&amp;quot; would be invalid,
+because the wheels of the lock become stuck after the display becomes the dead end &amp;quot;0102&amp;quot;.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Example 2:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input: deadends = [&amp;quot;8888&amp;quot;], target = &amp;quot;0009&amp;quot;
+Output: 1
+Explanation:
+We can turn the last wheel in reverse to move from &amp;quot;0000&amp;quot; -&amp;gt; &amp;quot;0009&amp;quot;.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Example 3:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input: deadends = [&amp;quot;8887&amp;quot;,&amp;quot;8889&amp;quot;,&amp;quot;8878&amp;quot;,&amp;quot;8898&amp;quot;,&amp;quot;8788&amp;quot;,&amp;quot;8988&amp;quot;,&amp;quot;7888&amp;quot;,&amp;quot;9888&amp;quot;], target = &amp;quot;8888&amp;quot;
+Output: -1
+Explanation:
+We can&#39;t reach the target without getting stuck.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Example 4:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input: deadends = [&amp;quot;0000&amp;quot;], target = &amp;quot;8888&amp;quot;
+Output: -1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Constraints:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;1 &amp;lt;= deadends.length &amp;lt;= 500&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;deadends[i].length == 4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;target.length == 4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;target will not be in the list &lt;code&gt;deadends&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;target&lt;/code&gt; and &lt;code&gt;deadends[i]&lt;/code&gt; consist of digits only.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;题解--双向-bfs&#34;&gt;题解  双向 BFS&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;类似题：&lt;a href=&#34;https://github.com/grandyang/leetcode/issues/126&#34;&gt;LeetCode 127 Word Ladder II&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;看到有 &lt;code&gt;deadends&lt;/code&gt; 其实就比较明显了——这是个走迷宫问题，而且因为有四位密码，所以其实是个四维迷宫。维数并不会增加解法的复杂程度，倒是会严重增加敲代码的繁琐程度。一开始是打算真的和迷宫一样，用四维数组做的，后来发现参数实在太多了，光敲一个位置就要 &lt;code&gt;mem[i0][i1][i2][i3]&lt;/code&gt; 这样来一遍，实在有点头皮发麻，改用 &lt;code&gt;String&lt;/code&gt; 和 &lt;code&gt;Map&lt;/code&gt; 来做记忆化了。&lt;/p&gt;
+&lt;p&gt;还是当作迷宫来解，因此思想是 BFS ，因为入口和出口都是唯一确定的，前后都可以作为 BFS 的起点，因此可以通过双向 BFS 来收缩搜索范围。&lt;/p&gt;
+&lt;p&gt;首先把 &lt;code&gt;deadends&lt;/code&gt; 存到一个 &lt;code&gt;HashSet&lt;/code&gt; 里，方便查验。BFS 需要前后两个队列，分别维护一个记忆化搜索表，记录到 &lt;code&gt;key&lt;/code&gt; 位置的步长。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt; Deque&amp;lt;String&amp;gt; d1 = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;(),
+						  d2 = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;();
+Map&amp;lt;String, Integer&amp;gt; m1 = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;(), 
+									 m2 = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+d1.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(s);
+m1.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(s, 0);
+d2.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(t);
+m2.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(t, 0);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后就是 BFS 了，一直搜到队列空为止。为了尽量收缩双向 BFS 的搜索范围，每次&lt;!-- raw HTML omitted --&gt;从更小的队列取元素进行搜索&lt;!-- raw HTML omitted --&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!d1.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;() &amp;amp;&amp;amp; !d2.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; t = -1;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (d1.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;() &amp;lt;= d2.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;()) {
+        t = update(d1, m1, m2);
+    } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+        t = update(d2, m2, m1);
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (t != -1) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; t;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;每次搜索要搜相邻的八个位置，也就是每一位的前后两个数字。原数字是 &lt;code&gt;char[i]&lt;/code&gt; 的话，以十为模加一或加九就行了——&lt;code&gt;(char) (&#39;0&#39; + ((chars[i] - &#39;0&#39; + offset) % 10))&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;新状态的检查包括这样一些原则——&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;新位置不能是 &lt;code&gt;deadend&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;新位置不能已经去过（在同一队列中），同一队列两次经过同一位置步长一定不会变短，也就不需要考虑了&lt;/li&gt;
+&lt;li&gt;在满足前两个前提下，如果能在反向记忆中找到相同状态，那一定是最短路径，直接输出&lt;/li&gt;
+&lt;li&gt;不在反向记忆中，就加入到当前记忆队列中，从而引起下一轮 BFS&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; ori = chars[i];
+chars[i] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;) (&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt; + ((chars[i] - &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt; + offset) % 10));
+String go = String.&lt;span style=&#34;color:#658b00&#34;&gt;valueOf&lt;/span&gt;(chars);
+chars[i] = ori;
+
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;deadEnds&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(go))
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;continue&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (fs_map.&lt;span style=&#34;color:#658b00&#34;&gt;containsKey&lt;/span&gt;(go))
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;continue&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (ot_map.&lt;span style=&#34;color:#658b00&#34;&gt;containsKey&lt;/span&gt;(go)) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;res&lt;/span&gt; = step + 1 + ot_map.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(go);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+}
+fs_map.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(go, step + 1);
+fs.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(go);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;完整代码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; res;
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] offset = {1, 9};
+Set&amp;lt;String&amp;gt; deadEnds;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;openLock_remastered&lt;/span&gt;(String[] dead, String target) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (target.&lt;span style=&#34;color:#658b00&#34;&gt;equals&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;0000&amp;#34;&lt;/span&gt;))
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; 0;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;deadEnds&lt;/span&gt; = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashSet&amp;lt;&amp;gt;();
+    &lt;span style=&#34;color:#228b22&#34;&gt;// 虽然这里 IDE 会推荐让 Arrays 来把 String[] 转换成 Collection,但这样做对速度没有好处。
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#228b22&#34;&gt;// IDE 上测出来差别不大，但到了 LeetCode 上居然能让整题多耗将近一倍时间，百思不得其解。
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (String str: dead)
+        deadEnds.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(str);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (deadEnds.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;0000&amp;#34;&lt;/span&gt;))
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+    Deque&amp;lt;String&amp;gt; front = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;();
+    Map&amp;lt;String, Integer&amp;gt; front_map = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+    Deque&amp;lt;String&amp;gt; back = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;();
+    Map&amp;lt;String, Integer&amp;gt; back_map = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+    front.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;0000&amp;#34;&lt;/span&gt;);
+    front_map.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;0000&amp;#34;&lt;/span&gt;, 0);
+    back.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(target);
+    back_map.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(target, 0);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!front.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;() &amp;amp;&amp;amp; !back.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (front.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;() &amp;lt; back.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;()) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (update(front, front_map, back_map))
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;res&lt;/span&gt;;
+        } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (update(back, back_map, front_map))
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;res&lt;/span&gt;;
+        }
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+}
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;update&lt;/span&gt;(Deque&amp;lt;String&amp;gt; fs, Map&amp;lt;String, Integer&amp;gt; fs_map, Map&amp;lt;String, Integer&amp;gt; ot_map) {
+    String cur = fs.&lt;span style=&#34;color:#658b00&#34;&gt;pollFirst&lt;/span&gt;();
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;[] chars = cur.&lt;span style=&#34;color:#658b00&#34;&gt;toCharArray&lt;/span&gt;();
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; step = fs_map.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(cur);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; 4; ++i) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; offset : &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;offset&lt;/span&gt;) {
+            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; ori = chars[i];
+            &lt;span style=&#34;color:#228b22&#34;&gt;// 在原 char[] 上改了，取完 String 再转回去，
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#228b22&#34;&gt;// 会比 clone() 新的要快很多
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;					 chars[i] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;) (&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt; + ((chars[i] - &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt; + offset) % 10));
+					 String go = String.&lt;span style=&#34;color:#658b00&#34;&gt;valueOf&lt;/span&gt;(chars);
+					 chars[i] = ori;	
+          
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;deadEnds&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(go))
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;continue&lt;/span&gt;;
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (fs_map.&lt;span style=&#34;color:#658b00&#34;&gt;containsKey&lt;/span&gt;(go))
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;continue&lt;/span&gt;;
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (ot_map.&lt;span style=&#34;color:#658b00&#34;&gt;containsKey&lt;/span&gt;(go)) {
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;res&lt;/span&gt; = step + 1 + ot_map.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(go);
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+            }
+            fs_map.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(go, step + 1);
+            fs.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(go);
+        }
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;false&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id=&#34;题解--astar-算法&#34;&gt;题解  AStar 算法&lt;/h3&gt;
+&lt;p&gt;作者：AC_OIer
+链接：https://leetcode-cn.com/problems/open-the-lock/solution/gong-shui-san-xie-yi-ti-shuang-jie-shuan-wyr9/&lt;/p&gt;
+&lt;p&gt;可以直接根据本题规则来设计 A* 的「启发式函数」。&lt;/p&gt;
+&lt;p&gt;比如对于两个状态 a 和 b 可直接计算出「理论最小转换次数」：不同字符的转换成本之和 。&lt;/p&gt;
+&lt;p&gt;需要注意的是：由于我们衡量某个字符 str 的估值是以目标字符串 target 为基准，因此我们只能确保 target 出队时为「距离最短」，而不能确保中间节点出队时「距离最短」，因此我们不能单纯根据某个节点是否「曾经入队」而决定是否入队，还要结合当前节点的「最小距离」是否被更新而决定是否入队。&lt;/p&gt;
+&lt;p&gt;这一点十分关键，在代码层面上体现在 map.get(str).step &amp;gt; poll.step + 1 的判断上。&lt;/p&gt;
+&lt;p&gt;注意：本题用 A* 过了，但通常我们需要先「确保有解」，A* 的启发搜索才会发挥真正价值。而本题，除非 t 本身在 deadends 中，其余情况我们无法很好提前判断「是否有解」。对于无解的情况 A* 效果不如「双向 BFS」。&lt;/p&gt;
+&lt;p&gt;源码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;Solution&lt;/span&gt; {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;Node&lt;/span&gt; {
+        String str;
+        &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; val, step;
+       &lt;span style=&#34;color:#228b22&#34;&gt;/**
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;        *  str : 对应字符串
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;        *  val : 估值（与目标字符串 target 的最小转换成本）
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;        *  step: 对应字符串是经过多少步转换而来
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;        */&lt;/span&gt;
+        Node(String _str, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; _val, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; _step) {
+            str = _str;
+            val = _val;
+            step = _step;
+        }
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;f&lt;/span&gt;(String str) {
+        &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; ans = 0;
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; 4; i++) {
+            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; cur = str.&lt;span style=&#34;color:#658b00&#34;&gt;charAt&lt;/span&gt;(i) - &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt;, target = t.&lt;span style=&#34;color:#658b00&#34;&gt;charAt&lt;/span&gt;(i) - &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt;;
+            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; a = Math.&lt;span style=&#34;color:#658b00&#34;&gt;min&lt;/span&gt;(cur, target), b = Math.&lt;span style=&#34;color:#658b00&#34;&gt;max&lt;/span&gt;(cur, target);
+            &lt;span style=&#34;color:#228b22&#34;&gt;// 在「正向转」和「反向转」之间取 min
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; min = Math.&lt;span style=&#34;color:#658b00&#34;&gt;min&lt;/span&gt;(b - a, a + 10 - b);
+            ans += min;
+        }
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; ans;
+    }
+    String s, t;
+    Set&amp;lt;String&amp;gt; set = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashSet&amp;lt;&amp;gt;();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;openLock&lt;/span&gt;(String[] ds, String _t) {
+        s = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;0000&amp;#34;&lt;/span&gt;;
+        t = _t;
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (s.&lt;span style=&#34;color:#658b00&#34;&gt;equals&lt;/span&gt;(t)) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; 0;
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (String d : ds) set.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(d);
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (set.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(s)) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+        
+        PriorityQueue&amp;lt;Node&amp;gt; q = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; PriorityQueue&amp;lt;&amp;gt;((a,b)-&amp;gt;a.&lt;span style=&#34;color:#658b00&#34;&gt;val&lt;/span&gt;-b.&lt;span style=&#34;color:#658b00&#34;&gt;val&lt;/span&gt;);
+        Map&amp;lt;String, Node&amp;gt; map = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+        Node root = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; Node(s, f(s), 0);
+        q.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(root);
+        map.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(s, root);
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!q.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+            Node poll = q.&lt;span style=&#34;color:#658b00&#34;&gt;poll&lt;/span&gt;();
+            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;[] pcs = poll.&lt;span style=&#34;color:#658b00&#34;&gt;str&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;toCharArray&lt;/span&gt;();
+            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; step = poll.&lt;span style=&#34;color:#658b00&#34;&gt;step&lt;/span&gt;;
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (poll.&lt;span style=&#34;color:#658b00&#34;&gt;str&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;equals&lt;/span&gt;(t)) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; step;
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; 4; i++) {
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j = -1; j &amp;lt;= 1; j++) {
+                    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (j == 0) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;continue&lt;/span&gt;;
+                    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; cur = pcs[i] - &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt;;
+                    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; next = (cur + j) % 10;
+                    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (next == -1) next = 9;
+
+                    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;[] clone = pcs.&lt;span style=&#34;color:#658b00&#34;&gt;clone&lt;/span&gt;();
+                    clone[i] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;)(next + &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt;);
+                    String str = String.&lt;span style=&#34;color:#658b00&#34;&gt;valueOf&lt;/span&gt;(clone);
+
+                    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (set.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(str)) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;continue&lt;/span&gt;;
+                    &lt;span style=&#34;color:#228b22&#34;&gt;// 如果 str 还没搜索过，或者 str 的「最短距离」被更新，则入队
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;                    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!map.&lt;span style=&#34;color:#658b00&#34;&gt;containsKey&lt;/span&gt;(str) || map.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(str).&lt;span style=&#34;color:#658b00&#34;&gt;step&lt;/span&gt; &amp;gt; step + 1) {
+                        Node node = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; Node(str, step + 1 + f(str), step + 1);
+                        map.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(str, node);
+                        q.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(node);
+                    }
+                }
+            }
+        }
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;- https://winterorch.github.io/posts/leetcode-752-open_the_lock/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
+        <link>https://winterorch.github.io/posts/leetcode-jianzhi-056/</link>
+        <pubDate>Sun, 20 Jun 2021 21:03:58 +0630</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/leetcode-jianzhi-056/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/leetcode-jianzhi-056/ -&lt;h1 id=&#34;剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof&#34;&gt;&lt;a href=&#34;https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/&#34;&gt;剑指 Offer 56 - I. 数组中数字出现的次数&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。&lt;/p&gt;
+&lt;p&gt;示例 1：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;输入：nums = [4,1,4,6]
+输出：[1,6] 或 [6,1]&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;示例 2：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;输入：nums = [1,2,10,4,1,4,3,3]
+输出：[2,10] 或 [10,2]&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;限制：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;2 &amp;lt;= nums.length &amp;lt;= 10000&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;题解&#34;&gt;题解&lt;/h3&gt;
+&lt;p&gt;时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; num : nums)
+    n ^= num;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果只有一个出现一次的数字，那答案已经出来了。然而这题有两个数字 &lt;code&gt;x, y&lt;/code&gt;，得到的 &lt;code&gt;n&lt;/code&gt; 是两者的异或 &lt;code&gt;n = x ^ y&lt;/code&gt; 。因为 &lt;code&gt;x != y&lt;/code&gt; ，&lt;code&gt;n&lt;/code&gt; 必定有至少一个非零位，接下来肯定得围绕着这个非零位作文章。&lt;/p&gt;
+&lt;p&gt;而这个非零位有什么用呢？它告诉我们，&lt;code&gt;x&lt;/code&gt; 和 &lt;code&gt;y&lt;/code&gt; 中有一个 (&lt;code&gt;x&lt;/code&gt;) 在该比特位上非零，另一个 (&lt;code&gt;y&lt;/code&gt;) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 &lt;code&gt;n&lt;/code&gt; 最低非零位上是否为零。&lt;/p&gt;
+&lt;p&gt;因此，接下来要做的就是——再遍历一遍原数组，在 &lt;code&gt;n&lt;/code&gt; 最低非零位上跟据是否为零放到两个 &lt;code&gt;int&lt;/code&gt; 上去异或。&lt;/p&gt;
+&lt;p&gt;完整答案&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] &lt;span style=&#34;color:#008b45&#34;&gt;singleNumbers&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] nums) {
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; x = 0, y = 0, n = 0, m = 1;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; num : nums)               &lt;span style=&#34;color:#228b22&#34;&gt;// 1. 遍历异或
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        n ^= num;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt;((n &amp;amp; m) == 0)               &lt;span style=&#34;color:#228b22&#34;&gt;// 2. 循环左移，计算 m
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        m &amp;lt;&amp;lt;= 1;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; num: nums) {              &lt;span style=&#34;color:#228b22&#34;&gt;// 3. 遍历 nums 分组
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt;((num &amp;amp; m) != 0)
+            x ^= num;                 &lt;span style=&#34;color:#228b22&#34;&gt;// 4. 当 num &amp;amp; m != 0
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;
+            y ^= num;                 &lt;span style=&#34;color:#228b22&#34;&gt;// 4. 当 num &amp;amp; m == 0
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] {x, y};          &lt;span style=&#34;color:#228b22&#34;&gt;// 5. 返回出现一次的数字
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;- https://winterorch.github.io/posts/leetcode-jianzhi-056/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>接口与抽象类的区别</title>
+        <link>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</link>
+        <pubDate>Wed, 02 Jun 2021 20:04:58 +0130</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/ -&lt;p&gt;先简单过一下接口语法中的注意点。&lt;/p&gt;
+&lt;h3 id=&#34;注意点&#34;&gt;&lt;strong&gt;注意点&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;接口中的变量隐式指定为 &lt;code&gt;public static final&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;接口中的方法会被隐式指定为 &lt;code&gt;public abstract&lt;/code&gt; （JDK 1.9 后允许 private，其它修饰符会报错）&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这也决定了接口中所有方法都必须被实现，当然这一要求有两种特殊的满足方式——抽象类实现接口，那么接口方法不一定要实现，可以由抽象类的子类实现；JDK 1.8 后有默认实现的接口方法也不必被实现类显式实现。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;接口不能有构造方法&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;JDK 1.8 后，接口可以有静态方法和方法体&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;JDK 1.8 后，接口方法可以有默认方法，用 &lt;code&gt;default&lt;/code&gt; 关键字修饰&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;与抽象类语法上的区别&#34;&gt;与抽象类语法上的区别&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;一个类可以实现多个接口&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;一个接口可以继承多个其它接口&lt;/p&gt;
+&lt;p&gt;Java 接口是对行为的抽象，一个行为本身可以看作多个行为的耦合&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;interface&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;Hockey&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;extends&lt;/span&gt; Sports, Event
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;接口与抽象类区别&#34;&gt;接口与抽象类区别&lt;/h2&gt;
+&lt;p&gt;接口和抽象类语法上的不同在之前两个文档中都已经接释清楚了，这里主要看两者思想上的不同。&lt;/p&gt;
+&lt;p&gt;摘取一些《Effective Java》中的说法&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;接口是对行为的抽象，达到 &lt;strong&gt;API 定义与实现分类&lt;/strong&gt; 的目的，因此支持多实现。甚至可以用没有任何方法的接口，作为 Marker Interface，目的仅仅是进行声明。但是用接口导出常量是不合适的使用，接口应当尽量减少细节泄露，常量应当由类保管。&lt;/p&gt;
+&lt;p&gt;相较之下，抽象类的主要目的是 &lt;strong&gt;代码重用&lt;/strong&gt;，本质是不能实例化的类。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;重点有两个——抽象类和接口的本质、目的都不同。&lt;/p&gt;
+&lt;h3 id=&#34;本质&#34;&gt;本质&lt;/h3&gt;
+&lt;p&gt;抽象类本质是类，因此不能多继承。C++ 允许多继承而 Java 不允许，这体现两者多态思想上的差别。我们知道 Java 继承其实叫 &lt;code&gt;extends&lt;/code&gt; ，严格来讲不叫“继承”，因为在 Java 中，继承首先是一种 &lt;code&gt;is-a&lt;/code&gt; 关系，即 &lt;code&gt;Student&lt;/code&gt; 要继承 &lt;code&gt;Person&lt;/code&gt; ，首先要满足 “&lt;code&gt;Student&lt;/code&gt; &lt;code&gt;is a&lt;/code&gt; &lt;code&gt;Person&lt;/code&gt;” 。这很好理解，按照里氏替换原则 (Liskov Substitution)，进行继承关系抽象时，凡是可以用父类或者基类的地方，都可以用子类进行替换。因此这显然不是中文里面继承的语义，因为中文里“儿子继承父亲”，但儿子不可能是父亲，两者有本质区别。&lt;/p&gt;
+&lt;p&gt;然后，Java 为什么只允许单继承就很好理解了。如果我想让 A 同时继承 B 和 C，那说明 A is B, A is C，那 B 和 C 之间自然应当满足某种继承关系，三者应当是一个继承链的关系而非继承树的关系，通过单继承也可以表示清楚，并不需要让 A 同时继承 B 和 C。更不用说 C++ 为了实现多继承，其实也带来菱形继承问题，可能造成内存浪费和数据冗余。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;C++中因为允许多继承，可能会因为&lt;strong&gt;菱形继承&lt;/strong&gt;造成内存浪费和数据冗余（如两个类BC分别继承同一基类A，再从这两个类派生出一个类D时会有冗余成员），因此最好使用虚继承。虚继承下，D实例内存地址中，BC虚继承来的A部分会通过一个指针分别指向一张虚基表（准确来讲是指向其中的虚基表偏移指针的存储地址，然后通过该指针取出偏移量），从虚基表中取出从基类A虚继承来成员在D内存中的偏移地址。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;曾看到有博客认为 C++ 多继承机制较为合理，给出的理由是“人可以有父母，那类也应当可以多继承”。结合前文内容，这个理由显然没有什么道理，但是我认为却很好地反映了 Java 中接口的思想。我们知道，对于生物而言，父和母显然是不等价的，母完成了作为母的职责，父完成了作为父的职责，然后才有“子”，因此与其类比为继承，不如类比为接口实现更妥当，因为父、母实际上在这里归根结底是&lt;strong&gt;行为的抽象&lt;/strong&gt;，父类必须实现接口 &lt;code&gt;CanBeFather&lt;/code&gt;，母类必须实现接口 &lt;code&gt;CanBeMother&lt;/code&gt;，这是一种行为关系。这一接口在使用过程中屏蔽了其它底层细节，无论父母是什么学历、有什么资产，这一过程中都不关注，也没有影响，这便是类功能上的解耦，通过一个用来将行为抽象化的接口完成了。&lt;/p&gt;
+&lt;h3 id=&#34;目的&#34;&gt;目的&lt;/h3&gt;
+&lt;p&gt;目的上面其实也说了，《Effective Java》总结的很到位，接口是对行为的抽象，达到 &lt;strong&gt;API 定义与实现分类&lt;/strong&gt; 的目的。如果一个类可以有多个行为、实现多个功能，那它当然可以实现多个接口。&lt;/p&gt;
+&lt;p&gt;而抽象类更多还是用来减少冗余代码，换句话说——提高代码质量、提高可读性、降低维护难度……&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;java-继承与里氏替换原则&#34;&gt;Java 继承与里氏替换原则&lt;/h2&gt;
+&lt;p&gt;Java中子类重写父类方法时&lt;!-- raw HTML omitted --&gt;不能抛出父类中没有抛出的异常&lt;!-- raw HTML omitted --&gt;，编译会不过，不抛是完全可以的。同时，该方法在子类中的访问级别也不能低于超类中的访问级别。&lt;!-- raw HTML omitted --&gt;这两项规则确保可使用超类实例的地方也能使用子类实例，符合&lt;strong&gt;里氏替换原则&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;变量&lt;/strong&gt;只能被隐藏（静态及非静态），不能被覆盖&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;静态方法&lt;/strong&gt;只能被隐藏，不能覆盖&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;静态方法&lt;/strong&gt;只能用静态方法隐藏，&lt;strong&gt;非静态方法&lt;/strong&gt;只能用非静态方法覆盖（否则编译不过）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;最终方法&lt;/strong&gt;不能覆盖。私有方法（private）实际会被隐式指定为 final ，所以同样不能覆盖。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;抽象方法&lt;/strong&gt;必须覆盖&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;同时要注意的是关于构造方法的内容&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 &lt;code&gt;super()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;子类要使用父类有参构造方法，使用 &lt;code&gt;super(...)&lt;/code&gt; 形式，且 &lt;code&gt;super()&lt;/code&gt; 必须是子类构造方法中第一行语句&lt;/li&gt;
+&lt;li&gt;父类没有不带参构造方法，子类构造方法中必须显示调用父类其它构造方法，否则编译不过&lt;/li&gt;
+&lt;/ul&gt;
+- https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
     
     
     
@@ -296,6 +716,104 @@
 &lt;p&gt;&lt;img src=&#34;https://winterorch.github.io/images/blog/computer_network-transport_layer_04.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;首部字段只有 8 个字节，包括源端口、目的端口、长度、检验和。12 字节的伪首部是为了计算检验和临时添加的。&lt;/p&gt;
 - https://winterorch.github.io/posts/computer_network-transport_layer/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>剑指 Offer 59 - I. 滑动窗口的最大值</title>
+        <link>https://winterorch.github.io/posts/leetcode-jianzhi-059/</link>
+        <pubDate>Tue, 01 Jun 2021 17:45:58 +0630</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/leetcode-jianzhi-059/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/leetcode-jianzhi-059/ -&lt;h1 id=&#34;剑指-offer-59---i-滑动窗口的最大值httpsleetcode-cncomproblemshua-dong-chuang-kou-de-zui-da-zhi-lcof&#34;&gt;&lt;a href=&#34;https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/&#34;&gt;剑指 Offer 59 - I. 滑动窗口的最大值&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;给定一个数组 &lt;code&gt;nums&lt;/code&gt; 和滑动窗口的大小 &lt;code&gt;k&lt;/code&gt;，请找出所有滑动窗口里的最大值。&lt;/p&gt;
+&lt;p&gt;示例 1：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7]
+解释:&lt;/p&gt;
+&lt;p&gt;滑动窗口的位置                最大值&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;[1  3  -1] -3  5  3  6  7       3
+1 [3  -1  -3] 5  3  6  7       3
+1  3 [-1  -3  5] 3  6  7       5
+1  3  -1 [-3  5  3] 6  7       5
+1  3  -1  -3 [5  3  6] 7       6
+1  3  -1  -3  5 [3  6  7]      7&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;提示：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;你可以假设 &lt;em&gt;k&lt;/em&gt; 总是有效的，在输入数组不为空的情况下，1 ≤ k ≤ 输入数组的大小。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;题解一-单调队列&#34;&gt;题解一 单调队列&lt;/h3&gt;
+&lt;p&gt;要求滑动窗口内的最大值，首先想到的是双向队列，一边推窗一边保持最大元素在队首。由于要确保窗口长度，队列中存的是下标。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] &lt;span style=&#34;color:#008b45&#34;&gt;maxSlidingWindow&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] nums, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; k) {
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] res = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[nums.&lt;span style=&#34;color:#658b00&#34;&gt;length&lt;/span&gt; - k + 1];
+    Deque&amp;lt;Integer&amp;gt; deque = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; nums.&lt;span style=&#34;color:#658b00&#34;&gt;length&lt;/span&gt;; ++i) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!deque.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;() &amp;amp;&amp;amp; deque.&lt;span style=&#34;color:#658b00&#34;&gt;peekFirst&lt;/span&gt;() == i - k) {
+            deque.&lt;span style=&#34;color:#658b00&#34;&gt;removeFirst&lt;/span&gt;();
+        }
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!deque.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;() &amp;amp;&amp;amp; nums[deque.&lt;span style=&#34;color:#658b00&#34;&gt;peekLast&lt;/span&gt;()] &amp;lt; nums[i]) {
+            deque.&lt;span style=&#34;color:#658b00&#34;&gt;removeLast&lt;/span&gt;();
+        }
+        deque.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(i);
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (i &amp;gt;= k - 1) {
+            res[i - k + 1] = nums[deque.&lt;span style=&#34;color:#658b00&#34;&gt;peekFirst&lt;/span&gt;()];
+        }
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; res;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;题解二--双向遍历&#34;&gt;题解二  双向遍历&lt;/h3&gt;
+&lt;p&gt;如果通过固定队列长度可以来限制搜索范围，通过双向遍历也可以。不依靠队列的话有个问题，最大值会不断传播，如果 [0] 处是数组最大值，这一最大值可以一直传播到队尾。那我们必须进行适当的划分，让最大值最远传播 k 个数字（包含自己）。&lt;/p&gt;
+&lt;p&gt;我们直接将队列分成一段段长为 &lt;code&gt;k&lt;/code&gt; 的区间，每一段区间中，第一次遍历取得前半段（&lt;code&gt;[0.. i % k]&lt;/code&gt;）上的最大值。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; n; ++i) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (i % k == 0) {
+        prefixMax[i] = nums[i];
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+        prefixMax[i] = Math.&lt;span style=&#34;color:#658b00&#34;&gt;max&lt;/span&gt;(prefixMax[i - 1], nums[i]);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后从后向前进行一次遍历，取得后半段（&lt;code&gt;[i % k .. k - 1]&lt;/code&gt;）上的最大值。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = n - 1; i &amp;gt;= 0; --i) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (i == n - 1 || (i + 1) % k == 0) {
+        suffixMax[i] = nums[i];
+    } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+        suffixMax[i] = Math.&lt;span style=&#34;color:#658b00&#34;&gt;max&lt;/span&gt;(suffixMax[i + 1], nums[i]);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后，我们要取以 &lt;code&gt;i&lt;/code&gt; 为起点长度为 &lt;code&gt;k&lt;/code&gt; 的窗口的最大值，实际要取的就是当前区间上 &lt;code&gt;[i % k .. k - 1]&lt;/code&gt; 上的最大值，和下一区间 &lt;code&gt;[0 .. (i - 1 + k) % k]&lt;/code&gt; 上的最大值。&lt;/p&gt;
+&lt;p&gt;完整答案&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] &lt;span style=&#34;color:#008b45&#34;&gt;maxSlidingWindow&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] nums, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; k) {
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; n = nums.&lt;span style=&#34;color:#658b00&#34;&gt;length&lt;/span&gt;;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (n == 0) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[0];
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] prefixMax = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[n];
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] suffixMax = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[n];
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; n; ++i) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (i % k == 0) {
+            prefixMax[i] = nums[i];
+        }
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+            prefixMax[i] = Math.&lt;span style=&#34;color:#658b00&#34;&gt;max&lt;/span&gt;(prefixMax[i - 1], nums[i]);
+        }
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = n - 1; i &amp;gt;= 0; --i) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (i == n - 1 || (i + 1) % k == 0) {
+            suffixMax[i] = nums[i];
+        } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+            suffixMax[i] = Math.&lt;span style=&#34;color:#658b00&#34;&gt;max&lt;/span&gt;(suffixMax[i + 1], nums[i]);
+        }
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] ans = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[n - k + 1];
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt;= n - k; ++i) {
+        ans[i] = Math.&lt;span style=&#34;color:#658b00&#34;&gt;max&lt;/span&gt;(suffixMax[i], prefixMax[i + k - 1]);
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; ans;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;- https://winterorch.github.io/posts/leetcode-jianzhi-059/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
         </item>
     
     

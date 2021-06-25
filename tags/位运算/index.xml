@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>位运算 on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/</link>
+    <description>Recent content in 位运算 on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Sun, 20 Jun 2021 21:03:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
+      <link>https://winterorch.github.io/posts/leetcode-jianzhi-056/</link>
+      <pubDate>Sun, 20 Jun 2021 21:03:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-056/</guid>
+      <description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+示例 1：
+ 输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]
+ 示例 2：
+ 输入：nums = [1,2,10,4,1,4,3,3] 输出：[2,10] 或 [10,2]
+ 限制：
+ 2 &amp;lt;= nums.length &amp;lt;= 10000
+  题解 时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字
+for(int num : nums) n ^= num; 如果只有一个出现一次的数字，那答案已经出来了。然而这题有两个数字 x, y，得到的 n 是两者的异或 n = x ^ y 。因为 x != y ，n 必定有至少一个非零位，接下来肯定得围绕着这个非零位作文章。
+而这个非零位有什么用呢？它告诉我们，x 和 y 中有一个 (x) 在该比特位上非零，另一个 (y) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 n 最低非零位上是否为零。</description>
+    </item>
+    
+  </channel>
+</rss>

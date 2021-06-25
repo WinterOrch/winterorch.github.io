@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>BFS on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/bfs/</link>
+    <description>Recent content in BFS on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Thu, 24 Jun 2021 15:11:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/bfs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 752 - 打开转盘锁</title>
+      <link>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</link>
+      <pubDate>Thu, 24 Jun 2021 15:11:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</guid>
+      <description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;. The wheels can rotate freely and wrap around: for example we can turn &#39;9&#39; to be &#39;0&#39;, or &#39;0&#39; to be &#39;9&#39;. Each move consists of turning one wheel one slot.
+The lock initially starts at &#39;0000&#39;, a string representing the state of the 4 wheels.</description>
+    </item>
+    
+  </channel>
+</rss>

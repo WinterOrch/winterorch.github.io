@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java Spring on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/categories/java-spring/</link>
+    <description>Recent content in Java Spring on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Thu, 24 Jun 2021 19:03:58 +0530</lastBuildDate><atom:link href="https://winterorch.github.io/categories/java-spring/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Spring 依赖注入注解的区分</title>
+      <link>https://winterorch.github.io/posts/java-spring-annotation-di_methods/</link>
+      <pubDate>Thu, 24 Jun 2021 19:03:58 +0530</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-spring-annotation-di_methods/</guid>
+      <description>Spring 支持的依赖注入有 @Autowired @Resource @Inject 三种
+@Autowired 来自 org.springframwork.beans.factory.annotation.Autowired ，装配顺序为：
+ 按 type 在上下文中查找匹配的 bean 如果有多个 bean，则按照 name 进行匹配  如有 @Qualifier ，则按指定的 name 进行匹配 如没有，则按变量名进行匹配   匹配不到就报错  @Autowired(required=false) 则注入失败不抛异常
+@Inject Spring 环境下和 @Autowired 相同，都依赖 AutowiredAnnotationBeanPostProcess 进行处理，但不能 (required=false)。@Inject 由 JSR-330 定义，可以切换到谷歌的 DI 框架——Guice。
+@Inject 在 Java EE 包内，SE 环境需要单独引入。
+@Resource JSR-250 定义。在 CommonAnnotationBeanPostProcessor 实现处理。同样有 name 和 type。装配顺序：
+ 如同时指定 name 和 type ，从上下文找到唯一匹配 bean 进行装配，找不到抛异常 如指定 name ，则到上下文找 id 匹配的 bean 进行装配，找不到抛异常 如指定 type ，则到上下文找类型匹配的唯一 bean 进行装配，找不到或找到不唯一都会抛异常 如果都没有指定，则默认按 byName 方式装配，找不到再按 byType 进行装配   IDEA 使用 @Autowired 时很常见警告 Field injection is not recommended。</description>
+    </item>
+    
+  </channel>
+</rss>
