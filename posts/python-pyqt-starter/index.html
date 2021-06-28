@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html><head>
+<title>Python - PYQT 踩坑记</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="一年里两次用PYQT，满脚是血，记录一些踩过的坑">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+<meta property="og:title" content="Python - PYQT 踩坑记" />
+<meta property="og:description" content="一年里两次用PYQT，满脚是血，记录一些踩过的坑" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://winterorch.github.io/posts/python-pyqt-starter/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-25T19:32:58&#43;06:30" />
+<meta property="article:modified_time" content="2021-06-25T19:32:58&#43;06:30" /><meta property="og:site_name" content="My Blog" />
+
+
+
+
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Python - PYQT 踩坑记"/>
+<meta name="twitter:description" content="一年里两次用PYQT，满脚是血，记录一些踩过的坑"/>
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+<script src="/vendor/js/vue.min.js" ></script>
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://winterorch.github.io/scss/journal.min.d4108c26a8f8dd3abc1cba5d3bd8b9d4b834ea3c0710b78fa3010b8942ce9d9b.css" integrity="sha256-1BCMJqj43Tq8HLpdO9i51Lg06jwHELePowELiULOnZs=" media="screen">
+
+
+
+<link rel="stylesheet" href="https://winterorch.github.io/scss/dark-mode.min.eb84b98ab2384f8334bfcaa9ab8f0a2dec872fe34abf8cd2bb451663742c8349.css" integrity="sha256-64S5irI4T4M0v8qpq48KLeyHL&#43;NKv4zSu0UWY3Qsg0k=" media="screen">
+
+
+<script src="/js/loadCSS.js"></script>
+<script>
+  loadCSS("https://fonts.googleapis.com/css?family=Fira+Mono|Material+Icons");
+</script>
+
+
+
+
+  
+    <script src="/js/toc.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>console.log("Hello from 'layouts/partials/extended_head.html'")</script>
+
+</head>
+<body>
+    	<div id="app"><div ref="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://winterorch.github.io">
+    
+        <div class="nav-title">
+            图拉国营噄茶馆
+        </div>
+        
+        <div class="nav-subtitle">
+            WinterOrch&#39;s Blog
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+            
+            
+            
+                
+            
+            
+            
+            <a class="a-block nav-link-item active" href="/posts">
+                归档
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/categories">
+                分类
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/tags">
+                标签
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/index.xml">
+                RSS
+            </a>
+            
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
+<br>
+移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	WinterOrch. 本站遵循 CC-BY-NC 4.0 协议
+	
+
+    </div>
+    
+</div><div ref="extraContainer" class="extra-container">
+    
+    
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e5%bc%80%e5%a7%8b-pyqt-%e9%a1%b9%e7%9b%ae%e4%bd%a0%e8%a6%81%e7%9f%a5%e9%81%93%e8%bf%99%e4%ba%9b" onclick="onNavClick(`#开始-pyqt-项目你要知道这些-nav`)" id="开始-pyqt-项目你要知道这些-nav">
+									开始 PyQt 项目，你要知道这些
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%bd%bf%e7%94%a8-qss-%e4%bd%a0%e8%a6%81%e7%9f%a5%e9%81%93%e8%bf%99%e4%ba%9b" onclick="onNavClick(`#使用-qss-你要知道这些-nav`)" id="使用-qss-你要知道这些-nav">
+									使用 QSS ，你要知道这些
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#qss-style-sheet-%e4%bc%9a%e8%87%aa%e5%8a%a8%e7%94%b1%e7%88%b6%e6%a1%86%e6%9e%b6%e4%bc%a0%e9%80%92%e7%bb%99%e5%ad%90%e6%a1%86%e6%9e%b6" onclick="onNavClick(`#qss-style-sheet-会自动由父框架传递给子框架-nav`)" id="qss-style-sheet-会自动由父框架传递给子框架-nav">
+									QSS Style Sheet 会自动由父框架传递给子框架
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%af%b7%e5%b0%bd%e9%87%8f%e4%bd%bf%e7%94%a8%e5%af%b9%e8%b1%a1%e7%9a%84-objectname-%e6%9d%a5%e5%8c%ba%e5%88%86%e5%ad%90%e5%af%b9%e8%b1%a1%e7%9a%84%e6%a0%b7%e5%bc%8f" onclick="onNavClick(`#请尽量使用对象的-objectname-来区分子对象的样式-nav`)" id="请尽量使用对象的-objectname-来区分子对象的样式-nav">
+									请尽量使用对象的 objectName 来区分子对象的样式
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a class="pagination-action" v-on:click="toggleDarkMode">
+            <i class="material-icons pagination-action-icon" v-if="isDarkMode">
+                brightness_4
+            </i>
+            <i class="material-icons pagination-action-icon" v-else="isDarkMode">
+                brightness_7
+            </i>
+        </a>
+        
+        
+    </div>
+</div>
+<div class="single-column-drawer-container" ref="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+                
+                
+                
+                    
+                
+                
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
+                    归档
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/categories">
+                    分类
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/tags">
+                    标签
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/index.xml">
+                    RSS
+                </a>
+                
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e5%bc%80%e5%a7%8b-pyqt-%e9%a1%b9%e7%9b%ae%e4%bd%a0%e8%a6%81%e7%9f%a5%e9%81%93%e8%bf%99%e4%ba%9b" onclick="onNavClick(`#开始-pyqt-项目你要知道这些-nav`)" id="开始-pyqt-项目你要知道这些-nav">
+									开始 PyQt 项目，你要知道这些
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%bd%bf%e7%94%a8-qss-%e4%bd%a0%e8%a6%81%e7%9f%a5%e9%81%93%e8%bf%99%e4%ba%9b" onclick="onNavClick(`#使用-qss-你要知道这些-nav`)" id="使用-qss-你要知道这些-nav">
+									使用 QSS ，你要知道这些
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#qss-style-sheet-%e4%bc%9a%e8%87%aa%e5%8a%a8%e7%94%b1%e7%88%b6%e6%a1%86%e6%9e%b6%e4%bc%a0%e9%80%92%e7%bb%99%e5%ad%90%e6%a1%86%e6%9e%b6" onclick="onNavClick(`#qss-style-sheet-会自动由父框架传递给子框架-nav`)" id="qss-style-sheet-会自动由父框架传递给子框架-nav">
+									QSS Style Sheet 会自动由父框架传递给子框架
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%af%b7%e5%b0%bd%e9%87%8f%e4%bd%bf%e7%94%a8%e5%af%b9%e8%b1%a1%e7%9a%84-objectname-%e6%9d%a5%e5%8c%ba%e5%88%86%e5%ad%90%e5%af%b9%e8%b1%a1%e7%9a%84%e6%a0%b7%e5%bc%8f" onclick="onNavClick(`#请尽量使用对象的-objectname-来区分子对象的样式-nav`)" id="请尽量使用对象的-objectname-来区分子对象的样式-nav">
+									请尽量使用对象的 objectName 来区分子对象的样式
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav ref="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div ref="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a ref="navTitle" class="navbar-brand" href="https://winterorch.github.io">
+            图拉国营噄茶馆
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" v-on:click="toggleDarkMode">
+            <i class="material-icons" v-if="isDarkMode">
+                brightness_4
+            </i>
+            <i class="material-icons" v-else="isDarkMode">
+                brightness_7
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" ref="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://winterorch.github.io">
+        <div class="single-column-header-title">图拉国营噄茶馆</div>
+        
+        <div class="single-column-header-subtitle">WinterOrch&#39;s Blog</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+<div ref="streamContainer" class="stream-container">
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+                
+            
+
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://winterorch.github.io/images/feature/scenes/UAZ.jpg')"
+                    
+                
+            >
+                <div class="post-title">
+                    Python - PYQT 踩坑记
+                    
+                    <div class="post-subtitle">
+                        一年里两次用PYQT，满脚是血，记录一些踩过的坑
+                    </div>
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2021-06-25 19:32
+                        </time>
+                        
+
+                        
+                            <i class="material-icons" style="">folder</i>
+                                <a href="/categories/python">Python</a>
+                                &nbsp;
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/qt">QT</a>
+                                &nbsp;
+                            
+                                <a href="/tags/pyqt">PYQT</a>
+                                &nbsp;
+                            
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>首先要踩一下 PYQT，如果使用 Python 过程中有 GUI 方面的需求，请一定一定先看有没有 QT 之外的选择~~（就是，那个，D 开头的那个，懂我意思吧（疯狂暗示不要做 GUI 程序））~~。用过 PYQT 的都知道，QT 提供的不仅仅是 GUI 组件库，而是从线程到网络通信的一整套 <code>QObject</code> ，个人认为对于 Python 而言这实在是过于不实际了，我觉得大多数人对于 Python 开发的期望都是每一个模块各司其职，项目能够“高内聚，低耦合”，Python 在这方面也是非常令人满意的，然而在 QT 中除外。</p>
+<p>PYQT 来源于 C++ QT，其理念就是将众多组件耦合到一起，如果你在一个团队中进行开发，这会导致——无论是图形界面方面的责任，还是业务逻辑方面的问题都会堆到你这里，成为你的压力，而如果你作为个人进行开发，这会使你写 GUI 的时候无时无刻不得顾及业务需求，两边都得顾得上，两边都得一起调。出了问题的话，非常不幸，网上能找到的 PYQT 资料非常之有限，甚至官方文档中都有大量的 <code>TODO</code> ，且完全没有要补上的迹象，我写代码过程中基本都只能参考 QT 的官方文档，因为他实在是比 PyQt 官方提供的要友好得多。</p>
+<!-- raw HTML omitted -->
+<p>如果在确认了这些问题之后，还是要入门 PYQT，推荐几个 Github：<a href="https://github.com/PyQt5/PyQt">PyQt Examples</a> 提供了大部分常用 GUI 组件的使用 Deemo，虽然 PyQt 对于这些组件基本都有大量复杂数倍的替代品，供你完成非常繁杂的需求，但是，没有谁想从那入手的。</p>
+<blockquote>
+<p>顺便提一下，有个非常不错（指功能上）的 PyQt 音乐播放器 <a href="https://github.com/feeluown/FeelUOwn">FeelUOwn</a> 项目。当时看到这个小项目是很感动的，非常兴奋地下下来源码，然后确信自己看的是天书——项目代码不是给人读的，PyQt 极大放大了代码可读性差的问题</p>
+</blockquote>
+<p>接下来是正片——</p>
+<hr>
+<h3 id="开始-pyqt-项目你要知道这些">开始 PyQt 项目，你要知道这些</h3>
+<ul>
+<li>
+<p>如果用 PyCharm 构建 PyQt 项目，你在点下 Run/Debug 之前请务必检查一下 <strong>Debug 配置</strong></p>
+<p>Run 和 Debug 图标左边那个下拉菜单，其中的 Edit Configurations，请检查一下 Configuration 下的 Excution 栏，<!-- raw HTML omitted --><strong>确保 <code>Emulate terminal in output console</code> 这个选项勾上</strong><!-- raw HTML omitted -->。否则即使你的程序挂掉，控制台也不会抛出一个异常来，没有什么比程序跑不起来，甚至连哪里出了问题都无法追溯更让人头疼的事情了。</p>
+</li>
+</ul>
+<hr>
+<h3 id="使用-qss-你要知道这些">使用 QSS ，你要知道这些</h3>
+<p>QSS 看似很美好，但也是重灾区。</p>
+<ul>
+<li>
+<h4 id="qss-style-sheet-会自动由父框架传递给子框架"><strong>QSS Style Sheet 会自动由父框架传递给子框架</strong></h4>
+<p>什么意思呢？就是说你可能想给 <code>QWidget</code> 设个好看的边框，于是写下这么一段内容：</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-css" data-lang="css"><span style="color:#8b008b;font-weight:bold">QWidget</span> {
+    <span style="color:#8b008b;font-weight:bold">background</span>: lightGray;
+    <span style="color:#8b008b;font-weight:bold">border</span>: <span style="color:#b452cd">3</span><span style="color:#00688b;font-weight:bold">px</span> <span style="color:#8b008b;font-weight:bold">solid</span> <span style="color:#8b008b;font-weight:bold">blue</span>;
+}
+</code></pre></div><p>然后发现所有 <code>Widget</code> 下所有的 <code>QLabel</code> 都诡异地多了个框而父框架反而没有。为什么呢？因为 <code>QLabel</code> 也是 <code>QWidget</code> 的一种，<code>QWidget</code> 的样式表会自动传递到它，并且生效。然而 <code>QWidget</code> 自己却不能生效，因为 <code>QWidget</code> 天生无法让自己的显式样式生效，它们只是用来传递给子框架的，换句话说，Qt 就这么设计的。</p>
+<p>如果想让父框架有边框之类的设置，请用 <code>QFrame</code> ，它不仅有同样的参数而且几乎能替代 <code>QWidget</code> 。</p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<h4 id="请尽量使用对象的-objectname-来区分子对象的样式"><strong>请尽量使用对象的 <code>objectName</code> 来区分子对象的样式</strong></h4>
+<p>如果你想要你的设置仅仅对最外层，或子对象中的一个生效，请这么写：</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-css" data-lang="css"><span style="color:#8b008b;font-weight:bold">QWidget</span>[<span style="color:#8b008b;font-weight:bold">objectName</span>=<span style="color:#cd5555">&#39;OutsidePanel&#39;</span>] {
+    <span style="color:#8b008b;font-weight:bold">background</span>: lightGray;
+    <span style="color:#8b008b;font-weight:bold">border</span>: <span style="color:#b452cd">3</span><span style="color:#00688b;font-weight:bold">px</span> <span style="color:#8b008b;font-weight:bold">solid</span> <span style="color:#8b008b;font-weight:bold">blue</span>;
+}
+</code></pre></div><p>那什么是 <code>objectName</code> 呢？它是 <code>QObject</code> 的一个成员变量，没错，PyQt 在最不需要解耦的地方做了一次解耦，让 <code>objectName</code> 需要单独设置。所以接下来，在这个你想让它有边框的 <code>QWidget</code> 的构造函数中写下：<code>self.setObjectName(&quot;OutsidePanel&quot;)</code> 。</p>
+<p>不推荐将组件的样式表颗粒化，在初始化过程中单独 <code>setStyleSheet()</code> ，还是推荐将一整个 Panel 的样式整合成一个文件，在父框架进行设置，而避免在运行过程中还要动态加载。我认为 Qt 的设计者也是这样希望的，应当有相应的优化。</p>
+<p>关于 QSS ，网上其实能查到很多内容，比方有人说可以直接跟据对象名和 CSS 一样用 <code>#</code> 设置对象的样式，实测并不行，推测可能是 PyQt 版本不同，能力也有所不同，很多网上提供的 QSS 属性也并不能生效。虽然 QSS 想让做 GUI 的人尽量用熟悉的方法——CSS来设计，但功能属实有限，不能达到 CSS 的效果不说，还给了有 CSS 使用经验的人过多不切实际的幻想，只能说是将 PyQt 本就有限的样式设置从 GUI 设计中部分解耦出来。</p>
+</li>
+</ul>
+<p>【未完，对 PyQt ，想吐槽的点实在是如涛涛江水一般】</p>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">最后修改于 2021-06-25</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts" href="https://winterorch.github.io/posts/leetcode-815-bus_routes/">
+			下回<br>LeetCode 815 - 公交路线
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://winterorch.github.io/posts/java-spring-annotation-di_methods/">
+			上回<br>Spring 依赖注入注解的区分
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div><div id="single-column-footer">
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
+<br>
+移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	WinterOrch. 本站遵循 CC-BY-NC 4.0 协议
+	
+</div>
+            </div>
+    <script>
+let app;
+
+app = new Vue({
+    el: '#app',
+    data: {
+        scrollY: 0,
+        navOpacity: 0,
+        isDrawerOpen: false,
+        mounted: false,
+        isDarkMode: false
+    },
+    methods: {
+            sgn(t, x) {
+                let k = 1. / (1. - 2 * t);
+                if (x <= t) return 0;
+                else if (x >= 1 - t) return 1;
+                else {
+                    return k * (x - t);
+                }
+            },
+            handleScroll() {
+                this.scrollY = window.scrollY;
+                this.navOpacity = this.sgn(.0, Math.min(1, Math.max(0, window.scrollY / (this.pageHeadHeight() - this.navBarHeight() * 0.8))));
+                const {navBar, navBackground, navTitle, extraContainer, streamContainer} = this.$refs;
+
+                if (this.navOpacity >= 1) {
+                    navBackground.style.opacity = 1;
+                    navTitle.style.opacity = 1;
+                } else {
+                    navBackground.style.opacity = 0;
+                    navTitle.style.opacity = 0;
+                }
+            },
+            handleResize() {
+                const {navBar, navBackground, navTitle, extraContainer, streamContainer} = this.$refs;
+                extraContainer.style.left = (streamContainer.offsetWidth - extraContainer.offsetWidth) + 'px';
+            },
+            navBarHeight() {
+                return this.$refs.navBar.offsetHeight;
+            },
+            pageHeadHeight() {
+                return this.$refs.pageHead.offsetHeight;
+            },
+            toggleDrawer() {
+                this.isDrawerOpen = !this.isDrawerOpen;
+                document.getElementsByTagName('html')[0].style.overflow = this.isDrawerOpen ? 'hidden' : 'unset';
+            },
+            closeDrawer() {
+                this.isDrawerOpen = false;
+                document.getElementsByTagName('html')[0].style.overflow = this.isDrawerOpen ? 'hidden' : 'unset';
+            },
+            toggleDarkMode() {
+                this.isDarkMode = !this.isDarkMode;
+                if (this.isDarkMode==true){
+                    document.cookie = "night=1;path=/";
+                    document.body.classList.add("night");
+                } else {
+                    document.cookie = "night=0;path=/";
+                    document.body.classList.remove("night");
+                }
+            },
+            debounce(func, wait, options) {
+                let lastArgs,
+                    lastThis,
+                    maxWait,
+                    result,
+                    timerId,
+                    lastCallTime
+
+                let lastInvokeTime = 0
+                let leading = false
+                let maxing = false
+                let trailing = true
+
+                
+                const useRAF = (!wait && wait !== 0 && typeof root.requestAnimationFrame === 'function')
+
+                if (typeof func !== 'function') {
+                    throw new TypeError('Expected a function')
+                }
+                function isObject(value) {
+                    const type = typeof value
+                    return value != null && (type === 'object' || type === 'function')
+                }
+
+                wait = +wait || 0
+                if (isObject(options)) {
+                    leading = !!options.leading
+                    maxing = 'maxWait' in options
+                    maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait
+                    trailing = 'trailing' in options ? !!options.trailing : trailing
+                }
+
+                function invokeFunc(time) {
+                    const args = lastArgs
+                    const thisArg = lastThis
+
+                    lastArgs = lastThis = undefined
+                    lastInvokeTime = time
+                    result = func.apply(thisArg, args)
+                    return result
+                }
+
+                function startTimer(pendingFunc, wait) {
+                    if (useRAF) {
+                    root.cancelAnimationFrame(timerId)
+                    return root.requestAnimationFrame(pendingFunc)
+                    }
+                    return setTimeout(pendingFunc, wait)
+                }
+
+                function cancelTimer(id) {
+                    if (useRAF) {
+                    return root.cancelAnimationFrame(id)
+                    }
+                    clearTimeout(id)
+                }
+
+                function leadingEdge(time) {
+                    
+                    lastInvokeTime = time
+                    
+                    timerId = startTimer(timerExpired, wait)
+                    
+                    return leading ? invokeFunc(time) : result
+                }
+
+                function remainingWait(time) {
+                    const timeSinceLastCall = time - lastCallTime
+                    const timeSinceLastInvoke = time - lastInvokeTime
+                    const timeWaiting = wait - timeSinceLastCall
+
+                    return maxing
+                    ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke)
+                    : timeWaiting
+                }
+
+                function shouldInvoke(time) {
+                    const timeSinceLastCall = time - lastCallTime
+                    const timeSinceLastInvoke = time - lastInvokeTime
+
+                    
+                    
+                    
+                    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+                    (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait))
+                }
+
+                function timerExpired() {
+                    const time = Date.now()
+                    if (shouldInvoke(time)) {
+                    return trailingEdge(time)
+                    }
+                    
+                    timerId = startTimer(timerExpired, remainingWait(time))
+                }
+
+                function trailingEdge(time) {
+                    timerId = undefined
+
+                    
+                    
+                    if (trailing && lastArgs) {
+                    return invokeFunc(time)
+                    }
+                    lastArgs = lastThis = undefined
+                    return result
+                }
+
+                function cancel() {
+                    if (timerId !== undefined) {
+                    cancelTimer(timerId)
+                    }
+                    lastInvokeTime = 0
+                    lastArgs = lastCallTime = lastThis = timerId = undefined
+                }
+
+                function flush() {
+                    return timerId === undefined ? result : trailingEdge(Date.now())
+                }
+
+                function pending() {
+                    return timerId !== undefined
+                }
+
+                function debounced(...args) {
+                    const time = Date.now()
+                    const isInvoking = shouldInvoke(time)
+
+                    lastArgs = args
+                    lastThis = this
+                    lastCallTime = time
+
+                    if (isInvoking) {
+                    if (timerId === undefined) {
+                        return leadingEdge(lastCallTime)
+                    }
+                    if (maxing) {
+                        
+                        timerId = startTimer(timerExpired, wait)
+                        return invokeFunc(lastCallTime)
+                    }
+                    }
+                    if (timerId === undefined) {
+                    timerId = startTimer(timerExpired, wait)
+                    }
+                    return result
+                }
+                debounced.cancel = cancel
+                debounced.flush = flush
+                debounced.pending = pending
+                return debounced
+                }
+
+    },
+    created() {
+        window.addEventListener('scroll', this.handleScroll);
+        window.addEventListener('resize', this.handleResize);
+        window._nonDesktop = function () {
+            let check = false;
+            (function (a) {
+                if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+            })(navigator.userAgent || navigator.vendor || window.opera);
+            return check;
+        };
+        
+        var night = document.cookie.replace(/(?:(?:^|.*;\s*)night\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        if (night==""){
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                
+            }
+        }else{
+            
+            if (night=="1") {
+                this.toggleDarkMode();
+            }
+        }
+    },
+    mounted() {
+        this.handleScroll();
+        this.handleResize();
+        this.mounted = true;
+
+        
+        
+        
+
+        document.querySelectorAll("table").forEach(function(elem){
+            elem.classList.add("table-striped");
+            elem.classList.add("table");
+            elem.classList.add("table-responsive");
+            elem.classList.add("table-hover");
+        })
+
+        
+        spy();
+        window.addEventListener('scroll', this.debounce(spy, 250, { 'maxWait': 250 }), false);
+        
+        
+    },
+    destroyed() {
+        window.removeEventListener('scroll', this.handleScroll);
+        window.removeEventListener('resize', this.handleResize);
+    }
+});
+
+
+
+</script>
+    </body>
+</html>

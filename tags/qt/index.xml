@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>QT on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/qt/</link>
+    <description>Recent content in QT on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Fri, 25 Jun 2021 19:32:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/qt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python - PYQT 踩坑记</title>
+      <link>https://winterorch.github.io/posts/python-pyqt-starter/</link>
+      <pubDate>Fri, 25 Jun 2021 19:32:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/python-pyqt-starter/</guid>
+      <description>首先要踩一下 PYQT，如果使用 Python 过程中有 GUI 方面的需求，请一定一定先看有没有 QT 之外的选择~~（就是，那个，D 开头的那个，懂我意思吧（疯狂暗示不要做 GUI 程序））~~。用过 PYQT 的都知道，QT 提供的不仅仅是 GUI 组件库，而是从线程到网络通信的一整套 QObject ，个人认为对于 Python 而言这实在是过于不实际了，我觉得大多数人对于 Python 开发的期望都是每一个模块各司其职，项目能够“高内聚，低耦合”，Python 在这方面也是非常令人满意的，然而在 QT 中除外。
+PYQT 来源于 C++ QT，其理念就是将众多组件耦合到一起，如果你在一个团队中进行开发，这会导致——无论是图形界面方面的责任，还是业务逻辑方面的问题都会堆到你这里，成为你的压力，而如果你作为个人进行开发，这会使你写 GUI 的时候无时无刻不得顾及业务需求，两边都得顾得上，两边都得一起调。出了问题的话，非常不幸，网上能找到的 PYQT 资料非常之有限，甚至官方文档中都有大量的 TODO ，且完全没有要补上的迹象，我写代码过程中基本都只能参考 QT 的官方文档，因为他实在是比 PyQt 官方提供的要友好得多。
+如果在确认了这些问题之后，还是要入门 PYQT，推荐几个 Github：PyQt Examples 提供了大部分常用 GUI 组件的使用 Deemo，虽然 PyQt 对于这些组件基本都有大量复杂数倍的替代品，供你完成非常繁杂的需求，但是，没有谁想从那入手的。
+ 顺便提一下，有个非常不错（指功能上）的 PyQt 音乐播放器 FeelUOwn 项目。当时看到这个小项目是很感动的，非常兴奋地下下来源码，然后确信自己看的是天书——项目代码不是给人读的，PyQt 极大放大了代码可读性差的问题
+ 接下来是正片——
+ 开始 PyQt 项目，你要知道这些   如果用 PyCharm 构建 PyQt 项目，你在点下 Run/Debug 之前请务必检查一下 Debug 配置</description>
+    </item>
+    
+  </channel>
+</rss>
