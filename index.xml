@@ -6,9 +6,330 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Thu, 24 Jun 2021 19:03:58 +0530</lastBuildDate>
+    <lastBuildDate>Sun, 27 Jun 2021 12:11:58 +0630</lastBuildDate>
     
         <atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>LeetCode 815 - 公交路线</title>
+        <link>https://winterorch.github.io/posts/leetcode-815-bus_routes/</link>
+        <pubDate>Sun, 27 Jun 2021 12:11:58 +0630</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/leetcode-815-bus_routes/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/leetcode-815-bus_routes/ -&lt;h1 id=&#34;leetcode-815-bus-routes&#34;&gt;[LeetCode] 815. Bus Routes&lt;/h1&gt;
+&lt;p&gt;We have a list of bus routes. Each &lt;code&gt;routes[i]&lt;/code&gt; is a bus route that the i-th bus repeats forever. For example if &lt;code&gt;routes[0] = [1, 5, 7]&lt;/code&gt;, this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.&lt;/p&gt;
+&lt;p&gt;We start at bus stop &lt;code&gt;S&lt;/code&gt; (initially not on a bus), and we want to go to bus stop &lt;code&gt;T&lt;/code&gt;. Travelling by buses only, what is the least number of buses we must take to reach our destination? Return -1 if it is not possible.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example 1:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input: routes = [[1,2,7],[3,6,7]], source = 1, target = 6
+Output: 2
+Explanation: The best strategy is take the first bus to the bus stop 7, then take the second bus to the bus stop 6.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Example 2:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input: routes = [[7,12],[4,5,15],[6],[15,19],[9,12,13]], source = 15, target = 12
+Output: -1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Constraints:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;1 &amp;lt;= routes.length &amp;lt;= 500&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;1 &amp;lt;= routes[i].length &amp;lt;= 10^5&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;All the values of &lt;code&gt;routes[i]&lt;/code&gt; are &lt;strong&gt;unique&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sum(routes[i].length) &amp;lt;= 10^5&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;0 &amp;lt;= routes[i][j] &amp;lt; 10^6&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;0 &amp;lt;= source, target &amp;lt; 10^6&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;顺便贴一下两年前这道题的提示：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Note:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;1 &amp;lt;= routes.length &amp;lt;= 500&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;1 &amp;lt;= routes[i].length &amp;lt;= 500&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;0 &amp;lt;= routes[i][j] &amp;lt; 10 ^ 6&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;题解--图压缩---最短路径算法&#34;&gt;题解  图压缩 +  最短路径算法&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;类似题：&lt;a href=&#34;https://github.com/grandyang/leetcode/issues/126&#34;&gt;LeetCode 127 Word Ladder II&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;看一下两年前和现在对案例限制的不同就可以看出来——力抠把这道题图的成分提升了，并且告诉你了一条公交路线里不会有重复站点，最终要的是，&lt;strong&gt;明确了公交站台的数量远远高于公交线路的数量&lt;/strong&gt;&lt;del&gt;（最离谱的是最后一个案例，尼玛十几条公交线路总共经过了五六万个站，要是在城市天际线里搞这种线路，小人上班还没坐到单位就老死了好吗）&lt;/del&gt;，换句话说，如果不进行压缩，直接以公交站为结点进行 BFS ，你的图会相当大，如果压缩了，那效率上一定是有收益的。因此有必要将站台图压缩成&lt;strong&gt;公交线路的邻接图&lt;/strong&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; n = routes.&lt;span style=&#34;color:#658b00&#34;&gt;length&lt;/span&gt;;
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[][] edge = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[n][n];
+Map&amp;lt;Integer, List&amp;lt;Integer&amp;gt;&amp;gt; rec = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; n; i++) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : routes[i]) {
+        List&amp;lt;Integer&amp;gt; list = rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(site, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;());
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j : list) {
+            edge[i][j] = edge[j][i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+        }
+        list.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(i);
+        rec.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(site, list);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这样下来，在搜索过程中队列中保存的就都是公交路线号而不是站台号了，那么&lt;!-- raw HTML omitted --&gt;起点和终点&lt;!-- raw HTML omitted --&gt;也就不是站台，而是&lt;!-- raw HTML omitted --&gt;经过相应站台所有公交线路的集合&lt;!-- raw HTML omitted --&gt;了，这其实就和 127 题那个单词编辑步长特别相似了，用 BFS 应当是可以的，而且其实这里的公交都是环线，完全可以用双向 BFS 进行优化（当发现一道 BFS 题的起点和终点可以互换，换句话说图是无向的，基本都可以用上双向 BFS）。&lt;/p&gt;
+&lt;p&gt;然而官答这里直接当成图来做了，直接算了个到所有（除经过起始站的之外）其它公交线路的最少转车站数，用的还是 SPFA，考虑到最后判题案例中其实充斥的都是站点繁多但实际上连通却不多的稀疏图，这样的选择反而相当高效。&lt;del&gt;所以说合适的输入案例是最有效的优化。&lt;/del&gt;&lt;/p&gt;
+&lt;p&gt;虽然 OJ 里无环的情况下还是迪杰斯特拉稳妥一些，但 Leetcode 上基本 SPFA 完全没有问题，写起来还方便，直接用队列不断更新相邻结点的最小距离，一旦距离进行更新就将该结点也丢进队列里，继续更新，直到队列为空。这一算法在稀疏图中效率非常高。&lt;/p&gt;
+&lt;p&gt;得到的结果里去找能到终点的最小距离就行了，整个算法理解起来非常简单。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] dis = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[n];
+Arrays.&lt;span style=&#34;color:#658b00&#34;&gt;fill&lt;/span&gt;(dis, -1);
+Queue&amp;lt;Integer&amp;gt; que = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;();
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(source, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;())) {
+    dis[site] = 1;
+    que.&lt;span style=&#34;color:#658b00&#34;&gt;offer&lt;/span&gt;(site);
+}
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!que.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; x = que.&lt;span style=&#34;color:#658b00&#34;&gt;poll&lt;/span&gt;();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; y = 0; y &amp;lt; n; y++) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (edge[x][y] &amp;amp;&amp;amp; dis[y] == -1) {
+            dis[y] = dis[x] + 1;
+            que.&lt;span style=&#34;color:#658b00&#34;&gt;offer&lt;/span&gt;(y);
+        }
+    }
+}
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; ret = Integer.&lt;span style=&#34;color:#658b00&#34;&gt;MAX_VALUE&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(target, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;())) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (dis[site] != -1) {
+        ret = Math.&lt;span style=&#34;color:#658b00&#34;&gt;min&lt;/span&gt;(ret, dis[site]);
+    }
+}
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; ret == Integer.&lt;span style=&#34;color:#658b00&#34;&gt;MAX_VALUE&lt;/span&gt; ? -1 : ret;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;代码总和&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;numBusesToDestination&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[][] routes, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; source, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; target) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (source == target) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; 0;
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; n = routes.&lt;span style=&#34;color:#658b00&#34;&gt;length&lt;/span&gt;;
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[][] edge = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[n][n];
+    Map&amp;lt;Integer, List&amp;lt;Integer&amp;gt;&amp;gt; rec = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; n; i++) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : routes[i]) {
+            List&amp;lt;Integer&amp;gt; list = rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(site, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;());
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j : list) {
+                edge[i][j] = edge[j][i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+            }
+            list.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(i);
+            rec.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(site, list);
+        }
+    }
+
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[] dis = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[n];
+    Arrays.&lt;span style=&#34;color:#658b00&#34;&gt;fill&lt;/span&gt;(dis, -1);
+    Queue&amp;lt;Integer&amp;gt; que = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(source, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;())) {
+        dis[site] = 1;
+        que.&lt;span style=&#34;color:#658b00&#34;&gt;offer&lt;/span&gt;(site);
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!que.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+        &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; x = que.&lt;span style=&#34;color:#658b00&#34;&gt;poll&lt;/span&gt;();
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; y = 0; y &amp;lt; n; y++) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (edge[x][y] &amp;amp;&amp;amp; dis[y] == -1) {
+                dis[y] = dis[x] + 1;
+                que.&lt;span style=&#34;color:#658b00&#34;&gt;offer&lt;/span&gt;(y);
+            }
+        }
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; ret = Integer.&lt;span style=&#34;color:#658b00&#34;&gt;MAX_VALUE&lt;/span&gt;;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(target, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;())) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (dis[site] != -1) {
+            ret = Math.&lt;span style=&#34;color:#658b00&#34;&gt;min&lt;/span&gt;(ret, dis[site]);
+        }
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; ret == Integer.&lt;span style=&#34;color:#658b00&#34;&gt;MAX_VALUE&lt;/span&gt; ? -1 : ret;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id=&#34;题解---bfs&#34;&gt;题解   BFS&lt;/h3&gt;
+&lt;p&gt;这里再写一个双向 BFS 。压缩部分和前面是一样的，问题是搜索部分。&lt;/p&gt;
+&lt;p&gt;首先，将起点和终点（其实是经过起点和终点的所有公交线路）分别装入两个方向的 BFS 队列中，如果这里就发现有一样的，那说明有车能从起点直达终点，不用搜了，直接输出 &lt;code&gt;1&lt;/code&gt; 。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[] vis = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[n];
+Deque&amp;lt;Integer&amp;gt; src_q, des_q;
+List&amp;lt;Integer&amp;gt; tar = rec.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(source);
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (tar == &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;null&lt;/span&gt;) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+} &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+    src_q = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;(tar);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (Integer i : tar) {
+        vis[i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+    }
+}
+tar = rec.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(target);
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (tar == &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;null&lt;/span&gt;) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+} &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+    des_q = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;(tar);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (Integer i : tar) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (vis[i])
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; 1;
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;
+            vis[i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接下来就是双向 BFS，既然是 BFS，我们每次走一步，搜一步能到的所有公交线路，如果搜到路线出现在另一方向的队列中，说明两个队列接上了，直接输出。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; src_steps = 0, des_steps = 1;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!src_q.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;() &amp;amp;&amp;amp; !des_q.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+    Deque&amp;lt;Integer&amp;gt; front, back;
+  
+  	&lt;span style=&#34;color:#228b22&#34;&gt;// 每次挑元素少的队列进行 BFS，从而收缩搜索范围
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (src_q.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;() &amp;gt; des_q.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;()) {
+        front = des_q;
+        back = src_q;
+        ++des_steps;
+    } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+        front = src_q;
+        back = des_q;
+        ++src_steps;
+    }
+  
+  	&lt;span style=&#34;color:#228b22&#34;&gt;// 检查邻结点中有没有能到对面（即另一个方向的队列）
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = front.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;(); i &amp;gt; 0; --i) {
+        &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; t = front.&lt;span style=&#34;color:#658b00&#34;&gt;removeFirst&lt;/span&gt;();
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j = 0; j &amp;lt; n; ++j) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (edge[t][j] &amp;amp;&amp;amp; !vis[j]) {
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!vis[j]) {
+                    vis[j] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+                    front.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(j);
+                } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+                    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (back.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(j)) {
+                        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; src_steps + des_steps;
+                    }
+                }
+            }
+        }
+    }
+}
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;代码总和&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;numBusesToDestination&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt;[][] routes, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; source, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; target) {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (source == target) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; 0;
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; n = routes.&lt;span style=&#34;color:#658b00&#34;&gt;length&lt;/span&gt;;
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[][] edge = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[n][n];
+    Map&amp;lt;Integer, List&amp;lt;Integer&amp;gt;&amp;gt; rec = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = 0; i &amp;lt; n; i++) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; site : routes[i]) {
+            List&amp;lt;Integer&amp;gt; list = rec.&lt;span style=&#34;color:#658b00&#34;&gt;getOrDefault&lt;/span&gt;(site, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;());
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j : list) {
+                edge[i][j] = edge[j][i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+            }
+            list.&lt;span style=&#34;color:#658b00&#34;&gt;add&lt;/span&gt;(i);
+            rec.&lt;span style=&#34;color:#658b00&#34;&gt;put&lt;/span&gt;(site, list);
+        }
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[] vis = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt;[n];
+    Deque&amp;lt;Integer&amp;gt; src_q, des_q;
+    List&amp;lt;Integer&amp;gt; tar = rec.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(source);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (tar == &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;null&lt;/span&gt;) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+    } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+        src_q = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;(tar);
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (Integer i : tar) {
+            vis[i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+        }
+    }
+    tar = rec.&lt;span style=&#34;color:#658b00&#34;&gt;get&lt;/span&gt;(target);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (tar == &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;null&lt;/span&gt;) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+    } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+        des_q = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ArrayDeque&amp;lt;&amp;gt;(tar);
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (Integer i : tar) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (vis[i])
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; 1;
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;
+                vis[i] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+        }
+    }
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; src_steps = 0, des_steps = 1;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; (!src_q.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;() &amp;amp;&amp;amp; !des_q.&lt;span style=&#34;color:#658b00&#34;&gt;isEmpty&lt;/span&gt;()) {
+        Deque&amp;lt;Integer&amp;gt; front, back;
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (src_q.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;() &amp;gt; des_q.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;()) {
+            front = des_q;
+            back = src_q;
+            ++des_steps;
+        } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+            front = src_q;
+            back = des_q;
+            ++src_steps;
+        }
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i = front.&lt;span style=&#34;color:#658b00&#34;&gt;size&lt;/span&gt;(); i &amp;gt; 0; --i) {
+            &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; t = front.&lt;span style=&#34;color:#658b00&#34;&gt;removeFirst&lt;/span&gt;();
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j = 0; j &amp;lt; n; ++j) {
+                &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (edge[t][j]) {
+                    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!vis[j]) {
+                        vis[j] = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;true&lt;/span&gt;;
+                        front.&lt;span style=&#34;color:#658b00&#34;&gt;addLast&lt;/span&gt;(j);
+                    } &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+                        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (back.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(j)) {
+                            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; src_steps + des_steps;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; -1;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id=&#34;总结&#34;&gt;总结&lt;/h3&gt;
+&lt;p&gt;这道题反正无论如何都绕不开图压缩了。搜索上，两种方法最终时间相差无几（指用 Leetcode 案例前提下），最小路径算法其实有些超过题目需求了，不过 SPFA 很契合这道题的场景，因此效率还是很高，加上写起来方便（重点），略优于双向 BFS。&lt;/p&gt;
+- https://winterorch.github.io/posts/leetcode-815-bus_routes/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>Python - PYQT 踩坑记</title>
+        <link>https://winterorch.github.io/posts/python-pyqt-starter/</link>
+        <pubDate>Fri, 25 Jun 2021 19:32:58 +0630</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/python-pyqt-starter/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/python-pyqt-starter/ -&lt;p&gt;首先要踩一下 PYQT，如果使用 Python 过程中有 GUI 方面的需求，请一定一定先看有没有 QT 之外的选择~~（就是，那个，D 开头的那个，懂我意思吧（疯狂暗示不要做 GUI 程序））~~。用过 PYQT 的都知道，QT 提供的不仅仅是 GUI 组件库，而是从线程到网络通信的一整套 &lt;code&gt;QObject&lt;/code&gt; ，个人认为对于 Python 而言这实在是过于不实际了，我觉得大多数人对于 Python 开发的期望都是每一个模块各司其职，项目能够“高内聚，低耦合”，Python 在这方面也是非常令人满意的，然而在 QT 中除外。&lt;/p&gt;
+&lt;p&gt;PYQT 来源于 C++ QT，其理念就是将众多组件耦合到一起，如果你在一个团队中进行开发，这会导致——无论是图形界面方面的责任，还是业务逻辑方面的问题都会堆到你这里，成为你的压力，而如果你作为个人进行开发，这会使你写 GUI 的时候无时无刻不得顾及业务需求，两边都得顾得上，两边都得一起调。出了问题的话，非常不幸，网上能找到的 PYQT 资料非常之有限，甚至官方文档中都有大量的 &lt;code&gt;TODO&lt;/code&gt; ，且完全没有要补上的迹象，我写代码过程中基本都只能参考 QT 的官方文档，因为他实在是比 PyQt 官方提供的要友好得多。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;如果在确认了这些问题之后，还是要入门 PYQT，推荐几个 Github：&lt;a href=&#34;https://github.com/PyQt5/PyQt&#34;&gt;PyQt Examples&lt;/a&gt; 提供了大部分常用 GUI 组件的使用 Deemo，虽然 PyQt 对于这些组件基本都有大量复杂数倍的替代品，供你完成非常繁杂的需求，但是，没有谁想从那入手的。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;顺便提一下，有个非常不错（指功能上）的 PyQt 音乐播放器 &lt;a href=&#34;https://github.com/feeluown/FeelUOwn&#34;&gt;FeelUOwn&lt;/a&gt; 项目。当时看到这个小项目是很感动的，非常兴奋地下下来源码，然后确信自己看的是天书——项目代码不是给人读的，PyQt 极大放大了代码可读性差的问题&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;接下来是正片——&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;开始-pyqt-项目你要知道这些&#34;&gt;开始 PyQt 项目，你要知道这些&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果用 PyCharm 构建 PyQt 项目，你在点下 Run/Debug 之前请务必检查一下 &lt;strong&gt;Debug 配置&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Run 和 Debug 图标左边那个下拉菜单，其中的 Edit Configurations，请检查一下 Configuration 下的 Excution 栏，&lt;!-- raw HTML omitted --&gt;&lt;strong&gt;确保 &lt;code&gt;Emulate terminal in output console&lt;/code&gt; 这个选项勾上&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;。否则即使你的程序挂掉，控制台也不会抛出一个异常来，没有什么比程序跑不起来，甚至连哪里出了问题都无法追溯更让人头疼的事情了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;使用-qss-你要知道这些&#34;&gt;使用 QSS ，你要知道这些&lt;/h3&gt;
+&lt;p&gt;QSS 看似很美好，但也是重灾区。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;h4 id=&#34;qss-style-sheet-会自动由父框架传递给子框架&#34;&gt;&lt;strong&gt;QSS Style Sheet 会自动由父框架传递给子框架&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;什么意思呢？就是说你可能想给 &lt;code&gt;QWidget&lt;/code&gt; 设个好看的边框，于是写下这么一段内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-css&#34; data-lang=&#34;css&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;QWidget&lt;/span&gt; {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;background&lt;/span&gt;: lightGray;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;border&lt;/span&gt;: &lt;span style=&#34;color:#b452cd&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;px&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;solid&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;blue&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后发现所有 &lt;code&gt;Widget&lt;/code&gt; 下所有的 &lt;code&gt;QLabel&lt;/code&gt; 都诡异地多了个框而父框架反而没有。为什么呢？因为 &lt;code&gt;QLabel&lt;/code&gt; 也是 &lt;code&gt;QWidget&lt;/code&gt; 的一种，&lt;code&gt;QWidget&lt;/code&gt; 的样式表会自动传递到它，并且生效。然而 &lt;code&gt;QWidget&lt;/code&gt; 自己却不能生效，因为 &lt;code&gt;QWidget&lt;/code&gt; 天生无法让自己的显式样式生效，它们只是用来传递给子框架的，换句话说，Qt 就这么设计的。&lt;/p&gt;
+&lt;p&gt;如果想让父框架有边框之类的设置，请用 &lt;code&gt;QFrame&lt;/code&gt; ，它不仅有同样的参数而且几乎能替代 &lt;code&gt;QWidget&lt;/code&gt; 。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h4 id=&#34;请尽量使用对象的-objectname-来区分子对象的样式&#34;&gt;&lt;strong&gt;请尽量使用对象的 &lt;code&gt;objectName&lt;/code&gt; 来区分子对象的样式&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;如果你想要你的设置仅仅对最外层，或子对象中的一个生效，请这么写：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-css&#34; data-lang=&#34;css&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;QWidget&lt;/span&gt;[&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;objectName&lt;/span&gt;=&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#39;OutsidePanel&amp;#39;&lt;/span&gt;] {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;background&lt;/span&gt;: lightGray;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;border&lt;/span&gt;: &lt;span style=&#34;color:#b452cd&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;px&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;solid&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;blue&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;那什么是 &lt;code&gt;objectName&lt;/code&gt; 呢？它是 &lt;code&gt;QObject&lt;/code&gt; 的一个成员变量，没错，PyQt 在最不需要解耦的地方做了一次解耦，让 &lt;code&gt;objectName&lt;/code&gt; 需要单独设置。所以接下来，在这个你想让它有边框的 &lt;code&gt;QWidget&lt;/code&gt; 的构造函数中写下：&lt;code&gt;self.setObjectName(&amp;quot;OutsidePanel&amp;quot;)&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;不推荐将组件的样式表颗粒化，在初始化过程中单独 &lt;code&gt;setStyleSheet()&lt;/code&gt; ，还是推荐将一整个 Panel 的样式整合成一个文件，在父框架进行设置，而避免在运行过程中还要动态加载。我认为 Qt 的设计者也是这样希望的，应当有相应的优化。&lt;/p&gt;
+&lt;p&gt;关于 QSS ，网上其实能查到很多内容，比方有人说可以直接跟据对象名和 CSS 一样用 &lt;code&gt;#&lt;/code&gt; 设置对象的样式，实测并不行，推测可能是 PyQt 版本不同，能力也有所不同，很多网上提供的 QSS 属性也并不能生效。虽然 QSS 想让做 GUI 的人尽量用熟悉的方法——CSS来设计，但功能属实有限，不能达到 CSS 的效果不说，还给了有 CSS 使用经验的人过多不切实际的幻想，只能说是将 PyQt 本就有限的样式设置从 GUI 设计中部分解耦出来。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;【未完，对 PyQt ，想吐槽的点实在是如涛涛江水一般】&lt;/p&gt;
+- https://winterorch.github.io/posts/python-pyqt-starter/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
     
     
     
@@ -1207,234 +1528,6 @@ Set&amp;lt;String&amp;gt; deadEnds;
 &lt;p&gt;但是抽象类中从一开始就不存在这个问题——因为抽象类并不只能包含抽象方法，还能包含普通方法，而 Java 中普通方法本身就是“虚函数”，允许子类重写。那么如果想要一个默认实现，直接写普通方法就行了。Java 语言设计抽象类的目的本就是方便代码重用，但在设计接口之初并没有把这一需求囊括进来。&lt;/p&gt;
 &lt;p&gt;而&lt;strong&gt;抽象方法&lt;/strong&gt;，仅用于标识子类&lt;strong&gt;必须实现&lt;/strong&gt;的方法（&lt;!-- raw HTML omitted --&gt;有一种特殊情况除外，就是&lt;strong&gt;子类也是抽象类&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;）。&lt;/p&gt;
 - https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>JVM GC</title>
-        <link>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</link>
-        <pubDate>Wed, 17 Mar 2021 22:03:58 +0630</pubDate>
-        
-        <guid>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</guid>
-        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/java-jvm-ram_and_gc/ -&lt;h3 id=&#34;一垃圾收集算法&#34;&gt;一、垃圾收集算法&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://winterorch.github.io/images/blog/java-jvm-ram_and_gc_01.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;跟据 &lt;code&gt;Object&lt;/code&gt; 生命周期分为三个层次&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Young Generation&lt;/li&gt;
-&lt;li&gt;Old Generation&lt;/li&gt;
-&lt;li&gt;Permanent Generation&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 &lt;code&gt;s0&lt;/code&gt; 或 &lt;code&gt;s1&lt;/code&gt; ，清理 Eden 和使用过的一块 Survivor。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Eden 区满时执行 Minor GC 清理可销毁对象，将不可销毁的迁移至其中一个存活区，而将另一个存活区直接清空，下一次 GC 时两个存活区角色交换，交换次数超过 15 （&lt;code&gt;MaxTenuringThreshold&lt;/code&gt;）的进入 Old Generation。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;复制算法（young代GC算法）&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;该算法会将内存区域分为两个大小一样的区域。GC回收时，遍历当前使用区域，只将正在引用的对象复制到另一个区域，因此复制成本较低，且复制过程中还会进行内存整理，不会出现“碎片”问题。缺点就是：需要两个大小一样的内存区域和生命周期短的对象。所以该算法不适合大内存对象和长生命周期的对象，适用于young代的SO/S1&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Hotspot 的动态年龄阈值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Hotspot遍历对象时按年龄从小到大对其所占用大小进行累积，当累积的某个年龄大小超过了 &lt;code&gt;survivor&lt;/code&gt; 区一半，取年龄与 &lt;code&gt;MaxTenuringThreshold&lt;/code&gt; 中更小的作为新年龄阈值&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Old Generation 通过“标记-整理”算法，标记处仍存活对象，并将所有存活对象向一端移动以保证内存连续，清理掉剩余部分内存。当进入的对象超过剩余空间大小，则触发 Full GC。“标记-整理”好处是不需要额外内存区域。&lt;/p&gt;
-&lt;p&gt;Permanent Generation 主要存放字节码、字符串常量池、静态变量、可持久化数据等。每次发生 Full GC 时，同时也会销毁 Permanent Generation 中的可销毁对象。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;永久代&lt;/strong&gt;实际上是HotSpot JVM对JVM方法区的实现。由于永久代内存经常不够或发生内存泄露，造成OOM(PermGen)，从JDK8开始废弃了永久代，替换为了&lt;strong&gt;本地内存&lt;/strong&gt;(native memory) 中的 Metaspace。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;元空间&lt;/strong&gt;与永久代最大区别在于它不在虚拟机中，而是使用&lt;!-- raw HTML omitted --&gt;本地内存&lt;!-- raw HTML omitted --&gt;。两者都是对JVM规范中方法区的实现，用于存储类的信息、常量池、方法数据、方法代码等。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;字符串常量从JDK1.7开始由永久代转移到堆中(Java heap space)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://images2015.cnblogs.com/blog/584866/201704/584866-20170426154633834-741444326.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;二经典垃圾收集器&#34;&gt;二、经典垃圾收集器&lt;/h3&gt;
-&lt;p&gt;&lt;img src=&#34;https://camo.githubusercontent.com/440ec4093732dc8fe7a3092666f15a7f2c4303b97499a517562e5f868fa6c967/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;HotSpot 中的&lt;strong&gt;安全点&lt;/strong&gt;一般设置在方法调用、循环跳转、异常跳转等地方，只在安全点位置建立根节点枚举，强制到大安全点后才暂停，进行垃圾收集。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;HotSpot 中有7个垃圾收集器，连线表示可以配合使用。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;serial&#34;&gt;&lt;strong&gt;Serial&lt;/strong&gt;&lt;/h5&gt;
-&lt;p&gt;串行的单线程收集器，简单高效。&lt;!-- raw HTML omitted --&gt;在 Client 场景下为默认 Young Generation 收集器&lt;!-- raw HTML omitted --&gt;，单线程收集效率高。Server 场景用于和 Parallel Scavenge 搭配使用。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;parnew&#34;&gt;&lt;strong&gt;ParNew&lt;/strong&gt;&lt;/h5&gt;
-&lt;p&gt;Serial 的多线程版本。&lt;!-- raw HTML omitted --&gt;在 Server 场景下为默认 Young Generation 收集器&lt;!-- raw HTML omitted --&gt;，可以与 CMS 配合使用。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;parallel-scavenge&#34;&gt;&lt;strong&gt;Parallel Scavenge&lt;/strong&gt;&lt;/h5&gt;
-&lt;p&gt;多线程。以“吞吐量”为优先考虑，即 CPU 运行用户代码的时间占总时间比值最高，CPU 用于垃圾回收的时间占总时间比值最低，而非其它垃圾收集器“尽可能缩短垃圾收集时用户线程的停顿时间”的目标，垃圾回收较为频繁。&lt;/p&gt;
-&lt;p&gt;CPU效率更高，也适合后台运算任务，不适合对停顿和响应敏感的交互式程序。&lt;/p&gt;
-&lt;p&gt;JVM中有配置以打开 GC 中新生代大小、Eden、S区自适应调节策略。虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;serial-old-收集器&#34;&gt;&lt;strong&gt;Serial Old&lt;/strong&gt; 收集器&lt;/h5&gt;
-&lt;p&gt;&lt;img src=&#34;https://camo.githubusercontent.com/619f88e2830cee0ebd2cc5ca6a3ecd63e7b9ab419a91537e5ed8868ef0fd34c9/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Serial 收集器的老年代版本，也是给 Client 场景下的虚拟机使用。如果用在 Server 场景下，它有两大用途：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;在 JDK 1.5 以及之前版本（Parallel Old 诞生以前）中与 Parallel Scavenge 收集器搭配使用。&lt;/li&gt;
-&lt;li&gt;作为 CMS 收集器的后备预案，在并发收集发生 Concurrent Mode Failure 时使用。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;parallel-old-收集器&#34;&gt;&lt;strong&gt;Parallel Old 收集器&lt;/strong&gt;&lt;/h5&gt;
-&lt;p&gt;&lt;img src=&#34;https://camo.githubusercontent.com/224de5079435a84b00846daf60b5c0e07283cea0cd03873c511f874246d2f17d/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;是 Parallel Scavenge 收集器的老年代版本。&lt;/p&gt;
-&lt;p&gt;在注重吞吐量以及 CPU 资源敏感的场合，都可以优先考虑 Parallel Scavenge 加 Parallel Old 收集器。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;cms&#34;&gt;&lt;strong&gt;CMS&lt;/strong&gt;&lt;/h5&gt;
-&lt;p&gt;&lt;a href=&#34;https://camo.githubusercontent.com/06b53c4f9160093c891076bd6e65b31fccdbbe03fa7b23e754c7ba6e7835abda/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067&#34;&gt;&lt;img src=&#34;https://camo.githubusercontent.com/06b53c4f9160093c891076bd6e65b31fccdbbe03fa7b23e754c7ba6e7835abda/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067&#34; alt=&#34;img&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;CMS（Concurrent Mark Sweep），Mark Sweep 指的是标记 - 清除算法。&lt;/p&gt;
-&lt;p&gt;分为以下四个流程：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;初始标记&lt;/strong&gt;：仅仅只是标记一下 GC Roots 能直接关联（一级连接，不遍历）到的对象，同时遍历新生代可直达地老年对象，速度很快，需要停顿。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;并发标记&lt;/strong&gt;：进行 GC Roots Tracing 的过程，它在整个回收过程中耗时最长，不需要停顿。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;重新标记&lt;/strong&gt;：为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，需要停顿。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;并发清除&lt;/strong&gt;： 清理删除掉标记阶段判断已经死亡的对象，不需要停顿。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;在整个过程中耗时最长的并发标记和并发清除过程中，收集器线程都可以与用户线程一起工作，不需要进行停顿。&lt;/p&gt;
-&lt;p&gt;具有以下缺点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;吞吐量低：对处理器资源敏感，低停顿时间是以牺牲吞吐量为代价的，导致 CPU 利用率不够高。因此 CMS 适用于四核以上的处理器。&lt;/li&gt;
-&lt;li&gt;无法处理浮动垃圾，可能出现 Concurrent Mode Failure。浮动垃圾是指并发清除阶段由于用户线程继续运行而产生的垃圾，这部分垃圾只能到下一次 GC 时才能进行回收。由于浮动垃圾的存在，因此需要预留出一部分内存，意味着 CMS 收集不能像其它收集器那样等待老年代快满的时候再回收。如果预留的内存不够存放浮动垃圾，就会出现 Concurrent Mode Failure，这时虚拟机将临时启用 Serial Old 来替代 CMS。&lt;/li&gt;
-&lt;li&gt;标记 - 清除算法导致的空间碎片，往往出现老年代空间剩余，但无法找到足够大连续空间来分配当前对象，不得不提前触发一次 Full GC。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;h5 id=&#34;g1&#34;&gt;&lt;strong&gt;G1&lt;/strong&gt;&lt;/h5&gt;
-&lt;p&gt;G1（Garbage-First），它是一款面向&lt;strong&gt;服务端应用&lt;/strong&gt;的垃圾收集器，在&lt;strong&gt;多 CPU 和大内存的场景&lt;/strong&gt;下有很好的性能。HotSpot 开发团队赋予它的使命是未来可以替换掉 CMS 收集器。&lt;/p&gt;
-&lt;p&gt;堆被分为新生代和老年代，其它收集器进行收集的范围都是整个新生代或者老年代，而 G1 可以直接对新生代和老年代一起回收。&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://camo.githubusercontent.com/31d36dcfe1b2abac1d55a8dc342a117bcfe2d41c7f5a2e415f308c5735b2123e/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67&#34;&gt;&lt;img src=&#34;https://camo.githubusercontent.com/31d36dcfe1b2abac1d55a8dc342a117bcfe2d41c7f5a2e415f308c5735b2123e/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67&#34; alt=&#34;img&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;G1 把堆划分成多个大小相等的&lt;strong&gt;独立区域&lt;/strong&gt;（Region），新生代和老年代不再物理隔离。&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://camo.githubusercontent.com/ac21bcb938d3b10ec2be009a0d2aa6317163cf3af46106771f1bf5ca058ca544/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67&#34;&gt;&lt;img src=&#34;https://camo.githubusercontent.com/ac21bcb938d3b10ec2be009a0d2aa6317163cf3af46106771f1bf5ca058ca544/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67&#34; alt=&#34;img&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;通过引入 Region 的概念，从而将原来的一整块内存空间划分成多个的小空间，使得每个小空间可以单独进行垃圾回收。这种划分方法带来了很大的灵活性，使得可预测的停顿时间模型成为可能。通过记录每个 Region 垃圾回收时间以及回收所获得的空间（这两个值是通过过去回收的经验获得），并维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的 Region。&lt;/p&gt;
-&lt;p&gt;每个 Region 都有一个 Remembered Set，用来记录该 Region 对象的引用对象所在的 Region。通过使用 Remembered Set，在做可达性分析的时候就可以避免全堆扫描。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;但是这样设计也存在副作用，region 大小固定为 1MB 到 32 MB 间的 2的幂值数，尽量能划 2048 个左右同等大小的 region 。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;blockquote&gt;
-&lt;p&gt;因为大小固定，和大对象很难保证一致，容易造成空间浪费，也很容易令大对象很难找到连续空间存放。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;a href=&#34;https://camo.githubusercontent.com/0f51e01c02ef3917df9a072b579a5004ae6f429dce742c32ba56d5c0de4da356/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067&#34;&gt;&lt;img src=&#34;https://camo.githubusercontent.com/0f51e01c02ef3917df9a072b579a5004ae6f429dce742c32ba56d5c0de4da356/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067&#34; alt=&#34;img&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;如果不计算维护 Remembered Set 的操作，G1 收集器的运作大致可划分为以下几个步骤：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;初始标记&lt;/strong&gt;：&lt;strong&gt;短暂停顿线程&lt;/strong&gt;以标记 GC Roots 直接关联到的对象，并修改 TAMS (Next Top at Mark Start) 值，让下一并发阶段能在正确 Region 中创建新对象。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;并发标记&lt;/strong&gt;：从 GC Roots 开始对堆对象进行可达性分析，递归扫描堆中的对象图，找出存活的对象，&lt;!-- raw HTML omitted --&gt;耗时长，但可以&lt;strong&gt;并发&lt;/strong&gt;执行&lt;!-- raw HTML omitted --&gt;。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;最终标记&lt;/strong&gt;：为了修正在并发标记阶段遗留的因用户程序继续运作而导致变动的标记记录，虚拟机将这段时间对象变化记录在线程的 Remembered Set Logs 里面，最终标记阶段需要把 Remembered Set Logs 的数据合并到 Remembered Set 中。这阶段需要&lt;strong&gt;短暂停顿&lt;/strong&gt;线程，但是可并行执行。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;筛选回收&lt;/strong&gt;：首先对各个 Region 中的回收价值和成本进行排序，根据用户所期望的 GC &lt;strong&gt;停顿&lt;/strong&gt;时间来制定回收计划。此阶段其实也可以做到与用户程序一起并发执行，但是因为只回收一部分 Region，时间是用户可控制的，而且停顿用户线程将大幅度提高收集效率。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;具备如下特点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;空间整合：整体来看是基于“标记 - 整理”算法实现的收集器，从局部（两个 Region 之间）上来看是基于“复制”算法实现的，这意味着运行期间不会产生内存空间碎片。&lt;/li&gt;
-&lt;li&gt;可预测的停顿：能让使用者明确指定在一个长度为 M 毫秒的时间片段内，消耗在 GC 上的时间不得超过 N 毫秒。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote&gt;
-&lt;p&gt;除经典垃圾收集器外还有 Shenandoah 收集器（CAS并发）、ZGC 收集器（通过染色体指针减少GC中内存屏障的使用）等低延迟垃圾收集器，见以下博客&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://blog.csdn.net/qq_31709249/article/details/106711606&#34;&gt;https://blog.csdn.net/qq_31709249/article/details/106711606&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;三内存分配与回收策略&#34;&gt;三、内存分配与回收策略&lt;/h3&gt;
-&lt;p&gt;Minor GC 和 Full GC&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Minor GC：回收新生代，因为新生代对象存活时间很短，因此 Minor GC 会频繁执行，执行的速度一般也会比较快。&lt;/li&gt;
-&lt;li&gt;Full GC：回收老年代和新生代，老年代对象其存活时间长，因此 Full GC 很少执行，执行速度会比 Minor GC 慢很多。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;内存分配策略&#34;&gt;内存分配策略&lt;/h4&gt;
-&lt;h5 id=&#34;1-对象优先在-eden-分配&#34;&gt;1. 对象优先在 Eden 分配&lt;/h5&gt;
-&lt;p&gt;大多数情况下，对象在新生代 Eden 上分配，当 Eden 空间不够时，发起 Minor GC。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;-Xmx：&lt;/strong&gt; 最大堆大小&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;-Xms：&lt;/strong&gt; 最小堆大小&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;-Xmn：&lt;/strong&gt; 年轻代堆大小&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;-XXSurvivorRatio：&lt;/strong&gt; 年轻代中Eden区与Survivor区的大小比值&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;h5 id=&#34;2-大对象直接进入老年代&#34;&gt;2. 大对象直接进入老年代&lt;/h5&gt;
-&lt;p&gt;大对象是指需要连续内存空间的对象，最典型的大对象是那种很长的字符串以及数组。&lt;/p&gt;
-&lt;p&gt;经常出现大对象会提前触发垃圾收集以获取足够的连续空间分配给大对象。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;-XX:PretenureSizeThreshold，大于此值的对象直接在老年代分配，避免在 Eden 和 Survivor 之间的大量内存复制。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h5 id=&#34;3-长期存活的对象进入老年代&#34;&gt;3. 长期存活的对象进入老年代&lt;/h5&gt;
-&lt;p&gt;为对象定义年龄计数器，对象在 Eden 出生并经过 Minor GC 依然存活，将移动到 Survivor 中，年龄就增加 1 岁，增加到一定年龄则移动到老年代中。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;-XX:MaxTenuringThreshold 用来定义对象进入老年期的年龄阈值。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h5 id=&#34;4-动态对象年龄判定&#34;&gt;4. 动态对象年龄判定&lt;/h5&gt;
-&lt;p&gt;虚拟机并不是永远要求对象的年龄必须达到 MaxTenuringThreshold 才能晋升老年代，如果在 Survivor 中相同年龄所有对象大小的总和大于 Survivor 空间的一半，则年龄大于或等于该年龄的对象可以直接进入老年代，无需等到 MaxTenuringThreshold 中要求的年龄。&lt;/p&gt;
-&lt;h5 id=&#34;5-空间分配担保&#34;&gt;5. 空间分配担保&lt;/h5&gt;
-&lt;p&gt;在发生 Minor GC 之前，虚拟机先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果条件成立的话，那么 Minor GC 可以确认是安全的。&lt;/p&gt;
-&lt;p&gt;如果不成立的话虚拟机会查看 HandlePromotionFailure 的值是否允许担保失败，如果允许那么就会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试着进行一次 Minor GC；如果小于，或者 HandlePromotionFailure 的值不允许冒险，那么就要进行一次 Full GC。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;JDK 6 Update 24 后，如果老年代连续空间大于新生代对象总大小或历次晋升的平均大小，则直接 Minor GC，否则 Full GC。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h4 id=&#34;full-gc-的触发条件&#34;&gt;Full GC 的触发条件&lt;/h4&gt;
-&lt;p&gt;对于 Minor GC，其触发条件非常简单，当 Eden 空间满时，就将触发一次 Minor GC。而 Full GC 则相对复杂，有以下条件：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;调用 System.gc()&lt;/p&gt;
-&lt;p&gt;只是建议虚拟机执行 Full GC，但是虚拟机&lt;strong&gt;不一定真正去执行&lt;/strong&gt;。&lt;strong&gt;不建议&lt;/strong&gt;使用这种方式，而是让虚拟机管理内存。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;老年代空间不足&lt;/p&gt;
-&lt;p&gt;老年代空间不足的常见场景为前文所讲的大对象直接进入老年代、长期存活的对象进入老年代等。&lt;/p&gt;
-&lt;p&gt;为了避免以上原因引起的 Full GC，&lt;!-- raw HTML omitted --&gt;应当尽量不要创建过大的对象以及数组&lt;!-- raw HTML omitted --&gt;。除此之外，可以通过 -Xmn 虚拟机参数调大新生代的大小，让对象尽量在新生代被回收掉，不进入老年代。还可以通过 -XX:MaxTenuringThreshold 调大对象进入老年代的年龄，让对象在新生代多存活一段时间。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;空间分配担保失败&lt;/p&gt;
-&lt;p&gt;使用复制算法的 Minor GC 需要老年代的内存空间作担保，如果担保失败会执行一次 Full GC。具体内容请参考上面的第 5 小节。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;JDK 1.7 及以前的永久代空间不足&lt;/p&gt;
-&lt;p&gt;在 JDK 1.7 及以前，HotSpot 虚拟机中的方法区是用永久代实现的，永久代中存放的为一些 Class 的信息、常量、静态变量等数据。&lt;/p&gt;
-&lt;p&gt;当系统中要加载的类、反射的类和调用的方法较多时，永久代可能会被占满，在未配置为采用 CMS GC 的情况下也会执行 Full GC。如果经过 Full GC 仍然回收不了，那么虚拟机会抛出 java.lang.OutOfMemoryError。&lt;/p&gt;
-&lt;p&gt;为避免以上原因引起的 Full GC，可采用的方法为增大永久代空间或转为使用 CMS GC。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Concurrent Mode Failure&lt;/p&gt;
-&lt;p&gt;执行 CMS GC 的过程中同时有对象要放入老年代，而此时老年代空间不足（可能是 GC 过程中浮动垃圾过多导致暂时性的空间不足），便会报 Concurrent Mode Failure 错误，并触发 Full GC。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;四可销毁对象&#34;&gt;四、可销毁对象&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Java 虚拟机不使用引用计数算法，因为两个对象如果循环引用，则引用计数器永远无法为 0。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h4 id=&#34;可达性分析&#34;&gt;可达性分析&lt;/h4&gt;
-&lt;p&gt;&lt;img src=&#34;https://winterorch.github.io/images/blog/java-jvm-ram_and_gc_02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;根搜索方法，将所有 Java 对象构成“搜索树”结构，有一个根节点 &lt;code&gt;root&lt;/code&gt;，每次从根节点触发进行搜索，遍历完后，不存在的变量成为可销毁对象。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;root&lt;/code&gt; 包括所有正在运行线程栈上的引用变量、所有全局变量、所有 &lt;code&gt;ClassLoader&lt;/code&gt; 。&lt;/p&gt;
-&lt;h4 id=&#34;类的卸载&#34;&gt;类的卸载&lt;/h4&gt;
-&lt;p&gt;类卸载必须满足很多条件，最基本的有：所有实例都被回收；&lt;code&gt;ClassLoader&lt;/code&gt;已被回收；对应的&lt;code&gt;Class&lt;/code&gt;对象没有在任何地方被引用。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;8u40 以后 G1 增加并默认开启 &lt;code&gt;ClassUnloadingWithConcurrentMark&lt;/code&gt; ，在并发标记阶段结束后，JVM 直接进行类卸载。&lt;/p&gt;
-&lt;/blockquote&gt;
-- https://winterorch.github.io/posts/java-jvm-ram_and_gc/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>中文文本测试</title>
-        <link>https://winterorch.github.io/posts/chinese/</link>
-        <pubDate>Thu, 14 Nov 2019 11:25:05 -0400</pubDate>
-        
-        <guid>https://winterorch.github.io/posts/chinese/</guid>
-        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/chinese/ -&lt;p&gt;　　这样看来， 邓拓在不经意间这样说过，越是没有本领的就越加自命不凡。这不禁令我深思。 我们不得不面对一个非常尴尬的事实，那就是， 一般来说， 所谓中午吃什么，关键是中午吃什么需要如何写。 伏尔泰说过一句富有哲理的话，坚持意志伟大的事业需要始终不渝的精神。这启发了我， 那么， 对我个人而言，中午吃什么不仅仅是一个重大的事件，还可能会改变我的人生。 这样看来， 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 一般来讲，我们都必须务必慎重的考虑考虑。 黑格尔说过一句富有哲理的话，只有永远躺在泥坑里的人，才不会再掉进坑里。这启发了我， 我们不得不面对一个非常尴尬的事实，那就是， 既然如何， 在这种困难的抉择下，本人思来想去，寝食难安。&lt;/p&gt;
-&lt;p&gt;　　我认为， 而这些并不是完全重要，更加重要的问题是， 了解清楚中午吃什么到底是一种怎么样的存在，是解决一切问题的关键。 中午吃什么因何而发生？ 而这些并不是完全重要，更加重要的问题是， 卢梭在不经意间这样说过，浪费时间是一桩大罪过。这启发了我， 既然如此， 从这个角度来看， 歌德在不经意间这样说过，意志坚强的人能把世界放在手中像泥块一样任意揉捏。我希望诸位也能好好地体会这句话。 我认为， 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 本人也是经过了深思熟虑，在每个日日夜夜思考这个问题。 这种事实对本人来说意义重大，相信对这个世界也是有一定意义的。 莎士比亚在不经意间这样说过，人的一生是短的，但如果卑劣地过这一生，就太长了。带着这句话，我们还要更加慎重的审视这个问题： 带着这些问题，我们来审视一下中午吃什么。 中午吃什么因何而发生？ 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 布尔沃曾经说过，要掌握书，莫被书掌握；要为生而读，莫为读而生。这似乎解答了我的疑惑。 而这些并不是完全重要，更加重要的问题是， 生活中，若中午吃什么出现了，我们就不得不考虑它出现了的事实。 本人也是经过了深思熟虑，在每个日日夜夜思考这个问题。 带着这些问题，我们来审视一下中午吃什么。 生活中，若中午吃什么出现了，我们就不得不考虑它出现了的事实。 我认为， 一般来说， 中午吃什么，到底应该如何实现。 我们不得不面对一个非常尴尬的事实，那就是， 所谓中午吃什么，关键是中午吃什么需要如何写。 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 现在，解决中午吃什么的问题，是非常非常重要的。&lt;/p&gt;
-&lt;p&gt;　　我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 可是，即使是这样，中午吃什么的出现仍然代表了一定的意义。 带着这些问题，我们来审视一下中午吃什么。 本人也是经过了深思熟虑，在每个日日夜夜思考这个问题。 我认为， 问题的关键究竟为何？ 非洲曾经提到过，最灵繁的人也看不见自己的背脊。这启发了我， 易卜生说过一句富有哲理的话，伟大的事业，需要决心，能力，组织和责任感。这似乎解答了我的疑惑。 一般来说， 在这种困难的抉择下，本人思来想去，寝食难安。 中午吃什么，到底应该如何实现。 经过上述讨论， 我们一般认为，抓住了问题的关键，其他一切则会迎刃而解。 中午吃什么因何而发生？ 
-带着这些问题，我们来审视一下中午吃什么。 对我个人而言，中午吃什么不仅仅是一个重大的事件，还可能会改变我的人生。&lt;/p&gt;
-- https://winterorch.github.io/posts/chinese/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
         </item>
     
     

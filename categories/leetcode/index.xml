@@ -7,7 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Thu, 24 Jun 2021 15:11:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 27 Jun 2021 12:11:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 815 - 公交路线</title>
+      <link>https://winterorch.github.io/posts/leetcode-815-bus_routes/</link>
+      <pubDate>Sun, 27 Jun 2021 12:11:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/leetcode-815-bus_routes/</guid>
+      <description>[LeetCode] 815. Bus Routes We have a list of bus routes. Each routes[i] is a bus route that the i-th bus repeats forever. For example if routes[0] = [1, 5, 7], this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.
+We start at bus stop S (initially not on a bus), and we want to go to bus stop T. Travelling by buses only, what is the least number of buses we must take to reach our destination?</description>
+    </item>
+    
     <item>
       <title>LeetCode 752 - 打开转盘锁</title>
       <link>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</link>
