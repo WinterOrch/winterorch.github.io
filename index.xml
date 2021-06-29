@@ -675,6 +675,512 @@ Set&amp;lt;String&amp;gt; deadEnds;
     
     
         <item>
+        <title>Spring下常用注释.</title>
+        <link>https://winterorch.github.io/posts/java-spring-annotation-collection/</link>
+        <pubDate>Wed, 16 Jun 2021 14:25:05 -0400</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/java-spring-annotation-collection/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/java-spring-annotation-collection/ -&lt;p&gt;首先，在 Spring 4.X 之后（不用 Spring Boot 的话）使用注释需要添加 aop 依赖。虽然不需要这么做了，还是有助于了解 Spring Boot 到底为我们做了什么。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&amp;lt;!-- https://mvnrepository.com/artifact/org.springframework/spring-aop --&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.springframework&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;spring-aop&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;{springframework.version}&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;而且需要在 XML 中添加约束并在 &lt;code&gt;context&lt;/code&gt; 中配置扫描范围。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;?xml version=&amp;#34;1.0&amp;#34; encoding=&amp;#34;UTF-8&amp;#34;?&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;beans&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;xmlns=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;http://www.springframework.org/schema/beans&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#658b00&#34;&gt;xmlns:xsi=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;http://www.w3.org/2001/XMLSchema-instance&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#658b00&#34;&gt;xmlns:context=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;http://www.springframework.org/schema/context&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#658b00&#34;&gt;xsi:schemaLocation=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;http://www.springframework.org/schema/beans
+&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;       http://www.springframework.org/schema/beans/spring-beans.xsd
+&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;       http://www.springframework.org/schema/context
+&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;       http://www.springframework.org/schema/context/spring-context.xsd&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;gt;&lt;/span&gt;
+
+	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;context:annotation-config/&amp;gt;&lt;/span&gt;
+
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;/beans&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;配置扫描范围&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&amp;lt;!--指定注解扫描包--&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;context:component-scan&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;base-package=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;com.yourpackage&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接下来按类别整理一些最常用的注释。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;bean-的扫描&#34;&gt;&lt;strong&gt;Bean 的扫描&lt;/strong&gt;&lt;/h2&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@ComponentScan&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@ComponentScan&lt;/code&gt;：通过注释方式配置扫描范围，将其下的 &lt;code&gt;@Component&lt;/code&gt; 组件（包括&lt;code&gt;@Controller&lt;/code&gt;、&lt;code&gt;@Service&lt;/code&gt;、&lt;code&gt;@Repository&lt;/code&gt;）纳入 IOC 容器. 只能作用于配置类，且 Spring Boot 的入口类不能被纳入到扫描范围中.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Spring Boot 默认的扫描范围是启动类所在包开始，当前包及子包下的所有文件&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@ComponentScan&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;cc.mrbird.demo&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;WebConfig&lt;/span&gt; {
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;可以通过 &lt;code&gt;excludeFilters&lt;/code&gt; 来排除一些组件的扫描，通过 &lt;code&gt;@Filter&lt;/code&gt; 注释完成&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@ComponentScan&lt;/span&gt;(value = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;cc.mrbird.demo&amp;#34;&lt;/span&gt;,
+        excludeFilters = {
+          			&lt;span style=&#34;color:#228b22&#34;&gt;// 将注解为 Controller 和 Repository 的类排除
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;                &lt;span style=&#34;color:#707a7c&#34;&gt;@Filter&lt;/span&gt;(type = FilterType.&lt;span style=&#34;color:#658b00&#34;&gt;ANNOTATION&lt;/span&gt;,
+                        classes = {Controller.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;, Repository.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;}),
+          			&lt;span style=&#34;color:#228b22&#34;&gt;// 排除所有 User 类（及子类、实现类）
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;                &lt;span style=&#34;color:#707a7c&#34;&gt;@Filter&lt;/span&gt;(type = FilterType.&lt;span style=&#34;color:#658b00&#34;&gt;ASSIGNABLE_TYPE&lt;/span&gt;, classes = User.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;)
+        })
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;WebConfig&lt;/span&gt; {
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如上所示，可以跟据&lt;strong&gt;注释&lt;/strong&gt;或直接指定排除相应&lt;strong&gt;类型&lt;/strong&gt;（包括其子类、实现类）&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;includeFilters&lt;/code&gt;的作用和&lt;code&gt;excludeFilters&lt;/code&gt;相反，其指定的是哪些组件需要被扫描：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@ComponentScan&lt;/span&gt;(value = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;cc.mrbird.demo&amp;#34;&lt;/span&gt;,
+        includeFilters = {
+          			&lt;span style=&#34;color:#228b22&#34;&gt;// 仅纳入注释为 Service 的类
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;                &lt;span style=&#34;color:#707a7c&#34;&gt;@Filter&lt;/span&gt;(type = FilterType.&lt;span style=&#34;color:#658b00&#34;&gt;ANNOTATION&lt;/span&gt;, classes = Service.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;)
+        }, useDefaultFilters = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;false&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;WebConfig&lt;/span&gt; {
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过实现 &lt;code&gt;org.springframework.core.type.filter.TypeFilter&lt;/code&gt;接口可以自定义扫描策略，通过实现 &lt;code&gt;match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)&lt;/code&gt; 方法，返回 &lt;code&gt;true&lt;/code&gt; 说明匹配成功。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;bean-的注册&#34;&gt;&lt;strong&gt;Bean 的注册&lt;/strong&gt;&lt;/h2&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@Bean&lt;/code&gt;, &lt;code&gt;@Component&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Bean&lt;/code&gt;：通过注解向 IOC 容器注册默认为方法名的 Bean，也可以通过 &lt;code&gt;@Bean(&amp;quot;{name}&amp;quot;)&lt;/code&gt; 来重新命名&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;WebConfig&lt;/span&gt; {
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Bean&lt;/span&gt;()
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; User &lt;span style=&#34;color:#008b45&#34;&gt;user&lt;/span&gt;() {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; User(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;mrbirdy&amp;#34;&lt;/span&gt;, 18);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;实现了 &lt;code&gt;FactoryBean&amp;lt;T&amp;gt;&lt;/code&gt; 接口的 Bean 是一类特殊的 Bean&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;CherryFactoryBean&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;implements&lt;/span&gt; FactoryBean&amp;lt;Cherry&amp;gt; {
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; Cherry &lt;span style=&#34;color:#008b45&#34;&gt;getObject&lt;/span&gt;() {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; Cherry();
+    }
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; Class&amp;lt;?&amp;gt; getObjectType() {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; Cherry.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;;
+    }
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;isSingleton&lt;/span&gt;() {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;false&lt;/span&gt;;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果 &lt;code&gt;isSingleton()&lt;/code&gt; 为 &lt;code&gt;false&lt;/code&gt; ，则每次会调用 &lt;code&gt;getObject()&lt;/code&gt; 从中获取 Bean。&lt;/p&gt;
+&lt;p&gt;通过加上前缀 &lt;code&gt;&amp;amp;&lt;/code&gt; 从工厂中取出对应的 Bean&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;Object cherryFactoryBean = context.&lt;span style=&#34;color:#658b00&#34;&gt;getBean&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;&amp;amp;cherryFactoryBean&amp;#34;&lt;/span&gt;);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Component&lt;/code&gt;：&lt;code&gt;component-scan&lt;/code&gt; 指定的扫描路径下所有被&lt;code&gt;@Controller&lt;/code&gt;、&lt;code&gt;@Service&lt;/code&gt;、&lt;code&gt;@Repository&lt;/code&gt;和&lt;code&gt;@Component&lt;/code&gt;注解标注的类都会被纳入IOC容器中&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Component&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;user&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#228b22&#34;&gt;// 相当于配置文件中 &amp;lt;bean id=&amp;#34;user&amp;#34; class=&amp;#34;当前注解的类&amp;#34;/&amp;gt;
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;User&lt;/span&gt; {
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; String name = ...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;说明该类被Spring管理。&lt;code&gt;Component&lt;/code&gt; 类的有参构造方法会被默认用作依赖注入，所以相比在成员变量上加 &lt;code&gt;@Autowire&lt;/code&gt; 来注入依赖，更合适的方法是通过构造方法注入。&lt;/p&gt;
+&lt;p&gt;衍生注解：按照MVC三层架构分层&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@Repository&lt;/code&gt;：用于DAO层，数据库操作&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Service&lt;/code&gt;：用于Service层，复杂逻辑&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Controller&lt;/code&gt;：用于Controller层，接收用户请求并调用Service层返回数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;连同&lt;code&gt;@Component&lt;/code&gt;，四个注解功能一样，都代表将某个类注册到Spring中&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;bean-的加载&#34;&gt;Bean 的加载&lt;/h2&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@Scope&lt;/code&gt;, &lt;code&gt;@Lazy&lt;/code&gt;, &lt;code&gt;@Conditional&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Scope&lt;/code&gt;：改变组件的作用域（默认 &lt;code&gt;singleton&lt;/code&gt;）&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;singleton&lt;/code&gt;：单实例（默认）,在Spring IOC容器启动的时候会调用方法创建对象然后纳入到IOC容器中，以后每次获取都是直接从IOC容器中获取（&lt;code&gt;map.get()&lt;/code&gt;）；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prototype&lt;/code&gt;：多实例，IOC容器启动的时候并不会去创建对象，而是在每次获取的时候才会去调用方法创建对象；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;request&lt;/code&gt;：一个请求对应一个实例；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;session&lt;/code&gt;：同一个session对应一个实例。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Lazy&lt;/code&gt;：懒加载（针对 &lt;code&gt;singleton&lt;/code&gt; ）&lt;/p&gt;
+&lt;p&gt;懒加载的单例不会马上调用方法创建对象并注册，只有当第一次被使用时才会调用方法创建对象并加入容器中。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Conditional&lt;/code&gt;：条件加载，类似于前面 &lt;code&gt;@ComponentScan&lt;/code&gt; 中的 &lt;code&gt;Filter&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;使用&lt;code&gt;@Conditional&lt;/code&gt;注解我们可以指定组件注册的条件，即满足特定条件才将组件纳入到 IOC 容器中。&lt;/p&gt;
+&lt;p&gt;在使用该注解之前，我们需要创建一个类，实现&lt;code&gt;Condition&lt;/code&gt;接口：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public class MyCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        return false;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;该接口包含一个&lt;code&gt;matches&lt;/code&gt;方法，包含两个入参:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;ConditionContext&lt;/code&gt;：上下文信息；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AnnotatedTypeMetadata&lt;/code&gt;：注解信息。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;简单完善一下这个实现类:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;MyCondition&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;implements&lt;/span&gt; Condition {
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;boolean&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;matches&lt;/span&gt;(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        String osName = context.&lt;span style=&#34;color:#658b00&#34;&gt;getEnvironment&lt;/span&gt;().&lt;span style=&#34;color:#658b00&#34;&gt;getProperty&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;os.name&amp;#34;&lt;/span&gt;);
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; osName != &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;null&lt;/span&gt; &amp;amp;&amp;amp; osName.&lt;span style=&#34;color:#658b00&#34;&gt;contains&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;Windows&amp;#34;&lt;/span&gt;);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接着将这个条件添加到User Bean注册的地方：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Bean&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@Conditional&lt;/span&gt;(MyCondition.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; User &lt;span style=&#34;color:#008b45&#34;&gt;user&lt;/span&gt;() {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; User(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;mrbird&amp;#34;&lt;/span&gt;, 18);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在Windows环境下，User这个组件将被成功注册，如果是别的操作系统，这个组件将不会被注册到IOC容器中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;属性注入&#34;&gt;属性注入&lt;/h2&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@Value&lt;/code&gt;, &lt;code&gt;@ConfigurationProperties&lt;/code&gt;, &lt;code&gt;@PropertySource&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Value&lt;/code&gt;:	Property注入&lt;/p&gt;
+&lt;p&gt;可以直接用在成员变量上，也可以用在Setter上&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;需要注意的是 &lt;code&gt;@value&lt;/code&gt;这种方式是不被推荐的，Spring 比较建议的是下面几种读取配置信息的方式。&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@ConfigurationProperties&lt;/code&gt;: Properties 读取并与 bean 绑定&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;LibraryProperties&lt;/code&gt; 类上加了 &lt;code&gt;@Component&lt;/code&gt; 注解，我们可以像使用普通 bean 一样将其注入到类中使用。&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;org.springframework.boot.context.properties.ConfigurationProperties&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;org.springframework.context.annotation.Configuration&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;org.springframework.stereotype.Component&lt;/span&gt;;
+
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;java.util.List&lt;/span&gt;;
+
+&lt;span style=&#34;color:#707a7c&#34;&gt;@Component&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@ConfigurationProperties&lt;/span&gt;(prefix = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;library&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;LibraryProperties&lt;/span&gt; {
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String location;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; List&amp;lt;Book&amp;gt; books;
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;Book&lt;/span&gt; {
+        String name;
+        String description;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;相应的配置文件内容&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;library:
+  location: 湖北武汉加油中国加油
+  books:
+    - name: 天才基本法
+      description: 二十二岁的林朝夕在父亲确诊阿尔茨海默病这天，得知自己暗恋多年的校园男神裴之即将出国深造的消息——对方考取的学校，恰是父亲当年为她放弃的那所。
+    - name: 时间的秩序
+      description: 为什么我们记得过去，而非未来？时间“流逝”意味着什么？是我们存在于时间之内，还是时间存在于我们之中？卡洛·罗韦利用诗意的文字，邀请我们思考这一亘古难题——时间的本质。
+    - name: 了不起的我
+      description: 如何养成一个新习惯？如何让心智变得更成熟？如何拥有高质量的关系？ 如何走出人生的艰难时刻？
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;然后就可以通过 &lt;code&gt;private final LibraryProperties library&lt;/code&gt; 注入 Property 对象了。&lt;/p&gt;
+&lt;p&gt;题外话：&lt;code&gt;InitializingBean&lt;/code&gt; 接口下的 &lt;code&gt;afterPropertiesSet()&lt;/code&gt; 方法可以作为一个 Property 注入后的 AOP 使用，如下所示：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@SpringBootApplication&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;ReadConfigPropertiesApplication&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;implements&lt;/span&gt; InitializingBean {
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;final&lt;/span&gt; LibraryProperties library;
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;ReadConfigPropertiesApplication&lt;/span&gt;(LibraryProperties library) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;library&lt;/span&gt; = library;
+    }
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;main&lt;/span&gt;(String[] args) {
+        SpringApplication.&lt;span style=&#34;color:#658b00&#34;&gt;run&lt;/span&gt;(ReadConfigPropertiesApplication.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;, args);
+    }
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;afterPropertiesSet&lt;/span&gt;() {
+        System.&lt;span style=&#34;color:#658b00&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;println&lt;/span&gt;(library.&lt;span style=&#34;color:#658b00&#34;&gt;getLocation&lt;/span&gt;());
+        System.&lt;span style=&#34;color:#658b00&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;println&lt;/span&gt;(library.&lt;span style=&#34;color:#658b00&#34;&gt;getBooks&lt;/span&gt;());    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;如果 Property类上不加 &lt;code&gt;Component&lt;/code&gt; ，就需要在 SpringBootApplication 上加 &lt;code&gt;@EnableConfigurationProperties&lt;/code&gt; 来注册 Bean ，如下所示：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@SpringBootApplication&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@EnableConfigurationProperties&lt;/span&gt;(ProfileProperties.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;ReadConfigPropertiesApplication&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;implements&lt;/span&gt; InitializingBean {
+ &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;final&lt;/span&gt; ProfileProperties profileProperties;
+
+ &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;ReadConfigPropertiesApplication&lt;/span&gt;(ProfileProperties profileProperties) {
+     &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;profileProperties&lt;/span&gt; = profileProperties;
+ }
+
+ &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;main&lt;/span&gt;(String[] args) {
+     SpringApplication.&lt;span style=&#34;color:#658b00&#34;&gt;run&lt;/span&gt;(ReadConfigPropertiesApplication.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;, args);
+ }
+
+ &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+ &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;afterPropertiesSet&lt;/span&gt;() {
+     System.&lt;span style=&#34;color:#658b00&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;println&lt;/span&gt;(profileProperties.&lt;span style=&#34;color:#658b00&#34;&gt;toString&lt;/span&gt;());
+ }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@PropertySource&lt;/code&gt;: 有单独文件的 properties 可以通过 &lt;code&gt;@PropertySource&lt;/code&gt; 来读取&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;org.springframework.beans.factory.annotation.Value&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;org.springframework.context.annotation.PropertySource&lt;/span&gt;;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#008b45;text-decoration:underline&#34;&gt;org.springframework.stereotype.Component&lt;/span&gt;;
+
+&lt;span style=&#34;color:#707a7c&#34;&gt;@Component&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@PropertySource&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;classpath:website.properties&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;WebSite&lt;/span&gt; {
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Value&lt;/span&gt;(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;${url}&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String url;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;校验注解&#34;&gt;校验注解&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这里可以参考 &lt;a href=&#34;https://snailclimb.gitee.io/springboot-guide/#/./docs/spring-bean-validation&#34;&gt;Spring Boot 指南&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;JSR 提供的校验注解&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@Null&lt;/code&gt; 被注释的元素必须为 null&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@NotNull&lt;/code&gt; 被注释的元素必须不为 null&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@AssertTrue&lt;/code&gt; 被注释的元素必须为 true&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@AssertFalse&lt;/code&gt; 被注释的元素必须为 false&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Min(value)&lt;/code&gt; 被注释的元素必须是一个数字，其值必须大于等于指定的最小值&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Max(value)&lt;/code&gt; 被注释的元素必须是一个数字，其值必须小于等于指定的最大值&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@DecimalMin(value)&lt;/code&gt; 被注释的元素必须是一个数字，其值必须大于等于指定的最小值&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@DecimalMax(value)&lt;/code&gt; 被注释的元素必须是一个数字，其值必须小于等于指定的最大值&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Size(max=, min=)&lt;/code&gt; 被注释的元素的大小必须在指定的范围内&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Digits (integer, fraction)&lt;/code&gt; 被注释的元素必须是一个数字，其值必须在可接受的范围内&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Past&lt;/code&gt; 被注释的元素必须是一个过去的日期&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Future&lt;/code&gt; 被注释的元素必须是一个将来的日期&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Pattern(regex=,flag=)&lt;/code&gt; 被注释的元素必须符合指定的正则表达式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;Person&lt;/span&gt; {
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;classId 不能为空&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String classId;
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Size&lt;/span&gt;(max = 33)
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;name 不能为空&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String name;
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Pattern&lt;/span&gt;(regexp = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;((^Man$|^Woman$|^UGM$))&amp;#34;&lt;/span&gt;, message = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;sex 值不在可选范围&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;sex 不能为空&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String sex;
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Email&lt;/span&gt;(message = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;email 格式不正确&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;email 不能为空&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String email;
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Hibernate Validator 提供的校验注解&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@NotBlank(message =)&lt;/code&gt; 验证字符串非 null，且长度必须大于 0&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Email&lt;/code&gt; 被注释的元素必须是电子邮箱地址&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Length(min=,max=)&lt;/code&gt; 被注释的字符串的大小必须在指定的范围内&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@NotEmpty&lt;/code&gt; 被注释的字符串的必须非空&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Range(min=,max=,message=)&lt;/code&gt; 被注释的元素必须在合适的范围内&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;自动装配&#34;&gt;自动装配&lt;/h2&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@Autowired&lt;/code&gt;, &lt;code&gt;@Resource&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@Autowired&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;自动装配，先&lt;code&gt;byType&lt;/code&gt;再&lt;code&gt;byName&lt;/code&gt;，如果不能唯一自动装配，则需要&lt;code&gt;@Qualifier(value=&amp;quot;xxx&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;在成员变量上实现：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;User&lt;/span&gt; {
+   &lt;span style=&#34;color:#707a7c&#34;&gt;@Autowired&lt;/span&gt;
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; Cat cat;
+   &lt;span style=&#34;color:#707a7c&#34;&gt;@Autowired&lt;/span&gt;
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; Dog dog;
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; String str;
+
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; Cat &lt;span style=&#34;color:#008b45&#34;&gt;getCat&lt;/span&gt;() {
+       &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; cat;
+  }
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; Dog &lt;span style=&#34;color:#008b45&#34;&gt;getDog&lt;/span&gt;() {
+       &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; dog;
+  }
+   &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; String &lt;span style=&#34;color:#008b45&#34;&gt;getStr&lt;/span&gt;() {
+       &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; str;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后在XML中配置Bean&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;context:annotation-config/&amp;gt;&lt;/span&gt;
+
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;id=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;dog&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;class=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;com.kuang.pojo.Dog&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;id=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;cat&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;class=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;com.kuang.pojo.Cat&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;id=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;user&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#658b00&#34;&gt;class=&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;com.kuang.pojo.User&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Qualifer()&lt;/code&gt;：如果bean名字不为类的默认名字，则要加&lt;code&gt;@Qualifer&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Autowired&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@Qualifier&lt;/span&gt;(value = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;cat2&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; Cat cat;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@Autowired&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@Qualifier&lt;/span&gt;(value = &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;dog2&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; Dog dog;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;  
+&amp;lt;/br&amp;gt;
+  
+- #### `@Resource`
+
+  自动装配，先`byName`再`byType`，如果`name`属性指定，则只会按照名称进行装配.
+
+  默认按照名称进行装配，名称可以通过name属性进行指定。如果没有指定name属性，当注解写在字段上时，默认取字段名进行按照名称查找，如果注解写在setter方法上默认取属性名进行装配
+
+  ```java
+  public class User {
+     //如果允许对象为null，设置required = false,默认为true
+     @Resource(name = &amp;quot;cat2&amp;quot;)
+     private Cat cat;
+     @Resource
+     private Dog dog;
+     private String str;
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;事务&#34;&gt;事务&lt;/h2&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@Transactional&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;@Transactional&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;在 Service 的实现类中使用，将方法标注为 SQL 事务.&lt;/p&gt;
+&lt;p&gt;首先需要在入口类上加入 &lt;code&gt;@EnableTransactionManagement&lt;/code&gt; 注解以开启事务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@EnableTransactionManagement&lt;/span&gt;
+&lt;span style=&#34;color:#707a7c&#34;&gt;@SpringBootApplication&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;TransactionApplication&lt;/span&gt; {
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;main&lt;/span&gt;(String[] args) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;throws&lt;/span&gt; Exception {
+        SpringApplication.&lt;span style=&#34;color:#658b00&#34;&gt;run&lt;/span&gt;(TransactionApplication.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;, args);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后再 &lt;code&gt;@Service&lt;/code&gt; 中标注事务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Service&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;UserServiceImpl&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;implements&lt;/span&gt; UserService {
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;final&lt;/span&gt; UserMapper userMapper;
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;UserServiceImpl&lt;/span&gt;(UserMapper userMapper) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;userMapper&lt;/span&gt; = userMapper;
+    }
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Transactional&lt;/span&gt;
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;saveUser&lt;/span&gt;(User user) {
+        userMapper.&lt;span style=&#34;color:#658b00&#34;&gt;save&lt;/span&gt;(user);
+        &lt;span style=&#34;color:#228b22&#34;&gt;// 测试事务回滚
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!StringUtils.&lt;span style=&#34;color:#658b00&#34;&gt;hasText&lt;/span&gt;(user.&lt;span style=&#34;color:#658b00&#34;&gt;getUsername&lt;/span&gt;())) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; RuntimeException(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;username不能为空&amp;#34;&lt;/span&gt;);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果生效，当用户名为空（这里用的是 &lt;code&gt;org.springframework.util&lt;/code&gt; 包下的 &lt;code&gt;hasText()&lt;/code&gt; 方法，要求字符串不为 &lt;code&gt;null&lt;/code&gt; 、长度大于0、不全为空），则会捕获到异常而进行回滚。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;@Transactional&lt;/code&gt; 同样利用的是 Spring 的 AOP 机制, 这里有两个坑.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意点一&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- raw HTML omitted --&gt;如果抛出的异常&lt;strong&gt;不是 &lt;code&gt;RuntimeException&lt;/code&gt; 或者 &lt;code&gt;Error&lt;/code&gt; ，也不是 &lt;code&gt;@Transactional&lt;/code&gt; 注解指定的回滚异常类型&lt;/strong&gt;，&lt;strong&gt;则不会进行事务回滚&lt;/strong&gt;。&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;所以在自定义需要回滚的异常时，要么继承 &lt;code&gt;RuntimeException&lt;/code&gt; ，要么直接在注释上标出来：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Transactional&lt;/span&gt;(rollbackFor = Exception.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;)
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;saveUser&lt;/span&gt;(User user) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;throws&lt;/span&gt; Exception {
+        userMapper.&lt;span style=&#34;color:#658b00&#34;&gt;save&lt;/span&gt;(user);
+        &lt;span style=&#34;color:#228b22&#34;&gt;// 测试事务回滚
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!StringUtils.&lt;span style=&#34;color:#658b00&#34;&gt;hasText&lt;/span&gt;(user.&lt;span style=&#34;color:#658b00&#34;&gt;getUsername&lt;/span&gt;())) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; Exception(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;username不能为空&amp;#34;&lt;/span&gt;);
+        }
+    }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;注意点二&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如果我们在相同 &lt;code&gt;Service&lt;/code&gt; 下的&lt;strong&gt;非事务方法中，对事务方法进行调用，事务同样不会生效&lt;/strong&gt;。如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Service&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;UserServiceImpl&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;implements&lt;/span&gt; UserService {
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;final&lt;/span&gt; UserMapper userMapper;
+
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;UserServiceImpl&lt;/span&gt;(UserMapper userMapper) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;userMapper&lt;/span&gt; = userMapper;
+    }
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;saveUserTest&lt;/span&gt;(User user) {
+        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#658b00&#34;&gt;saveUser&lt;/span&gt;(user);
+    }
+
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Transactional&lt;/span&gt;
+    &lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;saveUser&lt;/span&gt;(User user) {
+        userMapper.&lt;span style=&#34;color:#658b00&#34;&gt;save&lt;/span&gt;(user);
+        &lt;span style=&#34;color:#228b22&#34;&gt;// 测试事务回滚
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (!StringUtils.&lt;span style=&#34;color:#658b00&#34;&gt;hasText&lt;/span&gt;(user.&lt;span style=&#34;color:#658b00&#34;&gt;getUsername&lt;/span&gt;())) {
+            &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;new&lt;/span&gt; ParamInvalidException(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;username不能为空&amp;#34;&lt;/span&gt;);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;因为 Spring 事务控制通过 AOP 代理实现，通过代理目标对象来增强目标方法，而如果用 &lt;code&gt;this&lt;/code&gt; 调用方法，&lt;code&gt;this&lt;/code&gt; 绕过了代理类（实际上是代理类绕过原类，&lt;code&gt;this&lt;/code&gt; 无视了代理类），直接用了类本身，从而没有触发事务。&lt;/p&gt;
+&lt;p&gt;要让代理类重新生效有两种方法&lt;/p&gt;
+&lt;p&gt;1、 从 IOC 中获取 Bean 后再调用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;saveUserTest&lt;/span&gt;(User user) {
+    UserService userService = context.&lt;span style=&#34;color:#658b00&#34;&gt;getBean&lt;/span&gt;(UserService.&lt;span style=&#34;color:#658b00&#34;&gt;class&lt;/span&gt;);
+    userService.&lt;span style=&#34;color:#658b00&#34;&gt;saveUser&lt;/span&gt;(user);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、 直接从 AOP 上下文取代理对象进行调用（需要引入 AOP Starter 依赖），且需要再在 SpringBoot 入口类中通过注解&lt;code&gt;@EnableAspectJAutoProxy(exposeProxy = true)&lt;/code&gt;将当前代理对象暴露到 AOP 上下文中（通过 &lt;code&gt;AopContext&lt;/code&gt; 的 &lt;code&gt;ThreadLocal&lt;/code&gt; 实现）&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#707a7c&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;saveUserTest&lt;/span&gt;(User user) {
+    UserService userService = (UserService) AopContext.&lt;span style=&#34;color:#658b00&#34;&gt;currentProxy&lt;/span&gt;();
+    userService.&lt;span style=&#34;color:#658b00&#34;&gt;saveUser&lt;/span&gt;(user);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;总之是有种为了舍近求远又额外兜了一大圈的感觉，个人认为写事务就不要代入编程优雅方面的考虑了，没必要在方法单一职责上那么较真。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+- https://winterorch.github.io/posts/java-spring-annotation-collection/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
         <title>接口与抽象类的区别</title>
         <link>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</link>
         <pubDate>Wed, 02 Jun 2021 20:04:58 +0130</pubDate>
@@ -1460,74 +1966,6 @@ Set&amp;lt;String&amp;gt; deadEnds;
 &lt;/li&gt;
 &lt;/ul&gt;
 - https://winterorch.github.io/posts/computer_network-application_layer/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>Java 抽象类</title>
-        <link>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</link>
-        <pubDate>Sun, 30 May 2021 20:01:58 +0530</pubDate>
-        
-        <guid>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</guid>
-        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/ -&lt;h3 id=&#34;语法&#34;&gt;&lt;strong&gt;语法&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;抽象类中可以存在&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;构造方法&lt;/li&gt;
-&lt;li&gt;抽象方法&lt;/li&gt;
-&lt;li&gt;非抽象方法&lt;/li&gt;
-&lt;li&gt;成员变量&lt;/li&gt;
-&lt;li&gt;静态成员变量&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;总结：除了不能被实例化，抽象类几乎具有普通类的所有特性。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;注意点&#34;&gt;&lt;strong&gt;注意点&lt;/strong&gt;&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;抽象类&lt;strong&gt;不能被实例化&lt;/strong&gt;，如果试图实例化抽象类，编译无法通过&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;抽象类中&lt;strong&gt;可以有构造方法&lt;/strong&gt;，但是构造方法不能为抽象方法，其中原因见 [为什么构造函数不能为抽象]&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;抽象类及其实现的构造方法也必须遵循一般继承中的构造方法规范，包括：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 &lt;code&gt;super()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;子类要使用父类有参构造方法，使用 &lt;code&gt;super(...)&lt;/code&gt; 形式，且 &lt;code&gt;super()&lt;/code&gt; 必须是子类构造方法中第一行语句&lt;/li&gt;
-&lt;li&gt;父类没有不带参构造方法（只定义了有参构造方法而没有定义无参的），子类构造方法中必须显示调用父类其它构造方法，否则编译不过&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;抽象类中的&lt;strong&gt;静态方法也不能为抽象方法&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;抽象类中的抽象方法&lt;strong&gt;只能声明&lt;/strong&gt;，&lt;strong&gt;不能有具体实现&lt;/strong&gt;，这与接口不同（接口方法在 JDK 1.8 后也可以有默认实现），具体原因见  [为什么抽象方法不能有实现而接口方法可以]&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;有端联想&#34;&gt;&lt;strong&gt;有端联想&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;抽象类总结了几个比较有嚼劲的问题&lt;/p&gt;
-&lt;h4 id=&#34;1-为什么构造函数不能为抽象&#34;&gt;1. 为什么构造函数不能为抽象&lt;/h4&gt;
-&lt;p&gt;Java 抽象函数 和 C++ 虚函数 是等价概念，因此这里直接从 C++ 的角度找答案了。结论就是——构造函数从语言和逻辑来看都不能为虚函数。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;从内存结构角度来看&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;虚函数对应虚函数表 vtable ，表为类所有，但虚函数表指针为每个对象所有，在构造函数运行时进行空间分配，因此构造函数无法在未创建虚表指针的情况下调用虚表。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;从语言逻辑角度来看&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;构造函数目的是初始化实例，我们知道抽象类和虚基类都没有实例化的需求，将构造函数定义为虚函数是没有意义的。&lt;/p&gt;
-&lt;p&gt;可以先回顾一下虚函数的作用过程——通过指针或者引用来调用虚函数的时候能够调用到子类的对应成员函数。而构造函数是在创建对象时自动调用的，调用这一函数的指针或引用所对应的对象还不存在，也就决定了构造函数不能是虚函数。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;2-为什么抽象方法不能有实现而接口方法可以&#34;&gt;2. 为什么抽象方法不能有实现而接口方法可以&lt;/h4&gt;
-&lt;p&gt;JDK 1.8 以前两者都不能有实现，这对接口的实现造成了一些麻烦，因为很多时候我们希望接口方法能有一些默认实现，从而减少其实现类中的重复代码；更多的时候，我们实现接口也并不需要用到其中所有方法，但没有默认实现导致我们不得不在实现一个接口时实现其中所有方法（因此出现了很多用于适配接口与实现类的 &lt;code&gt;Adapter&lt;/code&gt; 类），哪怕根本不会用到。综上，JDK 1.8 以后接口也可以有默认实现了。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;这其实让我联想到数据库设计范式对数据库粒度的苛求。按照规范来说，如果有类在实现接口过程中存在用不到的方法，那说明接口的粒度仍不够小——对行为的定义不够细，但从另一方面来讲，追求完美的接口粒度又会使代码晦涩难懂，且不够灵活。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;但是抽象类中从一开始就不存在这个问题——因为抽象类并不只能包含抽象方法，还能包含普通方法，而 Java 中普通方法本身就是“虚函数”，允许子类重写。那么如果想要一个默认实现，直接写普通方法就行了。Java 语言设计抽象类的目的本就是方便代码重用，但在设计接口之初并没有把这一需求囊括进来。&lt;/p&gt;
-&lt;p&gt;而&lt;strong&gt;抽象方法&lt;/strong&gt;，仅用于标识子类&lt;strong&gt;必须实现&lt;/strong&gt;的方法（&lt;!-- raw HTML omitted --&gt;有一种特殊情况除外，就是&lt;strong&gt;子类也是抽象类&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;）。&lt;/p&gt;
-- https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
         </item>
     
     

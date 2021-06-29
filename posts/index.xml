@@ -76,6 +76,22 @@ for(int num : nums) n ^= num; 如果只有一个出现一次的数字，那答�
     </item>
     
     <item>
+      <title>Spring下常用注释.</title>
+      <link>https://winterorch.github.io/posts/java-spring-annotation-collection/</link>
+      <pubDate>Wed, 16 Jun 2021 14:25:05 -0400</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/java-spring-annotation-collection/</guid>
+      <description>首先，在 Spring 4.X 之后（不用 Spring Boot 的话）使用注释需要添加 aop 依赖。虽然不需要这么做了，还是有助于了解 Spring Boot 到底为我们做了什么。
+&amp;lt;!-- https://mvnrepository.com/artifact/org.springframework/spring-aop --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-aop&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;{springframework.version}&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 而且需要在 XML 中添加约束并在 context 中配置扫描范围。
+&amp;lt;?xml version=&amp;#34;1.0&amp;#34; encoding=&amp;#34;UTF-8&amp;#34;?&amp;gt; &amp;lt;beans xmlns=&amp;#34;http://www.springframework.org/schema/beans&amp;#34; xmlns:xsi=&amp;#34;http://www.w3.org/2001/XMLSchema-instance&amp;#34; xmlns:context=&amp;#34;http://www.springframework.org/schema/context&amp;#34; xsi:schemaLocation=&amp;#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&amp;#34;&amp;gt; &amp;lt;context:annotation-config/&amp;gt; &amp;lt;/beans&amp;gt; 配置扫描范围
+&amp;lt;!--指定注解扫描包--&amp;gt; &amp;lt;context:component-scan base-package=&amp;#34;com.yourpackage&amp;#34;/&amp;gt; 接下来按类别整理一些最常用的注释。
+Bean 的扫描   @ComponentScan
+   @ComponentScan：通过注释方式配置扫描范围，将其下的 @Component 组件（包括@Controller、@Service、@Repository）纳入 IOC 容器. 只能作用于配置类，且 Spring Boot 的入口类不能被纳入到扫描范围中.
+ Spring Boot 默认的扫描范围是启动类所在包开始，当前包及子包下的所有文件
+ @Configuration @ComponentScan(&amp;#34;cc.mrbird.demo&amp;#34;) public class WebConfig { }  可以通过 excludeFilters 来排除一些组件的扫描，通过 @Filter 注释完成</description>
+    </item>
+    
+    <item>
       <title>接口与抽象类的区别</title>
       <link>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</link>
       <pubDate>Wed, 02 Jun 2021 20:04:58 +0130</pubDate>

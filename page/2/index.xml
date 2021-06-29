@@ -13,6 +13,74 @@
     
     
         <item>
+        <title>Java 抽象类</title>
+        <link>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</link>
+        <pubDate>Sun, 30 May 2021 20:01:58 +0530</pubDate>
+        
+        <guid>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</guid>
+        <description>图拉国营噄茶馆 https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/ -&lt;h3 id=&#34;语法&#34;&gt;&lt;strong&gt;语法&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;抽象类中可以存在&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;构造方法&lt;/li&gt;
+&lt;li&gt;抽象方法&lt;/li&gt;
+&lt;li&gt;非抽象方法&lt;/li&gt;
+&lt;li&gt;成员变量&lt;/li&gt;
+&lt;li&gt;静态成员变量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;总结：除了不能被实例化，抽象类几乎具有普通类的所有特性。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;注意点&#34;&gt;&lt;strong&gt;注意点&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;抽象类&lt;strong&gt;不能被实例化&lt;/strong&gt;，如果试图实例化抽象类，编译无法通过&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;抽象类中&lt;strong&gt;可以有构造方法&lt;/strong&gt;，但是构造方法不能为抽象方法，其中原因见 [为什么构造函数不能为抽象]&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;抽象类及其实现的构造方法也必须遵循一般继承中的构造方法规范，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 &lt;code&gt;super()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;子类要使用父类有参构造方法，使用 &lt;code&gt;super(...)&lt;/code&gt; 形式，且 &lt;code&gt;super()&lt;/code&gt; 必须是子类构造方法中第一行语句&lt;/li&gt;
+&lt;li&gt;父类没有不带参构造方法（只定义了有参构造方法而没有定义无参的），子类构造方法中必须显示调用父类其它构造方法，否则编译不过&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;抽象类中的&lt;strong&gt;静态方法也不能为抽象方法&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;抽象类中的抽象方法&lt;strong&gt;只能声明&lt;/strong&gt;，&lt;strong&gt;不能有具体实现&lt;/strong&gt;，这与接口不同（接口方法在 JDK 1.8 后也可以有默认实现），具体原因见  [为什么抽象方法不能有实现而接口方法可以]&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;有端联想&#34;&gt;&lt;strong&gt;有端联想&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;抽象类总结了几个比较有嚼劲的问题&lt;/p&gt;
+&lt;h4 id=&#34;1-为什么构造函数不能为抽象&#34;&gt;1. 为什么构造函数不能为抽象&lt;/h4&gt;
+&lt;p&gt;Java 抽象函数 和 C++ 虚函数 是等价概念，因此这里直接从 C++ 的角度找答案了。结论就是——构造函数从语言和逻辑来看都不能为虚函数。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;从内存结构角度来看&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;虚函数对应虚函数表 vtable ，表为类所有，但虚函数表指针为每个对象所有，在构造函数运行时进行空间分配，因此构造函数无法在未创建虚表指针的情况下调用虚表。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;从语言逻辑角度来看&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;构造函数目的是初始化实例，我们知道抽象类和虚基类都没有实例化的需求，将构造函数定义为虚函数是没有意义的。&lt;/p&gt;
+&lt;p&gt;可以先回顾一下虚函数的作用过程——通过指针或者引用来调用虚函数的时候能够调用到子类的对应成员函数。而构造函数是在创建对象时自动调用的，调用这一函数的指针或引用所对应的对象还不存在，也就决定了构造函数不能是虚函数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;2-为什么抽象方法不能有实现而接口方法可以&#34;&gt;2. 为什么抽象方法不能有实现而接口方法可以&lt;/h4&gt;
+&lt;p&gt;JDK 1.8 以前两者都不能有实现，这对接口的实现造成了一些麻烦，因为很多时候我们希望接口方法能有一些默认实现，从而减少其实现类中的重复代码；更多的时候，我们实现接口也并不需要用到其中所有方法，但没有默认实现导致我们不得不在实现一个接口时实现其中所有方法（因此出现了很多用于适配接口与实现类的 &lt;code&gt;Adapter&lt;/code&gt; 类），哪怕根本不会用到。综上，JDK 1.8 以后接口也可以有默认实现了。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这其实让我联想到数据库设计范式对数据库粒度的苛求。按照规范来说，如果有类在实现接口过程中存在用不到的方法，那说明接口的粒度仍不够小——对行为的定义不够细，但从另一方面来讲，追求完美的接口粒度又会使代码晦涩难懂，且不够灵活。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;但是抽象类中从一开始就不存在这个问题——因为抽象类并不只能包含抽象方法，还能包含普通方法，而 Java 中普通方法本身就是“虚函数”，允许子类重写。那么如果想要一个默认实现，直接写普通方法就行了。Java 语言设计抽象类的目的本就是方便代码重用，但在设计接口之初并没有把这一需求囊括进来。&lt;/p&gt;
+&lt;p&gt;而&lt;strong&gt;抽象方法&lt;/strong&gt;，仅用于标识子类&lt;strong&gt;必须实现&lt;/strong&gt;的方法（&lt;!-- raw HTML omitted --&gt;有一种特殊情况除外，就是&lt;strong&gt;子类也是抽象类&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;）。&lt;/p&gt;
+- https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/ - WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</description>
+        </item>
+    
+    
+    
+        <item>
         <title>JVM GC</title>
         <link>https://winterorch.github.io/posts/java-jvm-ram_and_gc/</link>
         <pubDate>Wed, 17 Mar 2021 22:03:58 +0630</pubDate>
