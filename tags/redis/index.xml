@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Redis on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/redis/</link>
+    <description>Recent content in Redis on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <lastBuildDate>Wed, 30 Jun 2021 00:12:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis - 常用数据类型</title>
+      <link>https://winterorch.github.io/posts/redis-data_structure/</link>
+      <pubDate>Wed, 30 Jun 2021 00:12:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/redis-data_structure/</guid>
+      <description>以下示例代码部分源自 [小专栏] 剖析面试最常见问题之Redis .
+ type name	#查看当前 key 的类型  String string 数据结构是简单的 key-value 类型。虽然 Redis 是用 C 语言写的，但是 Redis 并没有使用 C 的字符串表示，而是自己构建了一种 简单动态字符串（simple dynamic string，SDS）。相比于 C 的原生字符串，Redis 的 SDS 不光可以保存文本数据还可以保存二进制数据，并且获取字符串长度复杂度为 O(1)（C 字符串为 O(N)）,除此之外,Redis 的 SDS API 是安全的，不会造成缓冲区溢出。
+ 常用命令: set,get,strlen,exists,dect,incr,setex 等等 应用场景 ：大多数需要缓存的场景、需要计数的场景，比如用户的访问次数、热点文章的点赞转发数量等等  127.0.0.1:6379&amp;gt; set key value #设置 key-value 类型的值 OK 127.0.0.1:6379&amp;gt; get key # 根据 key 获得对应的 value &amp;#34;value&amp;#34; 127.0.0.1:6379&amp;gt; exists key # 判断某个 key 是否存在 (integer) 1 127.</description>
+    </item>
+    
+    <item>
+      <title>Redis - 面试常见问题</title>
+      <link>https://winterorch.github.io/posts/redis-common_questions/</link>
+      <pubDate>Tue, 29 Jun 2021 15:30:58 +0630</pubDate>
+      
+      <guid>https://winterorch.github.io/posts/redis-common_questions/</guid>
+      <description>常见的内存数据库包括 Memcached 和 Redis。后者相较之下在 k/v 类型数据基础上提供了 list, set, zset, hash 等数据结构存储，并且可扩展性强，能够通过插件增加更多；同时具有容灾机制，支持数据持久化，也有原生集群模式，支持发布订阅模型、Lua 脚本、事务；并且支持更多编程语言，单线程模型更加高效。总而言之功能很强，应用很广。
+1. 简要介绍 Redis 是用 C 开发的内存数据库，非关系型数据库，读写速度快，广泛应用于缓存，也可以做分布式锁、消息队列。
+ Redis6.0 之前都是单线程处理，仅在4.0增加了对大键值对删除操作的“异步处理” 服务器内存使用完之后，将不用的数据存到磁盘上 过期数据的删除策略包括惰性删除与定期删除   2. 缓存的作用 访问数据库从硬盘中读取，过程较慢。如果用户访问数据为高频数据且不会经常改变，则可以存在缓存中，速度快。
+ 3. 删除策略   惰性删除
+只在取出 key 的时候才对数据进行过期检查。CPU负担小，但会残留很多过期 key
+  定期删除
+周期性取一批 key 执行删除过期 key 操作，通过限制删除操作执行时长和频率来减少删除操作对 CPU 影响
+  删除策略并不能清理所有过期 key ，过期 key 还需要内存淘汰机制解决。
+除了缓解内存消耗，设置过期时间也可以用于满足业务需要，比如验证码、登录Token的有效时间。
+ 4. 内存淘汰机制 跟据从中挑选淘汰数据的数据集不同，分为三大类：
+  从已设置过期时间的数据集中 volatile
+  volatile-lru (least recently used)</description>
+    </item>
+    
+  </channel>
+</rss>

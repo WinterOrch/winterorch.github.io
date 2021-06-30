@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html><head>
+<title>Redis - 常用数据类型</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="Redis通过C语言实现了自己的数据类型">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+<meta property="og:title" content="Redis - 常用数据类型" />
+<meta property="og:description" content="Redis通过C语言实现了自己的数据类型" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://winterorch.github.io/posts/redis-data_structure/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-30T00:12:58&#43;06:30" />
+<meta property="article:modified_time" content="2021-06-30T00:12:58&#43;06:30" /><meta property="og:site_name" content="My Blog" />
+
+
+
+
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis - 常用数据类型"/>
+<meta name="twitter:description" content="Redis通过C语言实现了自己的数据类型"/>
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+<script src="/vendor/js/vue.min.js" ></script>
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://winterorch.github.io/scss/journal.min.d4108c26a8f8dd3abc1cba5d3bd8b9d4b834ea3c0710b78fa3010b8942ce9d9b.css" integrity="sha256-1BCMJqj43Tq8HLpdO9i51Lg06jwHELePowELiULOnZs=" media="screen">
+
+
+
+<link rel="stylesheet" href="https://winterorch.github.io/scss/dark-mode.min.eb84b98ab2384f8334bfcaa9ab8f0a2dec872fe34abf8cd2bb451663742c8349.css" integrity="sha256-64S5irI4T4M0v8qpq48KLeyHL&#43;NKv4zSu0UWY3Qsg0k=" media="screen">
+
+
+<script src="/js/loadCSS.js"></script>
+<script>
+  loadCSS("https://fonts.googleapis.com/css?family=Fira+Mono|Material+Icons");
+</script>
+
+
+
+
+  
+    <script src="/js/toc.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>console.log("Hello from 'layouts/partials/extended_head.html'")</script>
+
+</head>
+<body>
+    	<div id="app"><div ref="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://winterorch.github.io">
+    
+        <div class="nav-title">
+            图拉国营噄茶馆
+        </div>
+        
+        <div class="nav-subtitle">
+            WinterOrch&#39;s Blog
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+            
+            
+            
+                
+            
+            
+            
+            <a class="a-block nav-link-item active" href="/posts">
+                归档
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/categories">
+                分类
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/tags">
+                标签
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/index.xml">
+                RSS
+            </a>
+            
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
+<br>
+移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	WinterOrch. 本站遵循 CC-BY-NC 4.0 协议
+	
+
+    </div>
+    
+</div><div ref="extraContainer" class="extra-container">
+    
+    
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#string" onclick="onNavClick(`#string-nav`)" id="string-nav">
+									String
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e8%ae%be%e7%bd%ae%e8%bf%87%e6%9c%9f%e5%af%b9%e6%89%80%e6%9c%89%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e9%83%bd%e9%80%82%e7%94%a8" onclick="onNavClick(`#设置过期对所有数据类型都适用-nav`)" id="设置过期对所有数据类型都适用-nav">
+									设置过期（对所有数据类型都适用）
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#ziplist-%e5%8e%8b%e7%bc%a9%e5%88%97%e8%a1%a8" onclick="onNavClick(`#ziplist-压缩列表-nav`)" id="ziplist-压缩列表-nav">
+									ZipList 压缩列表
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#list-%e9%93%be%e8%a1%a8" onclick="onNavClick(`#list-链表-nav`)" id="list-链表-nav">
+									List 链表
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#hash-%e6%97%a0%e5%ba%8f%e6%95%a3%e5%88%97%e8%a1%a8" onclick="onNavClick(`#hash-无序散列表-nav`)" id="hash-无序散列表-nav">
+									Hash 无序散列表
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#set-%e6%97%a0%e5%ba%8f%e9%9b%86%e5%90%88" onclick="onNavClick(`#set-无序集合-nav`)" id="set-无序集合-nav">
+									Set 无序集合
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#sortedset-%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88" onclick="onNavClick(`#sortedset-有序集合-nav`)" id="sortedset-有序集合-nav">
+									SortedSet 有序集合
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#bitmap" onclick="onNavClick(`#bitmap-nav`)" id="bitmap-nav">
+									bitmap
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%b9%90%e8%a7%82%e9%94%81" onclick="onNavClick(`#乐观锁-nav`)" id="乐观锁-nav">
+									乐观锁
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a class="pagination-action" v-on:click="toggleDarkMode">
+            <i class="material-icons pagination-action-icon" v-if="isDarkMode">
+                brightness_4
+            </i>
+            <i class="material-icons pagination-action-icon" v-else="isDarkMode">
+                brightness_7
+            </i>
+        </a>
+        
+        
+    </div>
+</div>
+<div class="single-column-drawer-container" ref="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+                
+                
+                
+                    
+                
+                
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
+                    归档
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/categories">
+                    分类
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/tags">
+                    标签
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/index.xml">
+                    RSS
+                </a>
+                
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目录 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#string" onclick="onNavClick(`#string-nav`)" id="string-nav">
+									String
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e8%ae%be%e7%bd%ae%e8%bf%87%e6%9c%9f%e5%af%b9%e6%89%80%e6%9c%89%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e9%83%bd%e9%80%82%e7%94%a8" onclick="onNavClick(`#设置过期对所有数据类型都适用-nav`)" id="设置过期对所有数据类型都适用-nav">
+									设置过期（对所有数据类型都适用）
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#ziplist-%e5%8e%8b%e7%bc%a9%e5%88%97%e8%a1%a8" onclick="onNavClick(`#ziplist-压缩列表-nav`)" id="ziplist-压缩列表-nav">
+									ZipList 压缩列表
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#list-%e9%93%be%e8%a1%a8" onclick="onNavClick(`#list-链表-nav`)" id="list-链表-nav">
+									List 链表
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#hash-%e6%97%a0%e5%ba%8f%e6%95%a3%e5%88%97%e8%a1%a8" onclick="onNavClick(`#hash-无序散列表-nav`)" id="hash-无序散列表-nav">
+									Hash 无序散列表
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#set-%e6%97%a0%e5%ba%8f%e9%9b%86%e5%90%88" onclick="onNavClick(`#set-无序集合-nav`)" id="set-无序集合-nav">
+									Set 无序集合
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#sortedset-%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88" onclick="onNavClick(`#sortedset-有序集合-nav`)" id="sortedset-有序集合-nav">
+									SortedSet 有序集合
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+							
+								</ul>
+							
+						
+						
+						
+							<li>
+								<a href="#bitmap" onclick="onNavClick(`#bitmap-nav`)" id="bitmap-nav">
+									bitmap
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%b9%90%e8%a7%82%e9%94%81" onclick="onNavClick(`#乐观锁-nav`)" id="乐观锁-nav">
+									乐观锁
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav ref="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div ref="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a ref="navTitle" class="navbar-brand" href="https://winterorch.github.io">
+            图拉国营噄茶馆
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" v-on:click="toggleDarkMode">
+            <i class="material-icons" v-if="isDarkMode">
+                brightness_4
+            </i>
+            <i class="material-icons" v-else="isDarkMode">
+                brightness_7
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" ref="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://winterorch.github.io">
+        <div class="single-column-header-title">图拉国营噄茶馆</div>
+        
+        <div class="single-column-header-subtitle">WinterOrch&#39;s Blog</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+<div ref="streamContainer" class="stream-container">
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+                
+            
+
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://winterorch.github.io/images/feature/scenes/Windmill.jpg')"
+                    
+                
+            >
+                <div class="post-title">
+                    Redis - 常用数据类型
+                    
+                    <div class="post-subtitle">
+                        Redis通过C语言实现了自己的数据类型
+                    </div>
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2021-06-30 00:12
+                        </time>
+                        
+
+                        
+                            <i class="material-icons" style="">folder</i>
+                                <a href="/categories/redis">Redis</a>
+                                &nbsp;
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/redis">Redis</a>
+                                &nbsp;
+                            
+                                <a href="/tags/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87">面试技术储备</a>
+                                &nbsp;
+                            
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>以下示例代码部分源自 [小专栏] <a href="https://xiaozhuanlan.com/topic/6845397012"><strong>剖析面试最常见问题之Redis</strong></a> .</p>
+<h3 id="heading"></h3>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#658b00">type</span> name		<span style="color:#228b22">#查看当前 key 的类型</span>
+</code></pre></div><hr>
+<h3 id="string">String</h3>
+<p>string 数据结构是简单的 key-value 类型。虽然 Redis 是用 C 语言写的，但是 Redis 并没有使用 C 的字符串表示，而是自己构建了一种 <strong>简单动态字符串</strong>（simple dynamic string，<strong>SDS</strong>）。相比于 C 的原生字符串，Redis 的 SDS 不光可以保存文本数据还可以保存二进制数据，并且获取字符串长度复杂度为 O(1)（C 字符串为 O(N)）,除此之外,Redis 的 SDS API 是安全的，不会造成缓冲区溢出。</p>
+<ul>
+<li><strong>常用命令:</strong> <code>set,get,strlen,exists,dect,incr,setex</code> 等等</li>
+<li><strong>应用场景</strong> ：大多数需要缓存的场景、需要计数的场景，比如用户的访问次数、热点文章的点赞转发数量等等</li>
+</ul>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; <span style="color:#658b00">set</span> key value <span style="color:#228b22">#设置 key-value 类型的值</span>
+OK
+127.0.0.1:6379&gt; get key <span style="color:#228b22"># 根据 key 获得对应的 value</span>
+<span style="color:#cd5555">&#34;value&#34;</span>
+127.0.0.1:6379&gt; exists key  <span style="color:#228b22"># 判断某个 key 是否存在</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; strlen key <span style="color:#228b22"># 返回 key 所储存的字符串值的长度。</span>
+(integer) <span style="color:#b452cd">5</span>
+127.0.0.1:6379&gt; del key <span style="color:#228b22"># 删除某个 key 对应的值</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; get key
+(nil)
+</code></pre></div><p><strong>作计数器用 （字符串的内容为整数的时候可以使用）</strong></p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; <span style="color:#658b00">set</span> number <span style="color:#b452cd">1</span>
+OK
+127.0.0.1:6379&gt; incr number <span style="color:#228b22"># 将 key 中储存的数字值增一</span>
+(integer) <span style="color:#b452cd">2</span>
+127.0.0.1:6379&gt; get number
+<span style="color:#cd5555">&#34;2&#34;</span>
+127.0.0.1:6379&gt; decr number <span style="color:#228b22"># 将 key 中储存的数字值减一</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; get number
+<span style="color:#cd5555">&#34;1&#34;</span>
+</code></pre></div><h4 id="设置过期对所有数据类型都适用"><strong>设置过期（对所有数据类型都适用）</strong></h4>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; expire key  <span style="color:#b452cd">60</span> <span style="color:#228b22"># 数据在 60s 后过期</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; setex key <span style="color:#b452cd">60</span> value <span style="color:#228b22"># 数据在 60s 后过期 (setex:[set] + [ex]pire)</span>
+OK
+127.0.0.1:6379&gt; ttl key <span style="color:#228b22"># 查看数据还有多久过期</span>
+(integer) <span style="color:#b452cd">56</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="ziplist-压缩列表">ZipList 压缩列表</h3>
+<p>压缩列表本质是字节数组，可以包含任意多个元素，每个元素可以是字节数组或整数。</p>
+<p><strong>编码</strong></p>
+<p><img src="https://image-static.segmentfault.com/230/743/2307433878-5c0e7ad049f11_articlex" alt=""></p>
+<ol>
+<li><code>zlbytes</code>：字节长度，占4字节，因此ZipList最长 $2^{32} - 1$ 字节</li>
+<li><code>zltail</code>：为元素相对起始地址的偏移量，占4字节</li>
+<li><code>zllen</code>：列表元素数目，占2字节，当数目超过 $2^{16}-1$ 时字段无效，只能通过遍历获取数目</li>
+<li><code>entryX</code>：若干元素</li>
+<li><code>zlend</code>：结尾字节，<code>0xFF</code></li>
+</ol>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="list-链表">List 链表</h3>
+<p>当列表中存储数据量较大，列表通过双向循环链表实现。可以支持反向查找和遍历，更方便操作，不过带来了部分额外的内存开销。</p>
+<ul>
+<li><strong>常用命令:</strong> <code>rpush,lpop,lpush,rpop,lrange、llen</code> 等。</li>
+<li><strong>应用场景:</strong> 发布与订阅或者说消息队列、慢查询。</li>
+</ul>
+<!-- raw HTML omitted -->
+<p><strong>实现队列</strong></p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; rpush myList value1 <span style="color:#228b22"># 向 list 的头部（右边）添加元素</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; rpush myList value2 value3 <span style="color:#228b22"># 向list的头部（最右边）添加多个元素</span>
+(integer) <span style="color:#b452cd">3</span>
+127.0.0.1:6379&gt; lpop myList <span style="color:#228b22"># 将 list的尾部(最左边)元素取出</span>
+<span style="color:#cd5555">&#34;value1&#34;</span>
+127.0.0.1:6379&gt; lrange myList <span style="color:#b452cd">0</span> <span style="color:#b452cd">1</span> <span style="color:#228b22"># 查看对应下标的list列表， 0 为 start,1为 end</span>
+1) <span style="color:#cd5555">&#34;value2&#34;</span>
+2) <span style="color:#cd5555">&#34;value3&#34;</span>
+127.0.0.1:6379&gt; lrange myList <span style="color:#b452cd">0</span> -1 <span style="color:#228b22"># 查看列表中的所有元素，-1表示倒数第一</span>
+1) <span style="color:#cd5555">&#34;value2&#34;</span>
+2) <span style="color:#cd5555">&#34;value3&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<p><strong>实现栈</strong></p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; rpush myList2 value1 value2 value3
+(integer) <span style="color:#b452cd">3</span>
+127.0.0.1:6379&gt; rpop myList2 <span style="color:#228b22"># 将 list的头部(最右边)元素取出</span>
+<span style="color:#cd5555">&#34;value3&#34;</span>
+</code></pre></div><p><strong>通过 <code>lrange</code> 查看对应下标范围的列表元素：</strong></p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; rpush myList value1 value2 value3
+(integer) <span style="color:#b452cd">3</span>
+127.0.0.1:6379&gt; lrange myList <span style="color:#b452cd">0</span> <span style="color:#b452cd">1</span> <span style="color:#228b22"># 查看对应下标的list列表， 0 为 start,1为 end</span>
+1) <span style="color:#cd5555">&#34;value1&#34;</span>
+2) <span style="color:#cd5555">&#34;value2&#34;</span>
+127.0.0.1:6379&gt; lrange myList <span style="color:#b452cd">0</span> -1 <span style="color:#228b22"># 查看列表中的所有元素，-1表示倒数第一</span>
+1) <span style="color:#cd5555">&#34;value1&#34;</span>
+2) <span style="color:#cd5555">&#34;value2&#34;</span>
+3) <span style="color:#cd5555">&#34;value3&#34;</span>
+</code></pre></div><p>通过 <code>lrange</code> 命令，你可以基于 list 实现分页查询，性能非常高！</p>
+<p><strong>通过 <code>llen</code> 查看链表长度：</strong></p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; llen myList
+(integer) <span style="color:#b452cd">3</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="hash-无序散列表">Hash 无序散列表</h3>
+<p>存储<strong>键值对</strong>。当数据量较小，使用ZipList存储，否则使用<strong>散列表</strong>(使用MurmurHash2作为哈希函数)。</p>
+<p>当负载因子大于1，触发扩容，将散列表扩大为2倍。当负载因子小于0.1，触发缩容，缩小为实际负载的2倍大小。</p>
+<ul>
+<li><strong>常用命令：</strong> <code>hset,hmset,hexists,hget,hgetall,hkeys,hvals</code> 等。</li>
+<li><strong>应用场景:</strong> 系统中对象数据的存储。</li>
+</ul>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; hset userInfoKey name <span style="color:#cd5555">&#34;guide&#34;</span> description <span style="color:#cd5555">&#34;dev&#34;</span> age <span style="color:#cd5555">&#34;24&#34;</span>
+OK
+127.0.0.1:6379&gt; hexists userInfoKey name <span style="color:#228b22"># 查看 key 对应的 value中指定的字段是否存在。</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; hget userInfoKey name <span style="color:#228b22"># 获取存储在哈希表中指定字段的值。</span>
+<span style="color:#cd5555">&#34;guide&#34;</span>
+127.0.0.1:6379&gt; hget userInfoKey age
+<span style="color:#cd5555">&#34;24&#34;</span>
+127.0.0.1:6379&gt; hgetall userInfoKey <span style="color:#228b22"># 获取在哈希表中指定 key 的所有字段和值</span>
+1) <span style="color:#cd5555">&#34;name&#34;</span>
+2) <span style="color:#cd5555">&#34;guide&#34;</span>
+3) <span style="color:#cd5555">&#34;description&#34;</span>
+4) <span style="color:#cd5555">&#34;dev&#34;</span>
+5) <span style="color:#cd5555">&#34;age&#34;</span>
+6) <span style="color:#cd5555">&#34;24&#34;</span>
+127.0.0.1:6379&gt; hkeys userInfoKey <span style="color:#228b22"># 获取 key 列表</span>
+1) <span style="color:#cd5555">&#34;name&#34;</span>
+2) <span style="color:#cd5555">&#34;description&#34;</span>
+3) <span style="color:#cd5555">&#34;age&#34;</span>
+127.0.0.1:6379&gt; hvals userInfoKey <span style="color:#228b22"># 获取 value 列表</span>
+1) <span style="color:#cd5555">&#34;guide&#34;</span>
+2) <span style="color:#cd5555">&#34;dev&#34;</span>
+3) <span style="color:#cd5555">&#34;24&#34;</span>
+127.0.0.1:6379&gt; hset userInfoKey name <span style="color:#cd5555">&#34;GuideGeGe&#34;</span> <span style="color:#228b22"># 修改某个字段对应的值</span>
+127.0.0.1:6379&gt; hget userInfoKey name
+<span style="color:#cd5555">&#34;GuideGeGe&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h4 id="set-无序集合">Set 无序集合</h4>
+<p>集合中的元素没有先后顺序，不允许重复数据。</p>
+<ul>
+<li><strong>常用命令：</strong> <code>sadd,spop,smembers,sismember,scard,sinterstore,sunion</code> 等。</li>
+<li><strong>应用场景:</strong> 需要存放的数据不能重复以及需要获取多个数据源交集和并集等场景</li>
+</ul>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; sadd mySet value1 value2 <span style="color:#228b22"># 添加元素进去</span>
+(integer) <span style="color:#b452cd">2</span>
+127.0.0.1:6379&gt; sadd mySet value1 <span style="color:#228b22"># 不允许有重复元素</span>
+(integer) <span style="color:#b452cd">0</span>
+127.0.0.1:6379&gt; smembers mySet <span style="color:#228b22"># 查看 set 中所有的元素</span>
+1) <span style="color:#cd5555">&#34;value1&#34;</span>
+2) <span style="color:#cd5555">&#34;value2&#34;</span>
+127.0.0.1:6379&gt; scard mySet <span style="color:#228b22"># 查看 set 的长度</span>
+(integer) <span style="color:#b452cd">2</span>
+127.0.0.1:6379&gt; sismember mySet value1 <span style="color:#228b22"># 检查某个元素是否存在set 中，只能接收单个元素</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; sadd mySet2 value2 value3
+(integer) <span style="color:#b452cd">2</span>
+127.0.0.1:6379&gt; sinterstore mySet3 mySet mySet2 <span style="color:#228b22"># 获取 mySet 和 mySet2 的交集并存放在 mySet3 中</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; smembers mySet3
+1) <span style="color:#cd5555">&#34;value2&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h4 id="sortedset-有序集合">SortedSet 有序集合</h4>
+<p>存储键值对，有序集合的值被称为分值(score)，必须为浮点数。SortedSet 是唯一既可以跟据成员访问，又可以跟据分值以及分值排列顺序访问元素的结构。有点像是 Java 中 HashMap 和 TreeSet 的结合体。</p>
+<ul>
+<li><strong>常用命令：</strong> <code>zadd,zcard,zscore,zrange,zrevrange,zrem</code> 等。</li>
+<li><strong>应用场景：</strong> 需要对数据根据某个权重进行排序的场景。比如在直播系统中，实时排行信息包含直播间在线用户列表，各种礼物排行榜，弹幕消息（可以理解为按消息维度的消息排行榜）等信息。</li>
+</ul>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; zadd myZset 3.0 value1 <span style="color:#228b22"># 添加元素到 sorted set 中 3.0 为权重</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; zadd myZset 2.0 value2 1.0 value3 <span style="color:#228b22"># 一次添加多个元素</span>
+(integer) <span style="color:#b452cd">2</span>
+127.0.0.1:6379&gt; zcard myZset <span style="color:#228b22"># 查看 sorted set 中的元素数量</span>
+(integer) <span style="color:#b452cd">3</span>
+127.0.0.1:6379&gt; zscore myZset value1 <span style="color:#228b22"># 查看某个 value 的权重</span>
+<span style="color:#cd5555">&#34;3&#34;</span>
+127.0.0.1:6379&gt; zrange  myZset <span style="color:#b452cd">0</span> -1 <span style="color:#228b22"># 顺序输出某个范围区间的元素，0 -1 表示输出所有元素</span>
+1) <span style="color:#cd5555">&#34;value3&#34;</span>
+2) <span style="color:#cd5555">&#34;value2&#34;</span>
+3) <span style="color:#cd5555">&#34;value1&#34;</span>
+127.0.0.1:6379&gt; zrange  myZset <span style="color:#b452cd">0</span> <span style="color:#b452cd">1</span> <span style="color:#228b22"># 顺序输出某个范围区间的元素，0 为 start  1 为 stop</span>
+1) <span style="color:#cd5555">&#34;value3&#34;</span>
+2) <span style="color:#cd5555">&#34;value2&#34;</span>
+127.0.0.1:6379&gt; zrevrange  myZset <span style="color:#b452cd">0</span> <span style="color:#b452cd">1</span> <span style="color:#228b22"># 逆序输出某个范围区间的元素，0 为 start  1 为 stop</span>
+1) <span style="color:#cd5555">&#34;value1&#34;</span>
+2) <span style="color:#cd5555">&#34;value2&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="bitmap">bitmap</h3>
+<p>适用只需要一个 bit 位来表示某个元素对应值或者状态的情况，如是否签到、是否登录等 Java 中使用 <code>bool</code> 的场景，加之 <code>bitmap</code> 可以统计设为 1 的位的数量</p>
+<p><strong>常用命令：</strong> <code>setbit</code> 、<code>getbit</code> 、<code>bitcount</code>、<code>bitop</code></p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#228b22"># SETBIT 会返回之前位的值（默认是 0）这里会生成 7 个位</span>
+127.0.0.1:6379&gt; setbit mykey <span style="color:#b452cd">7</span> <span style="color:#b452cd">1</span>
+(integer) <span style="color:#b452cd">0</span>
+127.0.0.1:6379&gt; setbit mykey <span style="color:#b452cd">7</span> <span style="color:#b452cd">0</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; getbit mykey <span style="color:#b452cd">7</span>
+(integer) <span style="color:#b452cd">0</span>
+127.0.0.1:6379&gt; setbit mykey <span style="color:#b452cd">6</span> <span style="color:#b452cd">1</span>
+(integer) <span style="color:#b452cd">0</span>
+127.0.0.1:6379&gt; setbit mykey <span style="color:#b452cd">8</span> <span style="color:#b452cd">1</span>
+(integer) <span style="color:#b452cd">0</span>
+<span style="color:#228b22"># 通过 bitcount 统计被被设置为 1 的位的数量。</span>
+127.0.0.1:6379&gt; bitcount mykey
+(integer) <span style="color:#b452cd">2</span>
+</code></pre></div><p>用户 ID 经常可以被用来作 <code>bitmap</code>  上的 <code>offset</code>，从而可以轻松统计“&hellip;的用户个数”。</p>
+<p>相应的，位操作 <code>BITOP operation destkey key [key ...]</code> ，支持 <code>AND</code> <code>OR</code> <code>NOT</code> <code>XOR</code> 四种操作中任意一种参数。</p>
+<p>初始化数据：</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; setbit <span style="color:#b452cd">20210308</span> <span style="color:#b452cd">1</span> <span style="color:#b452cd">1</span>
+(integer) <span style="color:#b452cd">0</span>
+127.0.0.1:6379&gt; setbit <span style="color:#b452cd">20210308</span> <span style="color:#b452cd">2</span> <span style="color:#b452cd">1</span>
+(integer) <span style="color:#b452cd">0</span>
+127.0.0.1:6379&gt; setbit <span style="color:#b452cd">20210309</span> <span style="color:#b452cd">1</span> <span style="color:#b452cd">1</span>
+(integer) <span style="color:#b452cd">0</span>
+</code></pre></div><p>统计 20210308~20210309 总活跃用户数: 1</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; bitop and desk1 <span style="color:#b452cd">20210308</span> <span style="color:#b452cd">20210309</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; bitcount desk1
+(integer) <span style="color:#b452cd">1</span>
+</code></pre></div><p>统计 20210308~20210309 在线活跃用户数: 2</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; bitop or desk2 <span style="color:#b452cd">20210308</span> <span style="color:#b452cd">20210309</span>
+(integer) <span style="color:#b452cd">1</span>
+127.0.0.1:6379&gt; bitcount desk2
+(integer) <span style="color:#b452cd">2</span>
+</code></pre></div><p>实际上，如果需要统计日活、月活用户这种，Redis 有一个非常对口的数据结构——HyperLoglog，原理其实类似于布隆滤波器，也是一个哈希过滤器，有一定的误警率，因此一般用于统计日活用户数量之类对精确度没有很高要求的数据。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="乐观锁">乐观锁</h3>
+<blockquote>
+<p>对应数据库中的 <code>version</code> 设计</p>
+</blockquote>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">watch money		<span style="color:#228b22">#使用 watch 当作乐观锁操作</span>
+</code></pre></div><p>被监视数据，如果在事务对其执行操作前被其它线程修改，则在调用 <code>exec</code> 时会执行失败</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">unwatch		<span style="color:#228b22"># 失败，乐观锁已经失效</span>
+
+watch money		<span style="color:#228b22"># 添加新的乐观锁</span>
+</code></pre></div><hr>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">最后修改于 2021-06-30</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts">
+			下回<br>已经到头啦。
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://winterorch.github.io/posts/redis-common_questions/">
+			上回<br>Redis - 面试常见问题
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div><div id="single-column-footer">
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
+<br>
+移植自 <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	WinterOrch. 本站遵循 CC-BY-NC 4.0 协议
+	
+</div>
+            </div>
+    <script>
+let app;
+
+app = new Vue({
+    el: '#app',
+    data: {
+        scrollY: 0,
+        navOpacity: 0,
+        isDrawerOpen: false,
+        mounted: false,
+        isDarkMode: false
+    },
+    methods: {
+            sgn(t, x) {
+                let k = 1. / (1. - 2 * t);
+                if (x <= t) return 0;
+                else if (x >= 1 - t) return 1;
+                else {
+                    return k * (x - t);
+                }
+            },
+            handleScroll() {
+                this.scrollY = window.scrollY;
+                this.navOpacity = this.sgn(.0, Math.min(1, Math.max(0, window.scrollY / (this.pageHeadHeight() - this.navBarHeight() * 0.8))));
+                const {navBar, navBackground, navTitle, extraContainer, streamContainer} = this.$refs;
+
+                if (this.navOpacity >= 1) {
+                    navBackground.style.opacity = 1;
+                    navTitle.style.opacity = 1;
+                } else {
+                    navBackground.style.opacity = 0;
+                    navTitle.style.opacity = 0;
+                }
+            },
+            handleResize() {
+                const {navBar, navBackground, navTitle, extraContainer, streamContainer} = this.$refs;
+                extraContainer.style.left = (streamContainer.offsetWidth - extraContainer.offsetWidth) + 'px';
+            },
+            navBarHeight() {
+                return this.$refs.navBar.offsetHeight;
+            },
+            pageHeadHeight() {
+                return this.$refs.pageHead.offsetHeight;
+            },
+            toggleDrawer() {
+                this.isDrawerOpen = !this.isDrawerOpen;
+                document.getElementsByTagName('html')[0].style.overflow = this.isDrawerOpen ? 'hidden' : 'unset';
+            },
+            closeDrawer() {
+                this.isDrawerOpen = false;
+                document.getElementsByTagName('html')[0].style.overflow = this.isDrawerOpen ? 'hidden' : 'unset';
+            },
+            toggleDarkMode() {
+                this.isDarkMode = !this.isDarkMode;
+                if (this.isDarkMode==true){
+                    document.cookie = "night=1;path=/";
+                    document.body.classList.add("night");
+                } else {
+                    document.cookie = "night=0;path=/";
+                    document.body.classList.remove("night");
+                }
+            },
+            debounce(func, wait, options) {
+                let lastArgs,
+                    lastThis,
+                    maxWait,
+                    result,
+                    timerId,
+                    lastCallTime
+
+                let lastInvokeTime = 0
+                let leading = false
+                let maxing = false
+                let trailing = true
+
+                
+                const useRAF = (!wait && wait !== 0 && typeof root.requestAnimationFrame === 'function')
+
+                if (typeof func !== 'function') {
+                    throw new TypeError('Expected a function')
+                }
+                function isObject(value) {
+                    const type = typeof value
+                    return value != null && (type === 'object' || type === 'function')
+                }
+
+                wait = +wait || 0
+                if (isObject(options)) {
+                    leading = !!options.leading
+                    maxing = 'maxWait' in options
+                    maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait
+                    trailing = 'trailing' in options ? !!options.trailing : trailing
+                }
+
+                function invokeFunc(time) {
+                    const args = lastArgs
+                    const thisArg = lastThis
+
+                    lastArgs = lastThis = undefined
+                    lastInvokeTime = time
+                    result = func.apply(thisArg, args)
+                    return result
+                }
+
+                function startTimer(pendingFunc, wait) {
+                    if (useRAF) {
+                    root.cancelAnimationFrame(timerId)
+                    return root.requestAnimationFrame(pendingFunc)
+                    }
+                    return setTimeout(pendingFunc, wait)
+                }
+
+                function cancelTimer(id) {
+                    if (useRAF) {
+                    return root.cancelAnimationFrame(id)
+                    }
+                    clearTimeout(id)
+                }
+
+                function leadingEdge(time) {
+                    
+                    lastInvokeTime = time
+                    
+                    timerId = startTimer(timerExpired, wait)
+                    
+                    return leading ? invokeFunc(time) : result
+                }
+
+                function remainingWait(time) {
+                    const timeSinceLastCall = time - lastCallTime
+                    const timeSinceLastInvoke = time - lastInvokeTime
+                    const timeWaiting = wait - timeSinceLastCall
+
+                    return maxing
+                    ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke)
+                    : timeWaiting
+                }
+
+                function shouldInvoke(time) {
+                    const timeSinceLastCall = time - lastCallTime
+                    const timeSinceLastInvoke = time - lastInvokeTime
+
+                    
+                    
+                    
+                    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+                    (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait))
+                }
+
+                function timerExpired() {
+                    const time = Date.now()
+                    if (shouldInvoke(time)) {
+                    return trailingEdge(time)
+                    }
+                    
+                    timerId = startTimer(timerExpired, remainingWait(time))
+                }
+
+                function trailingEdge(time) {
+                    timerId = undefined
+
+                    
+                    
+                    if (trailing && lastArgs) {
+                    return invokeFunc(time)
+                    }
+                    lastArgs = lastThis = undefined
+                    return result
+                }
+
+                function cancel() {
+                    if (timerId !== undefined) {
+                    cancelTimer(timerId)
+                    }
+                    lastInvokeTime = 0
+                    lastArgs = lastCallTime = lastThis = timerId = undefined
+                }
+
+                function flush() {
+                    return timerId === undefined ? result : trailingEdge(Date.now())
+                }
+
+                function pending() {
+                    return timerId !== undefined
+                }
+
+                function debounced(...args) {
+                    const time = Date.now()
+                    const isInvoking = shouldInvoke(time)
+
+                    lastArgs = args
+                    lastThis = this
+                    lastCallTime = time
+
+                    if (isInvoking) {
+                    if (timerId === undefined) {
+                        return leadingEdge(lastCallTime)
+                    }
+                    if (maxing) {
+                        
+                        timerId = startTimer(timerExpired, wait)
+                        return invokeFunc(lastCallTime)
+                    }
+                    }
+                    if (timerId === undefined) {
+                    timerId = startTimer(timerExpired, wait)
+                    }
+                    return result
+                }
+                debounced.cancel = cancel
+                debounced.flush = flush
+                debounced.pending = pending
+                return debounced
+                }
+
+    },
+    created() {
+        window.addEventListener('scroll', this.handleScroll);
+        window.addEventListener('resize', this.handleResize);
+        window._nonDesktop = function () {
+            let check = false;
+            (function (a) {
+                if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+            })(navigator.userAgent || navigator.vendor || window.opera);
+            return check;
+        };
+        
+        var night = document.cookie.replace(/(?:(?:^|.*;\s*)night\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        if (night==""){
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                
+            }
+        }else{
+            
+            if (night=="1") {
+                this.toggleDarkMode();
+            }
+        }
+    },
+    mounted() {
+        this.handleScroll();
+        this.handleResize();
+        this.mounted = true;
+
+        
+        
+        
+
+        document.querySelectorAll("table").forEach(function(elem){
+            elem.classList.add("table-striped");
+            elem.classList.add("table");
+            elem.classList.add("table-responsive");
+            elem.classList.add("table-hover");
+        })
+
+        
+        spy();
+        window.addEventListener('scroll', this.debounce(spy, 250, { 'maxWait': 250 }), false);
+        
+        
+    },
+    destroyed() {
+        window.removeEventListener('scroll', this.handleScroll);
+        window.removeEventListener('resize', this.handleResize);
+    }
+});
+
+
+
+</script>
+    </body>
+</html>
