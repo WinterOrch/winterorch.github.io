@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='整理一些Redis基础知识，数据结构和使用场景在另一篇笔记中收录.'><title>Redis - 面试常见问题</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/redis-common_questions/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Redis - 面试常见问题'>
+<meta property='og:description' content='整理一些Redis基础知识，数据结构和使用场景在另一篇笔记中收录.'>
+<meta property='og:url' content='https://winterorch.github.io/p/redis-common_questions/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Redis' /><meta property='article:published_time' content='2021-06-29T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-29T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/scenes/Windmill.jpg' />
+<meta name="twitter:title" content="Redis - 面试常见问题">
+<meta name="twitter:description" content="整理一些Redis基础知识，数据结构和使用场景在另一篇笔记中收录."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/scenes/Windmill.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis-common_questions/">
+                
+                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" alt="Featured image of post Redis - 面试常见问题" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" style="background-color: #984B4B; color: #fff;">
+                Redis
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/redis-common_questions/">Redis - 面试常见问题</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        整理一些Redis基础知识，数据结构和使用场景在另一篇笔记中收录.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 29, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>常见的内存数据库包括 Memcached 和 Redis。后者相较之下在 k/v 类型数据基础上提供了 list, set, zset, hash 等数据结构存储，并且可扩展性强，能够通过插件增加更多；同时具有容灾机制，支持数据持久化，也有原生集群模式，支持发布订阅模型、Lua 脚本、事务；并且支持更多编程语言，单线程模型更加高效。总而言之功能很强，应用很广。</p>
+<h3 id="1--简要介绍">1.  简要介绍</h3>
+<p>Redis 是用 C 开发的内存数据库，非关系型数据库，读写速度快，广泛应用于缓存，也可以做分布式锁、消息队列。</p>
+<ul>
+<li>Redis6.0 之前都是<strong>单线程处理</strong>，仅在4.0增加了对大键值对删除操作的“异步处理”</li>
+<li>服务器<strong>内存使用完</strong>之后，将不用的数据存到磁盘上</li>
+<li>过期数据的<strong>删除策略</strong>包括惰性删除与定期删除</li>
+</ul>
+<hr>
+<h3 id="2--缓存的作用">2.  缓存的作用</h3>
+<p>访问数据库从硬盘中读取，过程较慢。如果用户访问数据为高频数据且不会经常改变，则可以存在缓存中，速度快。</p>
+<hr>
+<h3 id="3--删除策略">3.  删除策略</h3>
+<ul>
+<li>
+<p><strong>惰性删除</strong></p>
+<p>只在取出 <code>key</code> 的时候才对数据进行过期检查。CPU负担小，但会残留很多过期 <code>key</code></p>
+</li>
+<li>
+<p><strong>定期删除</strong></p>
+<p>周期性取一批 <code>key</code> 执行删除过期 <code>key</code> 操作，通过限制删除操作执行时长和频率来减少删除操作对 CPU 影响</p>
+</li>
+</ul>
+<p>删除策略并不能清理所有过期 <code>key</code> ，过期 <code>key</code> 还需要<strong>内存淘汰机制</strong>解决。</p>
+<p>除了缓解内存消耗，设置过期时间也可以用于满足业务需要，比如验证码、登录Token的有效时间。</p>
+<hr>
+<h3 id="4--内存淘汰机制">4.  内存淘汰机制</h3>
+<p>跟据从中挑选淘汰数据的数据集不同，分为三大类：</p>
+<ol>
+<li>
+<p>从<strong>已设置过期时间的数据集</strong>中 <code>volatile</code></p>
+<ol>
+<li>
+<p><code>volatile-lru</code> (least recently used)</p>
+<p>移除<strong>最近最少使用</strong>的 <code>key</code></p>
+</li>
+<li>
+<p><code>volatile-ttl</code></p>
+<p>移除<strong>将要过期</strong>的数据</p>
+</li>
+<li>
+<p><code>volatile-random</code></p>
+<p>移除<strong>随机</strong>选择的数据</p>
+</li>
+<li>
+<p><code>volatile-lfu</code></p>
+<p>(4.0新增) 移除<strong>最不经常使用</strong>的数据</p>
+</li>
+</ol>
+</li>
+<li>
+<p>从**数据集（所有）**中 <code>allkeys</code></p>
+<ol>
+<li>
+<p><code>allkeys-lru</code> (least recently used)</p>
+<p>移除<strong>最近最少使用</strong>的 <code>key</code></p>
+</li>
+<li>
+<p><code>allkeys-random</code></p>
+<p>移除<strong>随机</strong>选择的数据</p>
+</li>
+<li>
+<p><code>allkeys-lfu</code> (least frequently used)</p>
+<p>(4.0新增) 移除<strong>最不经常使用</strong>的 <code>key</code></p>
+</li>
+</ol>
+</li>
+<li>
+<p>不进行数据淘汰 <code>no</code></p>
+<ol>
+<li>
+<p><code>no-eviction</code></p>
+<p>内存不足以容纳新写入数据就直接报错</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><figure style="flex-grow: 152; flex-basis: 365px">
+		<a href="/p/redis-common_questions/image-20210424145306210.jpg" data-size="819x538"><img src="/p/redis-common_questions/image-20210424145306210.jpg"
+				srcset="/p/redis-common_questions/image-20210424145306210_hud26ac44098ff4e9b2adbc224ce720d60_83362_480x0_resize_q75_box.jpg 480w, /p/redis-common_questions/image-20210424145306210_hud26ac44098ff4e9b2adbc224ce720d60_83362_1024x0_resize_q75_box.jpg 1024w"
+				width="819"
+				height="538"
+				loading="lazy"
+				alt="redisDB表结构">
+		</a>
+		
+		<figcaption>redisDB表结构</figcaption>
+		
+	</figure></p>
+<p>如图所示，Redis通过一个过期字典（类似HashTable）来保存数据过期时间，对应内存淘汰机制中 <code>server.db[i].expires</code> 。</p>
+<hr>
+<h3 id="5--持久化机制">5.  持久化机制</h3>
+<p>为了保证Redis挂掉后再重启数据可以进行恢复，需要将内存数据写入硬盘。两种持久化机制分别是快照 (<strong>snapshotting, RDB</strong>) 和只追加文件 (<strong>append-only file, AOF</strong>) 。</p>
+<p><strong>RDB 记录的是内存快照，AOF 记录的是执行过的所有命令。</strong></p>
+<p>快照持久化是 Redis 默认采用的持久化方式，可以将快照复制到其他服务器从而创建具相同数据的服务器副本，在 Redis.conf 配置文件中默认有此下配置：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">save <span class="m">900</span> <span class="m">1</span>           <span class="c1">#在900秒(15分钟)之后，如果至少有1个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
+save <span class="m">300</span> <span class="m">10</span>          <span class="c1">#在300秒(5分钟)之后，如果至少有10个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
+save <span class="m">60</span> <span class="m">10000</span>        <span class="c1">#在60秒(1分钟)之后，如果至少有10000个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
+<span class="c1"># 大部分情况下，15分钟够用，只保留这一条即可</span>
+</code></pre></div><p>RDB提供了三种机制</p>
+<ul>
+<li><code>save</code> 命令将阻塞服务器主线程直到 RDB 完成 （不推荐）</li>
+<li><code>bgsave</code> 命令 <code>fork()</code> 一个子线程在后台异步进行快照操作，<strong>同样会阻塞</strong>，但只发生在 <code>fork()</code> 阶段，时间较短。RDB 快照持久化期间父进程修改的数据不会被保存。</li>
+<li>自动，通过配置完成</li>
+</ul>
+<p>AOF 持久化 的实时性更好，因此已成为主流的持久化方案。默认情况下 Redis 没有开启 AOF（append only file）方式的持久化，可以通过 appendonly 参数开启：</p>
+<pre><code>appendonly yes
+</code></pre><p>开启 AOF 持久化后每执行一条会更改 Redis 中的数据的命令，Redis 就会将该命令写入硬盘中的 AOF 文件。AOF 文件的保存位置和 RDB 文件的位置相同，都是通过 dir 参数设置的，默认的文件名是 appendonly.aof。</p>
+<p>在 Redis 的配置文件中存在三种不同的 AOF 持久化方式，它们分别是：</p>
+<pre><code>appendfsync always    #每次有数据修改发生时都会写入AOF文件,这样会严重降低Redis的速度
+appendfsync everysec  #每秒钟同步一次，显示地将多个写命令同步到硬盘
+appendfsync no        #让操作系统决定何时进行同步
+</code></pre><p><code>appendfsync everysec</code> 比较好</p>
+<p><strong>优点</strong>：写入性能非常高；即时日志文件过大出现后台重写也不会影响客户端读写（<code>fork()</code>新线程进行重写）；记录方式可读，适合用作紧急恢复</p>
+<p><strong>缺点</strong>：日志文件更大，且会带来持续IO，对QPS影响更大</p>
+<h5 id="总结">总结</h5>
+<p>Redis 重启时优先载入 AOF，因为 AOF 数据集一般更加完整，但 RDB 更适合用于备份数据库，快速重启，且没有 AOF 潜在 BUG</p>
+<hr>
+<h3 id="6--redis-60-之前为什么不使用多线程">6.  Redis 6.0 之前为什么不使用多线程</h3>
+<ul>
+<li>单线程开发、维护容易</li>
+<li>Redis性能瓶颈在内存和网络，CPU瓶颈不明显</li>
+<li>多线程带来了死锁、线程上下文切换等问题，甚至可能影响性能</li>
+</ul>
+<p>6.0 后引入多线程也是为了提高网络 IO 读写性能，仅用在网络数据读写这类耗时操作上，无需担心线程安全问题。</p>
+<hr>
+<h3 id="7--事务-transaction">7.  事务 (Transaction)</h3>
+<p>关系型数据库的事务具备四大特性（ACID），合起来就是：</p>
+<ol>
+<li>
+<p><del>原子性</del></p>
+<p>确保都成功或都失败</p>
+<blockquote>
+<p>Redis <strong>不具备原子性</strong>，因为不支持回滚，当然这也带来部分性能提升和开发便捷性</p>
+</blockquote>
+</li>
+<li>
+<p>隔离性</p>
+<p>并发访问时，单用户事务不被其他事务所干扰，防止数据损坏</p>
+<blockquote>
+<p>Redis <strong>不具备隔离级别概念</strong>，命令在事务中没有被直接执行。只有发起执行命令时才会执行。</p>
+</blockquote>
+</li>
+<li>
+<p><del>持久性</del></p>
+<p>事务一旦提交，对数据库中数据的改变是持久的，被持久化写到存储器中，不会被系统其它问题改变</p>
+<blockquote>
+<p>Redis 同样不具备，但是当 AOF 持久化模式下，并且 <code>appendfsync</code> 选项值为 <code>always</code> 时，事务具有耐久性</p>
+</blockquote>
+</li>
+<li>
+<p>一致性</p>
+<p>执行事务前后数据保持一致，多个事务对同一数据读取的结果相同</p>
+</li>
+</ol>
+<p>Redis 事务实际提供了将多个命令请求打包功能，再按顺序执行打包的所有命令，且不会被中途打断。具备 <strong>一次性</strong>、<strong>顺序性</strong>、<strong>排他性</strong>，分以下两种情况：</p>
+<blockquote>
+<p>编译型异常中</p>
+<p>当命令出现错误，后续命令依旧可以添加到命令队列中，但所有命令都不会被执行</p>
+</blockquote>
+<blockquote>
+<p>运行时异常中</p>
+<p>当命令出现错误，其它命令可以正常执行，只有错误命令抛出异常</p>
+</blockquote>
+<hr>
+<h3 id="8_1-缓存穿透攻击">8_1. 缓存穿透攻击</h3>
+<p>黑客制造大量不存在 <code>key</code> 的请求，导致请求直接落到数据库进行查询，没有经过缓存层。</p>
+<p>要解决这一问题，最基本是要做好参数校验，不合法的参数直接抛异常给客户端。</p>
+<ul>
+<li>
+<p><strong>缓存无效的 <code>key</code></strong></p>
+<p>即时返回的空对象也将其缓存起来，同时设置过期时间</p>
+<p>但在 <code>key</code> 变化频繁的情况下，尤其在恶意攻击中可能产生大量无效的 <code>key</code></p>
+</li>
+<li>
+<p><strong>布隆过滤器</strong></p>
+<p>先用布隆过滤器判断请求值是否存在，实际上就是哈希校验</p>
+</li>
+</ul>
+<h3 id="8_2-缓存击穿">8_2. 缓存击穿</h3>
+<p><code>key</code> 失效的瞬间，大量并发集中访问，直接落在数据库上。</p>
+<ul>
+<li>
+<p><strong>设置热点数据不过期</strong></p>
+<p>可以解决问题，但并不好</p>
+</li>
+<li>
+<p><strong>加互斥锁</strong></p>
+<p>分布式锁来保证对每个 <code>key</code> 同时只有一个线程查询后端服务，其它线程没有获得分布式锁的权限，只需要等待，从而将高并发压力转移到分布式锁</p>
+</li>
+</ul>
+<h3 id="8_3-缓存雪崩">8_3. 缓存雪崩</h3>
+<p>服务器宕机或断网形成缓存雪崩，对数据库造成压力不可预知，很可能瞬间将数据库压垮。</p>
+<p>实际上就是压力累积超过临界导致的，</p>
+<ul>
+<li>增设缓存集群，<strong>异地多活</strong></li>
+<li><strong>限流降级</strong>，缓存失效后，通过加锁或队列来控制都数据库写缓存的线程数量</li>
+<li><strong>数据预热</strong>，预访问数据，使得尽可能多的数据被加载到缓存中，但要注意设置不同的过期时间，使缓存失效的时间点尽量均匀</li>
+</ul>
+<hr>
+<h3 id="9-单线程模型">9. 单线程模型</h3>
+<p>Redis 事件处理模型对应其中单线程的<strong>文件事件处理器</strong>(File Event Handler)，因此是单线程模型。通过 IO 多路复用来监听大量连接，跟据套接字执行任务关联不同的事件处理器，不需要创建多余线程来监听连接。</p>
+<blockquote>
+<p><strong>虽然文件事件处理器以单线程方式运行，但通过使用 I/O 多路复用程序来监听多个套接字</strong>，文件事件处理器既实现了高性能的网络通信模型，又可以很好地与 Redis 服务器中其他同样以单线程方式运行的模块进行对接，这保持了 Redis 内部单线程设计的简单性。</p>
+</blockquote>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="10-常见缓存读写策略及如何保证缓存数据库数据一致">10. 常见缓存读写策略及如何保证缓存数据库数据一致</h3>
+<p>缓存读写策略实际上也就是缓存和数据库间的位置关系，主要有以下三种</p>
+<h4 id="1-旁路缓存模式-cache-aside-pattern">1) 旁路缓存模式 (Cache Aside Pattern)</h4>
+<p>适用<strong>读请求较多</strong>的场景</p>
+<p><strong>写：</strong></p>
+<ul>
+<li>先更新 DB 中数据</li>
+<li>直接删除 cache</li>
+</ul>
+<blockquote>
+<p>之所以先更新 DB ，是因为 cache 的删除操作相对快很多，数据不一致的可能性大大降低。相反，如果先删除 cache，此时如果有并行请求直接从 DB 中读取数据，这一操作很可能在 DB 中数据被更新前完成。</p>
+</blockquote>
+<p><strong>读：</strong></p>
+<ul>
+<li>从 cache 中读取数据，读到直接返回</li>
+<li>读不到就从 DB 中读取并返回</li>
+<li>数据放到 cache 中</li>
+</ul>
+<p>缺点一、 首次请求数据一定不在 cache ，但是这一问题可以通过热点数据的提前缓存解决。</p>
+<p>缺点二、 写操作如果频繁，则 cache 数据被频繁删除，缓存命中率降低，缓存很大程度上被架空。在强一致场景下需要锁/分布锁保证更新 cache 时不存在线程问题；弱一致场景下可以 cache 和 DB 一起更新，cache 设置较短的过期事件以提高缓存命中率。</p>
+<h4 id="2-读写穿透模式-readwrite-through-pattern">2) 读写穿透模式 (Read/Write Through Pattern)</h4>
+<p>cache 负责将数据读取和写入 DB，作为服务端和 DB 间的中间件。然而相当难实现，因为 Redis 不提供 DB 读写功能。</p>
+<p><strong>写：</strong></p>
+<ul>
+<li>查 cache，不存在则直接更新 DB</li>
+<li>cache 存在，则先更新 cache，cache 服务自己更新 DB（cache 和 DB 同步更新）</li>
+</ul>
+<p><strong>读：</strong></p>
+<ul>
+<li>从 cache 读数据，读到直接返回</li>
+<li>没读到就从 DB 加载到 cache，然后返回响应</li>
+</ul>
+<p>由于 Redis 不提供 DB 读写，这一模式实际上只是在旁路模式上进行了封装。同样具有首次请求数据不在 cache 问题。</p>
+<h4 id="3-异步缓存写入-write-behind-pattern">3) 异步缓存写入 (Write Behind Pattern)</h4>
+<p>和 读写穿透模式 相似，但只更新缓存，不直接更新 DB，用异步批量的方式来更新 DB。消息队列中消息异步写入磁盘、MySQL 的 InnoDB Buffer Pool 机制都用到这种策略。</p>
+<p>DB 的写性能非常高，适合数据频繁变化，数据一致性要求又不高的场景，如浏览量、点赞量。</p>
+<p>缺点很明显，数据一致性很难维护，cache 可能在数据异步更新前宕机。</p>
+<h4 id="如何保证缓存数据库数据一致">如何保证缓存数据库数据一致</h4>
+<p>旁路缓存模式下，可以增加 cache 更新重试机制——如果 cache 服务不可用而暂时无法删除缓存，就隔一段时间再试，多次失败就将更新失败 key 存入队列，等缓存恢复后进行删除。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="11-redis-cluster">11. Redis Cluster</h3>
+<p>Redis 集群主要解决的是性能问题，在缓存数据量过大的情况下将数据分散到各台 Redis 主机上，可以看作是一种<strong>负载均衡</strong>手段，方便业务进行横向拓展。</p>
+<p>Redis Cluster 有多个节点，是去中心化的分布式结构，每个节点都负责数据读写操作，各节点间会进行通信。通过分片 (sharding) 来进行数据管理，提供复制和故障转移功能。</p>
+<!-- raw HTML omitted -->
+<h4 id="1-hash-slot">1) Hash Slot</h4>
+<p>共 16384 个槽被平均分配给节点进行管理，每个节点对自己负责的槽进行读写操作。各个节点间彼此通信，知晓其它节点负责管理的槽范围。</p>
+<p>作为一个分布式系统，各结点需要互相通信来维护一份所有其它示例的状态信息，基于 Gossip 协议实现数据的最终一致性。</p>
+<!-- raw HTML omitted -->
+<h4 id="2-访问流程">2) 访问流程</h4>
+<p>客户端访问任意节点时，对数据 <code>key</code> 按照 CRC16 进行 Hash 计算，然后对运算结果模 16384 ，判断槽是否在当前节点管理范围内：如果在，则执行命令，返回结果；如果不在，返回moved重定向异常，之后由客户端跟据重定向异常中目标节点信息去发送命令。</p>
+<!-- raw HTML omitted -->
+<h4 id="3-迁移">3) 迁移</h4>
+<p>如果节点在迁移过程中收到客户端命令，会返回 ASK 重定向异常。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="12-redis-replication">12. Redis Replication</h3>
+<p>Redis 主从主要解决的是可用性问题，读吞吐量过大情况下，可以通过一主多从来提高可用性和读吞吐量，从机多少取决于读吞吐量大小。</p>
+<p>从机只能读，不能写。主机断开连接，从机仍然连接到主机，只是没有任何写操作传入，如果主机上线，从机依然可以直接获取。通过指令 <code>SLAVEOF no one</code> 来脱离从机身份。</p>
+<!-- raw HTML omitted -->
+<h4 id="1-复制">1) 复制</h4>
+<ul>
+<li>
+<p><code>SYNC</code></p>
+<p>每次执行 <code>SYNC</code> ，主服务器需要 <code>BGSAVE</code> 来生成 RDB，并发送给从服务器；从服务器载入 RDB 期间阻塞进程，无法处理请求。</p>
+</li>
+<li>
+<p><code>PSYNC</code></p>
+<p>部分重同步，主服务器收到 <code>PSYNC</code> 后返回 <code>+CONTINUE</code> ，示意准备执行部分重同步，然后继续发送新指令以完成同步。</p>
+<blockquote>
+<p>主从服务器分别维护“<strong>复制偏移量</strong>”，记录收到的数据长度（字节数）。通过对比主从复制偏移量可以直到是否处于一致状态。</p>
+<p>主服务器维护一个定长 FIFO 队列，作为复制积压缓冲区。主服务器将写命令发给从机，同时入队到复制积压缓冲区。</p>
+</blockquote>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p>如果从机先前没有复制过任何主机，或执行过 <code>SLAVEOF no one</code> ，则为了开始新复制而发送 <code>PSYNC ? -1</code> ，请求主机进行完整重同步。主机返回 <code>+FULLRESYNC &lt;runid&gt; &lt;offsetid&gt;</code> 示意准备完整重同步。</p>
+</li>
+<li>
+<p>反之，发送 <code>PSYNC &lt;runid&gt; &lt;offset&gt;</code> ，供主机判断执行哪种同步</p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h4 id="2-哨兵">2) 哨兵</h4>
+<p>主从的问题在于一旦主机宕机，从机晋升，将需要人工重新配置其余所有从机，复制新的主机，并改变应用方主机地址，为此需要一个（实际上一般是多个）哨兵来干这件事。</p>
+<p>单个哨兵如果检测到主服务器宕机，不会马上进行 <code>failover</code> ，而是认为主服务器“<strong>主观下线</strong>”。当检测到主服务器不可用的哨兵达到一定数量，则哨兵间进行投票，决定接替的从机，切换成功后，通过发布订阅模式，让各个哨兵把监控的从服务器实现切换主机，称为“<strong>客观下线</strong>”。</p>
+<p><strong>客观下线</strong>后，即使原主机重新上线，也只能作为新主机的从机。</p>
+<p><strong>缺点</strong>：无法在线扩容，集群容量到达上限，不好在线扩容；实现哨兵模式配置有很多选择，较为复杂</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/redis/">Redis</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Street2.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Street2.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 常用数据类型</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Arctic.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 依赖注入注解的区分</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Fancy1.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Fancy1.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 常用注释</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-transport_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/09.jpg" loading="lazy" data-key="computer_network-transport_layer" data-hash="/images/feature/abyss/09.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 传输层</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-application_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/10.jpg" loading="lazy" data-key="computer_network-application_layer" data-hash="/images/feature/abyss/10.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 应用层</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1--简要介绍">1.  简要介绍</a></li>
+        <li><a href="#2--缓存的作用">2.  缓存的作用</a></li>
+        <li><a href="#3--删除策略">3.  删除策略</a></li>
+        <li><a href="#4--内存淘汰机制">4.  内存淘汰机制</a></li>
+        <li><a href="#5--持久化机制">5.  持久化机制</a>
+          <ol>
+            <li></li>
+          </ol>
+        </li>
+        <li><a href="#6--redis-60-之前为什么不使用多线程">6.  Redis 6.0 之前为什么不使用多线程</a></li>
+        <li><a href="#7--事务-transaction">7.  事务 (Transaction)</a></li>
+        <li><a href="#8_1-缓存穿透攻击">8_1. 缓存穿透攻击</a></li>
+        <li><a href="#8_2-缓存击穿">8_2. 缓存击穿</a></li>
+        <li><a href="#8_3-缓存雪崩">8_3. 缓存雪崩</a></li>
+        <li><a href="#9-单线程模型">9. 单线程模型</a></li>
+        <li><a href="#10-常见缓存读写策略及如何保证缓存数据库数据一致">10. 常见缓存读写策略及如何保证缓存数据库数据一致</a>
+          <ol>
+            <li><a href="#1-旁路缓存模式-cache-aside-pattern">1) 旁路缓存模式 (Cache Aside Pattern)</a></li>
+            <li><a href="#2-读写穿透模式-readwrite-through-pattern">2) 读写穿透模式 (Read/Write Through Pattern)</a></li>
+            <li><a href="#3-异步缓存写入-write-behind-pattern">3) 异步缓存写入 (Write Behind Pattern)</a></li>
+            <li><a href="#如何保证缓存数据库数据一致">如何保证缓存数据库数据一致</a></li>
+          </ol>
+        </li>
+        <li><a href="#11-redis-cluster">11. Redis Cluster</a>
+          <ol>
+            <li><a href="#1-hash-slot">1) Hash Slot</a></li>
+            <li><a href="#2-访问流程">2) 访问流程</a></li>
+            <li><a href="#3-迁移">3) 迁移</a></li>
+          </ol>
+        </li>
+        <li><a href="#12-redis-replication">12. Redis Replication</a>
+          <ol>
+            <li><a href="#1-复制">1) 复制</a></li>
+            <li><a href="#2-哨兵">2) 哨兵</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

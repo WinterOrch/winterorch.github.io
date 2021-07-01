@@ -5,15 +5,14 @@
     <link>https://winterorch.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/</link>
     <description>Recent content in 位运算 on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Sun, 20 Jun 2021 21:03:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 20 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
-      <link>https://winterorch.github.io/posts/leetcode-jianzhi-056/</link>
-      <pubDate>Sun, 20 Jun 2021 21:03:58 +0630</pubDate>
+      <link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</link>
+      <pubDate>Sun, 20 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-056/</guid>
+      <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</guid>
       <description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
 示例 1：
  输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]

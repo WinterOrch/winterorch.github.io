@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='一年里两次用PYQT，满脚是血，记录一些踩过的坑.'><title>Python - PYQT 踩坑记</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/python-pyqt_bloody_tips/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Python - PYQT 踩坑记'>
+<meta property='og:description' content='一年里两次用PYQT，满脚是血，记录一些踩过的坑.'>
+<meta property='og:url' content='https://winterorch.github.io/p/python-pyqt_bloody_tips/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Qt' /><meta property='article:tag' content='PyQt' /><meta property='article:published_time' content='2021-06-25T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-25T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/scenes/UAZ.jpg' />
+<meta name="twitter:title" content="Python - PYQT 踩坑记">
+<meta name="twitter:description" content="一年里两次用PYQT，满脚是血，记录一些踩过的坑."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/scenes/UAZ.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/python-pyqt_bloody_tips/">
+                
+                    <img src="/images/feature/scenes/UAZ.jpg" loading="lazy" alt="Featured image of post Python - PYQT 踩坑记" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/python/" style="background-color: #FFF4C1; color: #4F4F4F;">
+                Python
+            </a>
+        
+            <a href="/categories/gui/" >
+                GUI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/python-pyqt_bloody_tips/">Python - PYQT 踩坑记</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        一年里两次用PYQT，满脚是血，记录一些踩过的坑.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 25, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>首先要踩一下 PYQT，如果使用 Python 过程中有 GUI 方面的需求，请一定一定先看有没有 QT 之外的选择 <del>（Django不好吗？）</del>。用过 PYQT 的都知道，QT 提供的不仅仅是 GUI 组件库，而是从线程到网络通信的一整套 <code>QObject</code> ，个人认为对于 Python 而言这实在是过于不实际了，我觉得大多数人对于 Python 开发的期望都是每一个模块各司其职，项目能够“高内聚，低耦合”，Python 在这方面也是非常令人满意的，然而在 QT 中除外。</p>
+<p>PYQT 来源于 C++ QT，其理念就是将众多组件耦合到一起，如果你在一个团队中进行开发，这会导致——无论是图形界面方面的责任，还是业务逻辑方面的问题都会堆到你这里，成为你的压力，而如果你作为个人进行开发，这会使你写 GUI 的时候无时无刻不得顾及业务需求，两边都得顾得上，两边都得一起调。出了问题的话，非常不幸，网上能找到的 PYQT 资料非常之有限，甚至官方文档中都有大量的 <code>TODO</code> ，且完全没有要补上的迹象，我写代码过程中基本都只能参考 QT 的官方文档，因为他实在是比 PyQt 官方提供的要友好得多。</p>
+<!-- raw HTML omitted -->
+<p>如果在确认了这些问题之后，还是要入门 PYQT，推荐几个 Github：<a class="link" href="https://github.com/PyQt5/PyQt"  target="_blank" rel="noopener"
+    >PyQt Examples</a> 提供了大部分常用 GUI 组件的使用 Deemo，虽然 PyQt 对于这些组件基本都有大量复杂数倍的替代品，供你完成非常繁杂的需求，但是，没有谁想从那入手的。</p>
+<blockquote>
+<p>顺便提一下，有个非常不错（指功能上）的 PyQt 音乐播放器 <a class="link" href="https://github.com/feeluown/FeelUOwn"  target="_blank" rel="noopener"
+    >FeelUOwn</a> 项目。当时看到这个小项目是很感动的，非常兴奋地下下来源码，然后确信自己看的是天书——项目代码不是给人读的，PyQt 极大放大了代码可读性差的问题</p>
+</blockquote>
+<p>接下来是正片——</p>
+<hr>
+<h3 id="开始-pyqt-项目你要知道这些">开始 PyQt 项目，你要知道这些</h3>
+<ul>
+<li>
+<p>如果用 PyCharm 构建 PyQt 项目，你在点下 Run/Debug 之前请务必检查一下 <strong>Debug 配置</strong></p>
+<p>Run 和 Debug 图标左边那个下拉菜单，其中的 Edit Configurations，请检查一下 Configuration 下的 Excution 栏，<!-- raw HTML omitted --><strong>确保 <code>Emulate terminal in output console</code> 这个选项勾上</strong><!-- raw HTML omitted -->。否则即使你的程序挂掉，控制台也不会抛出一个异常来，没有什么比程序跑不起来，甚至连哪里出了问题都无法追溯更让人头疼的事情了。</p>
+</li>
+</ul>
+<hr>
+<h3 id="使用-qss-你要知道这些">使用 QSS ，你要知道这些</h3>
+<p>QSS 看似很美好，但也是重灾区。</p>
+<ul>
+<li>
+<h4 id="qss-style-sheet-会自动由父框架传递给子框架"><strong>QSS Style Sheet 会自动由父框架传递给子框架</strong></h4>
+<p>什么意思呢？就是说你可能想给 <code>QWidget</code> 设个好看的边框，于是写下这么一段内容：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="nt">QWidget</span> <span class="p">{</span>
+    <span class="k">background</span><span class="p">:</span> <span class="n">lightGray</span><span class="p">;</span>
+    <span class="k">border</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">blue</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>然后发现所有 <code>Widget</code> 下所有的 <code>QLabel</code> 都诡异地多了个框而父框架反而没有。为什么呢？因为 <code>QLabel</code> 也是 <code>QWidget</code> 的一种，<code>QWidget</code> 的样式表会自动传递到它，并且生效。然而 <code>QWidget</code> 自己却不能生效，因为 <code>QWidget</code> 天生无法让自己的显式样式生效，它们只是用来传递给子框架的，换句话说，Qt 就这么设计的。</p>
+<p>如果想让父框架有边框之类的设置，请用 <code>QFrame</code> ，它不仅有同样的参数而且几乎能替代 <code>QWidget</code> 。</p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<h4 id="请尽量使用对象的-objectname-来区分子对象的样式"><strong>请尽量使用对象的 <code>objectName</code> 来区分子对象的样式</strong></h4>
+<p>如果你想要你的设置仅仅对最外层，或子对象中的一个生效，请这么写：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="nt">QWidget</span><span class="o">[</span><span class="nt">objectName</span><span class="o">=</span><span class="s1">&#39;OutsidePanel&#39;</span><span class="o">]</span> <span class="p">{</span>
+    <span class="k">background</span><span class="p">:</span> <span class="n">lightGray</span><span class="p">;</span>
+    <span class="k">border</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">blue</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>那什么是 <code>objectName</code> 呢？它是 <code>QObject</code> 的一个成员变量，没错，PyQt 在最不需要解耦的地方做了一次解耦，让 <code>objectName</code> 需要单独设置。所以接下来，在这个你想让它有边框的 <code>QWidget</code> 的构造函数中写下：<code>self.setObjectName(&quot;OutsidePanel&quot;)</code> 。</p>
+<p>不推荐将组件的样式表颗粒化，在初始化过程中单独 <code>setStyleSheet()</code> ，还是推荐将一整个 Panel 的样式整合成一个文件，在父框架进行设置，而避免在运行过程中还要动态加载。我认为 Qt 的设计者也是这样希望的，应当有相应的优化。</p>
+<p>关于 QSS ，网上其实能查到很多内容，比方有人说可以直接跟据对象名和 CSS 一样用 <code>#</code> 设置对象的样式，实测并不行，推测可能是 PyQt 版本不同，能力也有所不同，很多网上提供的 QSS 属性也并不能生效。虽然 QSS 想让做 GUI 的人尽量用熟悉的方法——CSS来设计，但功能属实有限，不能达到 CSS 的效果不说，还给了有 CSS 使用经验的人过多不切实际的幻想，只能说是将 PyQt 本就有限的样式设置从 GUI 设计中部分解耦出来。</p>
+</li>
+</ul>
+<p>【未完，对 PyQt ，想吐槽的点实在是如涛涛江水一般】</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/qt/">Qt</a>
+        
+            <a href="/tags/pyqt/">PyQt</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#开始-pyqt-项目你要知道这些">开始 PyQt 项目，你要知道这些</a></li>
+        <li><a href="#使用-qss-你要知道这些">使用 QSS ，你要知道这些</a>
+          <ol>
+            <li><a href="#qss-style-sheet-会自动由父框架传递给子框架"><strong>QSS Style Sheet 会自动由父框架传递给子框架</strong></a></li>
+            <li><a href="#请尽量使用对象的-objectname-来区分子对象的样式"><strong>请尽量使用对象的 <code>objectName</code> 来区分子对象的样式</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

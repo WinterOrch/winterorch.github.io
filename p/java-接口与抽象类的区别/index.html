@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题.'><title>Java - 接口与抽象类的区别</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - 接口与抽象类的区别'>
+<meta property='og:description' content='接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题.'>
+<meta property='og:url' content='https://winterorch.github.io/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='OOP' /><meta property='article:published_time' content='2021-06-02T20:04:58&#43;01:30'/><meta property='article:modified_time' content='2021-06-02T20:04:58&#43;01:30'/><meta property='og:image' content='https://winterorch.github.io/images/feature/abyss/05.jpg' />
+<meta name="twitter:title" content="Java - 接口与抽象类的区别">
+<meta name="twitter:description" content="接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/abyss/05.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/">
+                
+                    <img src="/images/feature/abyss/05.jpg" loading="lazy" alt="Featured image of post Java - 接口与抽象类的区别" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/java%E5%9F%BA%E7%A1%80/" style="background-color: #D26900; color: #fff;">
+                Java基础
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/">Java - 接口与抽象类的区别</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        接口和抽象类一样不能用于实例化对象，两者的差别也是一个很有嚼劲的问题.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 02, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>先简单过一下接口语法中的注意点。</p>
+<h3 id="注意点"><strong>注意点</strong></h3>
+<ul>
+<li>
+<p>接口中的变量隐式指定为 <code>public static final</code></p>
+</li>
+<li>
+<p>接口中的方法会被隐式指定为 <code>public abstract</code> （JDK 1.9 后允许 private，其它修饰符会报错）</p>
+<blockquote>
+<p>这也决定了接口中所有方法都必须被实现，当然这一要求有两种特殊的满足方式——抽象类实现接口，那么接口方法不一定要实现，可以由抽象类的子类实现；JDK 1.8 后有默认实现的接口方法也不必被实现类显式实现。</p>
+</blockquote>
+</li>
+<li>
+<p>接口不能有构造方法</p>
+</li>
+<li>
+<p>JDK 1.8 后，接口可以有静态方法和方法体</p>
+</li>
+<li>
+<p>JDK 1.8 后，接口方法可以有默认方法，用 <code>default</code> 关键字修饰</p>
+</li>
+</ul>
+<h3 id="与抽象类语法上的区别">与抽象类语法上的区别</h3>
+<ul>
+<li>
+<p>一个类可以实现多个接口</p>
+</li>
+<li>
+<p>一个接口可以继承多个其它接口</p>
+<p>Java 接口是对行为的抽象，一个行为本身可以看作多个行为的耦合</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Hockey</span> <span class="kd">extends</span> <span class="n">Sports</span><span class="o">,</span> <span class="n">Event</span>
+</code></pre></div></li>
+</ul>
+<hr>
+<h2 id="接口与抽象类区别">接口与抽象类区别</h2>
+<p>接口和抽象类语法上的不同在之前两个文档中都已经接释清楚了，这里主要看两者思想上的不同。</p>
+<p>摘取一些《Effective Java》中的说法</p>
+<blockquote>
+<p>接口是对行为的抽象，达到 <strong>API 定义与实现分类</strong> 的目的，因此支持多实现。甚至可以用没有任何方法的接口，作为 Marker Interface，目的仅仅是进行声明。但是用接口导出常量是不合适的使用，接口应当尽量减少细节泄露，常量应当由类保管。</p>
+<p>相较之下，抽象类的主要目的是 <strong>代码重用</strong>，本质是不能实例化的类。</p>
+</blockquote>
+<p>重点有两个——抽象类和接口的本质、目的都不同。</p>
+<h3 id="本质">本质</h3>
+<p>抽象类本质是类，因此不能多继承。C++ 允许多继承而 Java 不允许，这体现两者多态思想上的差别。我们知道 Java 继承其实叫 <code>extends</code> ，严格来讲不叫“继承”，因为在 Java 中，继承首先是一种 <code>is-a</code> 关系，即 <code>Student</code> 要继承 <code>Person</code> ，首先要满足 “<code>Student</code> <code>is a</code> <code>Person</code>” 。这很好理解，按照里氏替换原则 (Liskov Substitution)，进行继承关系抽象时，凡是可以用父类或者基类的地方，都可以用子类进行替换。因此这显然不是中文里面继承的语义，因为中文里“儿子继承父亲”，但儿子不可能是父亲，两者有本质区别。</p>
+<p>然后，Java 为什么只允许单继承就很好理解了。如果我想让 A 同时继承 B 和 C，那说明 A is B, A is C，那 B 和 C 之间自然应当满足某种继承关系，三者应当是一个继承链的关系而非继承树的关系，通过单继承也可以表示清楚，并不需要让 A 同时继承 B 和 C。更不用说 C++ 为了实现多继承，其实也带来菱形继承问题，可能造成内存浪费和数据冗余。</p>
+<blockquote>
+<p>C++中因为允许多继承，可能会因为<strong>菱形继承</strong>造成内存浪费和数据冗余（如两个类BC分别继承同一基类A，再从这两个类派生出一个类D时会有冗余成员），因此最好使用虚继承。虚继承下，D实例内存地址中，BC虚继承来的A部分会通过一个指针分别指向一张虚基表（准确来讲是指向其中的虚基表偏移指针的存储地址，然后通过该指针取出偏移量），从虚基表中取出从基类A虚继承来成员在D内存中的偏移地址。</p>
+</blockquote>
+<p>曾看到有博客认为 C++ 多继承机制较为合理，给出的理由是“人可以有父母，那类也应当可以多继承”。结合前文内容，这个理由显然没有什么道理，但是我认为却很好地反映了 Java 中接口的思想。我们知道，对于生物而言，父和母显然是不等价的，母完成了作为母的职责，父完成了作为父的职责，然后才有“子”，因此与其类比为继承，不如类比为接口实现更妥当，因为父、母实际上在这里归根结底是<strong>行为的抽象</strong>，父类必须实现接口 <code>CanBeFather</code>，母类必须实现接口 <code>CanBeMother</code>，这是一种行为关系。这一接口在使用过程中屏蔽了其它底层细节，无论父母是什么学历、有什么资产，这一过程中都不关注，也没有影响，这便是类功能上的解耦，通过一个用来将行为抽象化的接口完成了。</p>
+<h3 id="目的">目的</h3>
+<p>目的上面其实也说了，《Effective Java》总结的很到位，接口是对行为的抽象，达到 <strong>API 定义与实现分类</strong> 的目的。如果一个类可以有多个行为、实现多个功能，那它当然可以实现多个接口。</p>
+<p>而抽象类更多还是用来减少冗余代码，换句话说——提高代码质量、提高可读性、降低维护难度……</p>
+<hr>
+<h2 id="java-继承与里氏替换原则">Java 继承与里氏替换原则</h2>
+<p>Java中子类重写父类方法时<!-- raw HTML omitted -->不能抛出父类中没有抛出的异常<!-- raw HTML omitted -->，编译会不过，不抛是完全可以的。同时，该方法在子类中的访问级别也不能低于超类中的访问级别。<!-- raw HTML omitted -->这两项规则确保可使用超类实例的地方也能使用子类实例，符合<strong>里氏替换原则</strong><!-- raw HTML omitted -->。</p>
+<ul>
+<li><strong>变量</strong>只能被隐藏（静态及非静态），不能被覆盖</li>
+<li><strong>静态方法</strong>只能被隐藏，不能覆盖</li>
+<li><strong>静态方法</strong>只能用静态方法隐藏，<strong>非静态方法</strong>只能用非静态方法覆盖（否则编译不过）</li>
+<li><strong>最终方法</strong>不能覆盖。私有方法（private）实际会被隐式指定为 final ，所以同样不能覆盖。</li>
+<li><strong>抽象方法</strong>必须覆盖</li>
+</ul>
+<p>同时要注意的是关于构造方法的内容</p>
+<ul>
+<li>子类实例化对象时，如果子类构造方法没有显式调用父类构造方法，默认调用 <code>super()</code></li>
+<li>子类要使用父类有参构造方法，使用 <code>super(...)</code> 形式，且 <code>super()</code> 必须是子类构造方法中第一行语句</li>
+<li>父类没有不带参构造方法，子类构造方法中必须显示调用父类其它构造方法，否则编译不过</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/java/">Java</a>
+        
+            <a href="/tags/oop/">OOP</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/arknights/Penguin.jpg" loading="lazy" data-key="" data-hash="/images/feature/arknights/Penguin.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 抽象类</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-ram_and_gc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg" loading="lazy" data-key="java-jvm-ram_and_gc" data-hash="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM GC</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#注意点"><strong>注意点</strong></a></li>
+        <li><a href="#与抽象类语法上的区别">与抽象类语法上的区别</a></li>
+      </ol>
+    </li>
+    <li><a href="#接口与抽象类区别">接口与抽象类区别</a>
+      <ol>
+        <li><a href="#本质">本质</a></li>
+        <li><a href="#目的">目的</a></li>
+      </ol>
+    </li>
+    <li><a href="#java-继承与里氏替换原则">Java 继承与里氏替换原则</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

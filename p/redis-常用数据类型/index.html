@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合).'><title>Redis - 常用数据类型</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Redis - 常用数据类型'>
+<meta property='og:description' content='Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合).'>
+<meta property='og:url' content='https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Redis' /><meta property='article:published_time' content='2021-06-30T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-30T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/scenes/Street2.jpg' />
+<meta name="twitter:title" content="Redis - 常用数据类型">
+<meta name="twitter:description" content="Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/scenes/Street2.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+                
+                    <img src="/images/feature/scenes/Street2.jpg" loading="lazy" alt="Featured image of post Redis - 常用数据类型" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" style="background-color: #984B4B; color: #fff;">
+                Redis
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Redis - 常用数据类型</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合).
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 30, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>以下示例代码部分源自 [小专栏] <a class="link" href="https://xiaozhuanlan.com/topic/6845397012"  target="_blank" rel="noopener"
+    ><strong>剖析面试最常见问题之Redis</strong></a> .</p>
+<h3 id="heading"></h3>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">type</span> name		<span class="c1">#查看当前 key 的类型</span>
+</code></pre></div><hr>
+<h3 id="string">String</h3>
+<p>string 数据结构是简单的 key-value 类型。虽然 Redis 是用 C 语言写的，但是 Redis 并没有使用 C 的字符串表示，而是自己构建了一种 <strong>简单动态字符串</strong>（simple dynamic string，<strong>SDS</strong>）。相比于 C 的原生字符串，Redis 的 SDS 不光可以保存文本数据还可以保存二进制数据，并且获取字符串长度复杂度为 O(1)（C 字符串为 O(N)）,除此之外,Redis 的 SDS API 是安全的，不会造成缓冲区溢出。</p>
+<ul>
+<li><strong>常用命令:</strong> <code>set,get,strlen,exists,dect,incr,setex</code> 等等</li>
+<li><strong>应用场景</strong> ：大多数需要缓存的场景、需要计数的场景，比如用户的访问次数、热点文章的点赞转发数量等等</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; <span class="nb">set</span> key value <span class="c1">#设置 key-value 类型的值</span>
+OK
+127.0.0.1:6379&gt; get key <span class="c1"># 根据 key 获得对应的 value</span>
+<span class="s2">&#34;value&#34;</span>
+127.0.0.1:6379&gt; exists key  <span class="c1"># 判断某个 key 是否存在</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; strlen key <span class="c1"># 返回 key 所储存的字符串值的长度。</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">5</span>
+127.0.0.1:6379&gt; del key <span class="c1"># 删除某个 key 对应的值</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; get key
+<span class="o">(</span>nil<span class="o">)</span>
+</code></pre></div><p><strong>作计数器用 （字符串的内容为整数的时候可以使用）</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; <span class="nb">set</span> number <span class="m">1</span>
+OK
+127.0.0.1:6379&gt; incr number <span class="c1"># 将 key 中储存的数字值增一</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; get number
+<span class="s2">&#34;2&#34;</span>
+127.0.0.1:6379&gt; decr number <span class="c1"># 将 key 中储存的数字值减一</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; get number
+<span class="s2">&#34;1&#34;</span>
+</code></pre></div><h4 id="设置过期对所有数据类型都适用"><strong>设置过期（对所有数据类型都适用）</strong></h4>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; expire key  <span class="m">60</span> <span class="c1"># 数据在 60s 后过期</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; setex key <span class="m">60</span> value <span class="c1"># 数据在 60s 后过期 (setex:[set] + [ex]pire)</span>
+OK
+127.0.0.1:6379&gt; ttl key <span class="c1"># 查看数据还有多久过期</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">56</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="ziplist-压缩列表">ZipList 压缩列表</h3>
+<p>压缩列表本质是字节数组，可以包含任意多个元素，每个元素可以是字节数组或整数。</p>
+<p><strong>编码</strong></p>
+<p><img src="https://image-static.segmentfault.com/230/743/2307433878-5c0e7ad049f11_articlex" alt=""  /></p>
+<ol>
+<li><code>zlbytes</code>：字节长度，占4字节，因此ZipList最长 $2^{32} - 1$ 字节</li>
+<li><code>zltail</code>：为元素相对起始地址的偏移量，占4字节</li>
+<li><code>zllen</code>：列表元素数目，占2字节，当数目超过 $2^{16}-1$ 时字段无效，只能通过遍历获取数目</li>
+<li><code>entryX</code>：若干元素</li>
+<li><code>zlend</code>：结尾字节，<code>0xFF</code></li>
+</ol>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="list-链表">List 链表</h3>
+<p>当列表中存储数据量较大，列表通过双向循环链表实现。可以支持反向查找和遍历，更方便操作，不过带来了部分额外的内存开销。</p>
+<ul>
+<li><strong>常用命令:</strong> <code>rpush,lpop,lpush,rpop,lrange、llen</code> 等。</li>
+<li><strong>应用场景:</strong> 发布与订阅或者说消息队列、慢查询。</li>
+</ul>
+<!-- raw HTML omitted -->
+<p><strong>实现队列</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; rpush myList value1 <span class="c1"># 向 list 的头部（右边）添加元素</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; rpush myList value2 value3 <span class="c1"># 向list的头部（最右边）添加多个元素</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+127.0.0.1:6379&gt; lpop myList <span class="c1"># 将 list的尾部(最左边)元素取出</span>
+<span class="s2">&#34;value1&#34;</span>
+127.0.0.1:6379&gt; lrange myList <span class="m">0</span> <span class="m">1</span> <span class="c1"># 查看对应下标的list列表， 0 为 start,1为 end</span>
+1<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value3&#34;</span>
+127.0.0.1:6379&gt; lrange myList <span class="m">0</span> -1 <span class="c1"># 查看列表中的所有元素，-1表示倒数第一</span>
+1<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value3&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<p><strong>实现栈</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; rpush myList2 value1 value2 value3
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+127.0.0.1:6379&gt; rpop myList2 <span class="c1"># 将 list的头部(最右边)元素取出</span>
+<span class="s2">&#34;value3&#34;</span>
+</code></pre></div><p><strong>通过 <code>lrange</code> 查看对应下标范围的列表元素：</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; rpush myList value1 value2 value3
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+127.0.0.1:6379&gt; lrange myList <span class="m">0</span> <span class="m">1</span> <span class="c1"># 查看对应下标的list列表， 0 为 start,1为 end</span>
+1<span class="o">)</span> <span class="s2">&#34;value1&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+127.0.0.1:6379&gt; lrange myList <span class="m">0</span> -1 <span class="c1"># 查看列表中的所有元素，-1表示倒数第一</span>
+1<span class="o">)</span> <span class="s2">&#34;value1&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;value3&#34;</span>
+</code></pre></div><p>通过 <code>lrange</code> 命令，你可以基于 list 实现分页查询，性能非常高！</p>
+<p><strong>通过 <code>llen</code> 查看链表长度：</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; llen myList
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="hash-无序散列表">Hash 无序散列表</h3>
+<p>存储<strong>键值对</strong>。当数据量较小，使用ZipList存储，否则使用<strong>散列表</strong>(使用MurmurHash2作为哈希函数)。</p>
+<p>当负载因子大于1，触发扩容，将散列表扩大为2倍。当负载因子小于0.1，触发缩容，缩小为实际负载的2倍大小。</p>
+<ul>
+<li><strong>常用命令：</strong> <code>hset,hmset,hexists,hget,hgetall,hkeys,hvals</code> 等。</li>
+<li><strong>应用场景:</strong> 系统中对象数据的存储。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; hset userInfoKey name <span class="s2">&#34;guide&#34;</span> description <span class="s2">&#34;dev&#34;</span> age <span class="s2">&#34;24&#34;</span>
+OK
+127.0.0.1:6379&gt; hexists userInfoKey name <span class="c1"># 查看 key 对应的 value中指定的字段是否存在。</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; hget userInfoKey name <span class="c1"># 获取存储在哈希表中指定字段的值。</span>
+<span class="s2">&#34;guide&#34;</span>
+127.0.0.1:6379&gt; hget userInfoKey age
+<span class="s2">&#34;24&#34;</span>
+127.0.0.1:6379&gt; hgetall userInfoKey <span class="c1"># 获取在哈希表中指定 key 的所有字段和值</span>
+1<span class="o">)</span> <span class="s2">&#34;name&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;guide&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;description&#34;</span>
+4<span class="o">)</span> <span class="s2">&#34;dev&#34;</span>
+5<span class="o">)</span> <span class="s2">&#34;age&#34;</span>
+6<span class="o">)</span> <span class="s2">&#34;24&#34;</span>
+127.0.0.1:6379&gt; hkeys userInfoKey <span class="c1"># 获取 key 列表</span>
+1<span class="o">)</span> <span class="s2">&#34;name&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;description&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;age&#34;</span>
+127.0.0.1:6379&gt; hvals userInfoKey <span class="c1"># 获取 value 列表</span>
+1<span class="o">)</span> <span class="s2">&#34;guide&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;dev&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;24&#34;</span>
+127.0.0.1:6379&gt; hset userInfoKey name <span class="s2">&#34;GuideGeGe&#34;</span> <span class="c1"># 修改某个字段对应的值</span>
+127.0.0.1:6379&gt; hget userInfoKey name
+<span class="s2">&#34;GuideGeGe&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h4 id="set-无序集合">Set 无序集合</h4>
+<p>集合中的元素没有先后顺序，不允许重复数据。</p>
+<ul>
+<li><strong>常用命令：</strong> <code>sadd,spop,smembers,sismember,scard,sinterstore,sunion</code> 等。</li>
+<li><strong>应用场景:</strong> 需要存放的数据不能重复以及需要获取多个数据源交集和并集等场景</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; sadd mySet value1 value2 <span class="c1"># 添加元素进去</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; sadd mySet value1 <span class="c1"># 不允许有重复元素</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+127.0.0.1:6379&gt; smembers mySet <span class="c1"># 查看 set 中所有的元素</span>
+1<span class="o">)</span> <span class="s2">&#34;value1&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+127.0.0.1:6379&gt; scard mySet <span class="c1"># 查看 set 的长度</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; sismember mySet value1 <span class="c1"># 检查某个元素是否存在set 中，只能接收单个元素</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; sadd mySet2 value2 value3
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; sinterstore mySet3 mySet mySet2 <span class="c1"># 获取 mySet 和 mySet2 的交集并存放在 mySet3 中</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; smembers mySet3
+1<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h4 id="sortedset-有序集合">SortedSet 有序集合</h4>
+<p>存储键值对，有序集合的值被称为分值(score)，必须为浮点数。SortedSet 是唯一既可以跟据成员访问，又可以跟据分值以及分值排列顺序访问元素的结构。有点像是 Java 中 HashMap 和 TreeSet 的结合体。</p>
+<ul>
+<li><strong>常用命令：</strong> <code>zadd,zcard,zscore,zrange,zrevrange,zrem</code> 等。</li>
+<li><strong>应用场景：</strong> 需要对数据根据某个权重进行排序的场景。比如在直播系统中，实时排行信息包含直播间在线用户列表，各种礼物排行榜，弹幕消息（可以理解为按消息维度的消息排行榜）等信息。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; zadd myZset 3.0 value1 <span class="c1"># 添加元素到 sorted set 中 3.0 为权重</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; zadd myZset 2.0 value2 1.0 value3 <span class="c1"># 一次添加多个元素</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; zcard myZset <span class="c1"># 查看 sorted set 中的元素数量</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+127.0.0.1:6379&gt; zscore myZset value1 <span class="c1"># 查看某个 value 的权重</span>
+<span class="s2">&#34;3&#34;</span>
+127.0.0.1:6379&gt; zrange  myZset <span class="m">0</span> -1 <span class="c1"># 顺序输出某个范围区间的元素，0 -1 表示输出所有元素</span>
+1<span class="o">)</span> <span class="s2">&#34;value3&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;value1&#34;</span>
+127.0.0.1:6379&gt; zrange  myZset <span class="m">0</span> <span class="m">1</span> <span class="c1"># 顺序输出某个范围区间的元素，0 为 start  1 为 stop</span>
+1<span class="o">)</span> <span class="s2">&#34;value3&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+127.0.0.1:6379&gt; zrevrange  myZset <span class="m">0</span> <span class="m">1</span> <span class="c1"># 逆序输出某个范围区间的元素，0 为 start  1 为 stop</span>
+1<span class="o">)</span> <span class="s2">&#34;value1&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;value2&#34;</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="bitmap">bitmap</h3>
+<p>适用只需要一个 bit 位来表示某个元素对应值或者状态的情况，如是否签到、是否登录等 Java 中使用 <code>bool</code> 的场景，加之 <code>bitmap</code> 可以统计设为 1 的位的数量</p>
+<p><strong>常用命令：</strong> <code>setbit</code> 、<code>getbit</code> 、<code>bitcount</code>、<code>bitop</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># SETBIT 会返回之前位的值（默认是 0）这里会生成 7 个位</span>
+127.0.0.1:6379&gt; setbit mykey <span class="m">7</span> <span class="m">1</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+127.0.0.1:6379&gt; setbit mykey <span class="m">7</span> <span class="m">0</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; getbit mykey <span class="m">7</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+127.0.0.1:6379&gt; setbit mykey <span class="m">6</span> <span class="m">1</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+127.0.0.1:6379&gt; setbit mykey <span class="m">8</span> <span class="m">1</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+<span class="c1"># 通过 bitcount 统计被被设置为 1 的位的数量。</span>
+127.0.0.1:6379&gt; bitcount mykey
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+</code></pre></div><p>用户 ID 经常可以被用来作 <code>bitmap</code>  上的 <code>offset</code>，从而可以轻松统计“&hellip;的用户个数”。</p>
+<p>相应的，位操作 <code>BITOP operation destkey key [key ...]</code> ，支持 <code>AND</code> <code>OR</code> <code>NOT</code> <code>XOR</code> 四种操作中任意一种参数。</p>
+<p>初始化数据：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; setbit <span class="m">20210308</span> <span class="m">1</span> <span class="m">1</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+127.0.0.1:6379&gt; setbit <span class="m">20210308</span> <span class="m">2</span> <span class="m">1</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+127.0.0.1:6379&gt; setbit <span class="m">20210309</span> <span class="m">1</span> <span class="m">1</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+</code></pre></div><p>统计 20210308~20210309 总活跃用户数: 1</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; bitop and desk1 <span class="m">20210308</span> <span class="m">20210309</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; bitcount desk1
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+</code></pre></div><p>统计 20210308~20210309 在线活跃用户数: 2</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">127.0.0.1:6379&gt; bitop or desk2 <span class="m">20210308</span> <span class="m">20210309</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; bitcount desk2
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+</code></pre></div><p>实际上，如果需要统计日活、月活用户这种，Redis 有一个非常对口的数据结构——HyperLoglog，原理其实类似于布隆滤波器，也是一个哈希过滤器，有一定的误警率，因此一般用于统计日活用户数量之类对精确度没有很高要求的数据。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="乐观锁">乐观锁</h3>
+<blockquote>
+<p>对应数据库中的 <code>version</code> 设计</p>
+</blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">watch money		<span class="c1">#使用 watch 当作乐观锁操作</span>
+</code></pre></div><p>被监视数据，如果在事务对其执行操作前被其它线程修改，则在调用 <code>exec</code> 时会执行失败</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">unwatch		<span class="c1"># 失败，乐观锁已经失效</span>
+
+watch money		<span class="c1"># 添加新的乐观锁</span>
+</code></pre></div><hr>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/redis/">Redis</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-common_questions/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" data-key="redis-common_questions" data-hash="/images/feature/scenes/Windmill.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 面试常见问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Arctic.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 依赖注入注解的区分</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Fancy1.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Fancy1.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 常用注释</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-transport_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/09.jpg" loading="lazy" data-key="computer_network-transport_layer" data-hash="/images/feature/abyss/09.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 传输层</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-application_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/10.jpg" loading="lazy" data-key="computer_network-application_layer" data-hash="/images/feature/abyss/10.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 应用层</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#heading"></a></li>
+        <li><a href="#string">String</a>
+          <ol>
+            <li><a href="#设置过期对所有数据类型都适用"><strong>设置过期（对所有数据类型都适用）</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#ziplist-压缩列表">ZipList 压缩列表</a></li>
+        <li><a href="#list-链表">List 链表</a></li>
+        <li><a href="#hash-无序散列表">Hash 无序散列表</a>
+          <ol>
+            <li><a href="#set-无序集合">Set 无序集合</a></li>
+            <li><a href="#sortedset-有序集合">SortedSet 有序集合</a></li>
+          </ol>
+        </li>
+        <li><a href="#bitmap">bitmap</a></li>
+        <li><a href="#乐观锁">乐观锁</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

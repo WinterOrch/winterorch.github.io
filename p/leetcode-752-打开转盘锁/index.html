@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='双向BFS迷宫遍历.'><title>LeetCode 752 - 打开转盘锁</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode 752 - 打开转盘锁'>
+<meta property='og:description' content='双向BFS迷宫遍历.'>
+<meta property='og:url' content='https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='BFS' /><meta property='article:tag' content='Leetcode' /><meta property='article:published_time' content='2021-06-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-24T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="LeetCode 752 - 打开转盘锁">
+<meta name="twitter:description" content="双向BFS迷宫遍历.">
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/leetcode/" style="background-color: #7B7B7B; color: #fff;">
+                Leetcode
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/">LeetCode 752 - 打开转盘锁</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        双向BFS迷宫遍历.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 24, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h1 id="leetcode-752-open-the-lock">[LeetCode] 752. Open the Lock</h1>
+<p>You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: <code>'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'</code>. The wheels can rotate freely and wrap around: for example we can turn <code>'9'</code> to be <code>'0'</code>, or <code>'0'</code> to be <code>'9'</code>. Each move consists of turning one wheel one slot.</p>
+<p>The lock initially starts at <code>'0000'</code>, a string representing the state of the 4 wheels.</p>
+<p>You are given a list of <code>deadends</code> dead ends, meaning if the lock displays any of these codes, the wheels of the lock will stop turning and you will be unable to open it.</p>
+<p>Given a <code>target</code> representing the value of the wheels that will unlock the lock, return the minimum total number of turns required to open the lock, or -1 if it is impossible.</p>
+<p>Example 1:</p>
+<pre><code>Input: deadends = [&quot;0201&quot;,&quot;0101&quot;,&quot;0102&quot;,&quot;1212&quot;,&quot;2002&quot;], target = &quot;0202&quot;
+Output: 6
+Explanation:
+A sequence of valid moves would be &quot;0000&quot; -&gt; &quot;1000&quot; -&gt; &quot;1100&quot; -&gt; &quot;1200&quot; -&gt; &quot;1201&quot; -&gt; &quot;1202&quot; -&gt; &quot;0202&quot;.
+Note that a sequence like &quot;0000&quot; -&gt; &quot;0001&quot; -&gt; &quot;0002&quot; -&gt; &quot;0102&quot; -&gt; &quot;0202&quot; would be invalid,
+because the wheels of the lock become stuck after the display becomes the dead end &quot;0102&quot;.
+</code></pre><p>Example 2:</p>
+<pre><code>Input: deadends = [&quot;8888&quot;], target = &quot;0009&quot;
+Output: 1
+Explanation:
+We can turn the last wheel in reverse to move from &quot;0000&quot; -&gt; &quot;0009&quot;.
+</code></pre><p>Example 3:</p>
+<pre><code>Input: deadends = [&quot;8887&quot;,&quot;8889&quot;,&quot;8878&quot;,&quot;8898&quot;,&quot;8788&quot;,&quot;8988&quot;,&quot;7888&quot;,&quot;9888&quot;], target = &quot;8888&quot;
+Output: -1
+Explanation:
+We can't reach the target without getting stuck.
+</code></pre><p>Example 4:</p>
+<pre><code>Input: deadends = [&quot;0000&quot;], target = &quot;8888&quot;
+Output: -1
+</code></pre><p>Constraints:</p>
+<ul>
+<li><code>1 &lt;= deadends.length &lt;= 500</code></li>
+<li><code>deadends[i].length == 4</code></li>
+<li><code>target.length == 4</code></li>
+<li>target will not be in the list <code>deadends</code>.</li>
+<li><code>target</code> and <code>deadends[i]</code> consist of digits only.</li>
+</ul>
+<hr>
+<h3 id="题解--双向-bfs">题解  双向 BFS</h3>
+<blockquote>
+<p>类似题：<a class="link" href="https://github.com/grandyang/leetcode/issues/126"  target="_blank" rel="noopener"
+    >LeetCode 127 Word Ladder II</a></p>
+</blockquote>
+<p>看到有 <code>deadends</code> 其实就比较明显了——这是个走迷宫问题，而且因为有四位密码，所以其实是个四维迷宫。维数并不会增加解法的复杂程度，倒是会严重增加敲代码的繁琐程度。一开始是打算真的和迷宫一样，用四维数组做的，后来发现参数实在太多了，光敲一个位置就要 <code>mem[i0][i1][i2][i3]</code> 这样来一遍，实在有点头皮发麻，改用 <code>String</code> 和 <code>Map</code> 来做记忆化了。</p>
+<p>还是当作迷宫来解，因此思想是 BFS ，因为入口和出口都是唯一确定的，前后都可以作为 BFS 的起点，因此可以通过双向 BFS 来收缩搜索范围。</p>
+<p>首先把 <code>deadends</code> 存到一个 <code>HashSet</code> 里，方便查验。BFS 需要前后两个队列，分别维护一个记忆化搜索表，记录到 <code>key</code> 位置的步长。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">d1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayDeque</span><span class="o">&lt;&gt;(),</span>
+						  <span class="n">d2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayDeque</span><span class="o">&lt;&gt;();</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">m1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;(),</span> 
+									 <span class="n">m2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">d1</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+<span class="n">m1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="n">0</span><span class="o">);</span>
+<span class="n">d2</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+<span class="n">m2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">0</span><span class="o">);</span>
+</code></pre></div><p>然后就是 BFS 了，一直搜到队列空为止。为了尽量收缩双向 BFS 的搜索范围，每次<!-- raw HTML omitted -->从更小的队列取元素进行搜索<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="k">while</span> <span class="o">(!</span><span class="n">d1</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">d2</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">d1</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">d2</span><span class="o">.</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">update</span><span class="o">(</span><span class="n">d1</span><span class="o">,</span> <span class="n">m1</span><span class="o">,</span> <span class="n">m2</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">update</span><span class="o">(</span><span class="n">d2</span><span class="o">,</span> <span class="n">m2</span><span class="o">,</span> <span class="n">m1</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="o">!=</span> <span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="k">return</span> <span class="n">t</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><p>每次搜索要搜相邻的八个位置，也就是每一位的前后两个数字。原数字是 <code>char[i]</code> 的话，以十为模加一或加九就行了——<code>(char) ('0' + ((chars[i] - '0' + offset) % 10))</code> 。</p>
+<p>新状态的检查包括这样一些原则——</p>
+<ol>
+<li>新位置不能是 <code>deadend</code></li>
+<li>新位置不能已经去过（在同一队列中），同一队列两次经过同一位置步长一定不会变短，也就不需要考虑了</li>
+<li>在满足前两个前提下，如果能在反向记忆中找到相同状态，那一定是最短路径，直接输出</li>
+<li>不在反向记忆中，就加入到当前记忆队列中，从而引起下一轮 BFS</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">char</span> <span class="n">ori</span> <span class="o">=</span> <span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+<span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="kt">char</span><span class="o">)</span> <span class="o">(</span><span class="sc">&#39;0&#39;</span> <span class="o">+</span> <span class="o">((</span><span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span> <span class="o">+</span> <span class="n">offset</span><span class="o">)</span> <span class="o">%</span> <span class="n">10</span><span class="o">));</span>
+<span class="n">String</span> <span class="n">go</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">chars</span><span class="o">);</span>
+<span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">ori</span><span class="o">;</span>
+
+<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">deadEnds</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">go</span><span class="o">))</span>
+    <span class="k">continue</span><span class="o">;</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">fs_map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">go</span><span class="o">))</span>
+    <span class="k">continue</span><span class="o">;</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">ot_map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">go</span><span class="o">))</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">res</span> <span class="o">=</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span> <span class="o">+</span> <span class="n">ot_map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">go</span><span class="o">);</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="n">fs_map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">go</span><span class="o">,</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
+<span class="n">fs</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">go</span><span class="o">);</span>
+</code></pre></div><p>完整代码</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span> <span class="n">res</span><span class="o">;</span>
+<span class="kt">int</span><span class="o">[]</span> <span class="n">offset</span> <span class="o">=</span> <span class="o">{</span><span class="n">1</span><span class="o">,</span> <span class="n">9</span><span class="o">};</span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">deadEnds</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kt">int</span> <span class="nf">openLock_remastered</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">dead</span><span class="o">,</span> <span class="n">String</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">target</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&#34;0000&#34;</span><span class="o">))</span>
+        <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">deadEnds</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="c1">// 虽然这里 IDE 会推荐让 Arrays 来把 String[] 转换成 Collection,但这样做对速度没有好处。
+</span><span class="c1"></span>    <span class="c1">// IDE 上测出来差别不大，但到了 LeetCode 上居然能让整题多耗将近一倍时间，百思不得其解。
+</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">:</span> <span class="n">dead</span><span class="o">)</span>
+        <span class="n">deadEnds</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">deadEnds</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="s">&#34;0000&#34;</span><span class="o">))</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+    <span class="n">Deque</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">front</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayDeque</span><span class="o">&lt;&gt;();</span>
+    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">front_map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="n">Deque</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">back</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayDeque</span><span class="o">&lt;&gt;();</span>
+    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">back_map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="n">front</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="s">&#34;0000&#34;</span><span class="o">);</span>
+    <span class="n">front_map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;0000&#34;</span><span class="o">,</span> <span class="n">0</span><span class="o">);</span>
+    <span class="n">back</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">target</span><span class="o">);</span>
+    <span class="n">back_map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">0</span><span class="o">);</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">front</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">back</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">front</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">back</span><span class="o">.</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">update</span><span class="o">(</span><span class="n">front</span><span class="o">,</span> <span class="n">front_map</span><span class="o">,</span> <span class="n">back_map</span><span class="o">))</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">res</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">update</span><span class="o">(</span><span class="n">back</span><span class="o">,</span> <span class="n">back_map</span><span class="o">,</span> <span class="n">front_map</span><span class="o">))</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">res</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">update</span><span class="o">(</span><span class="n">Deque</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fs</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">fs_map</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">ot_map</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="na">pollFirst</span><span class="o">();</span>
+    <span class="kt">char</span><span class="o">[]</span> <span class="n">chars</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+    <span class="kt">int</span> <span class="n">step</span> <span class="o">=</span> <span class="n">fs_map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">cur</span><span class="o">);</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">4</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">offset</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">offset</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">char</span> <span class="n">ori</span> <span class="o">=</span> <span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+            <span class="c1">// 在原 char[] 上改了，取完 String 再转回去，
+</span><span class="c1"></span>            <span class="c1">// 会比 clone() 新的要快很多
+</span><span class="c1"></span>					 <span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="kt">char</span><span class="o">)</span> <span class="o">(</span><span class="sc">&#39;0&#39;</span> <span class="o">+</span> <span class="o">((</span><span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span> <span class="o">+</span> <span class="n">offset</span><span class="o">)</span> <span class="o">%</span> <span class="n">10</span><span class="o">));</span>
+					 <span class="n">String</span> <span class="n">go</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">chars</span><span class="o">);</span>
+					 <span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">ori</span><span class="o">;</span>	
+          
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">deadEnds</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">go</span><span class="o">))</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">fs_map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">go</span><span class="o">))</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">ot_map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">go</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="na">res</span> <span class="o">=</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span> <span class="o">+</span> <span class="n">ot_map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">go</span><span class="o">);</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="n">fs_map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">go</span><span class="o">,</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
+            <span class="n">fs</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">go</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><hr>
+<h3 id="题解--astar-算法">题解  AStar 算法</h3>
+<p>作者：AC_OIer
+链接：https://leetcode-cn.com/problems/open-the-lock/solution/gong-shui-san-xie-yi-ti-shuang-jie-shuan-wyr9/</p>
+<p>可以直接根据本题规则来设计 A* 的「启发式函数」。</p>
+<p>比如对于两个状态 a 和 b 可直接计算出「理论最小转换次数」：不同字符的转换成本之和 。</p>
+<p>需要注意的是：由于我们衡量某个字符 str 的估值是以目标字符串 target 为基准，因此我们只能确保 target 出队时为「距离最短」，而不能确保中间节点出队时「距离最短」，因此我们不能单纯根据某个节点是否「曾经入队」而决定是否入队，还要结合当前节点的「最小距离」是否被更新而决定是否入队。</p>
+<p>这一点十分关键，在代码层面上体现在 map.get(str).step &gt; poll.step + 1 的判断上。</p>
+<p>注意：本题用 A* 过了，但通常我们需要先「确保有解」，A* 的启发搜索才会发挥真正价值。而本题，除非 t 本身在 deadends 中，其余情况我们无法很好提前判断「是否有解」。对于无解的情况 A* 效果不如「双向 BFS」。</p>
+<p>源码</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">class</span> <span class="nc">Node</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">str</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">val</span><span class="o">,</span> <span class="n">step</span><span class="o">;</span>
+       <span class="cm">/**
+</span><span class="cm">        *  str : 对应字符串
+</span><span class="cm">        *  val : 估值（与目标字符串 target 的最小转换成本）
+</span><span class="cm">        *  step: 对应字符串是经过多少步转换而来
+</span><span class="cm">        */</span>
+        <span class="n">Node</span><span class="o">(</span><span class="n">String</span> <span class="n">_str</span><span class="o">,</span> <span class="kt">int</span> <span class="n">_val</span><span class="o">,</span> <span class="kt">int</span> <span class="n">_step</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">str</span> <span class="o">=</span> <span class="n">_str</span><span class="o">;</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">_val</span><span class="o">;</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">_step</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kt">int</span> <span class="nf">f</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">4</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="o">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">cur</span><span class="o">,</span> <span class="n">target</span><span class="o">),</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">cur</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+            <span class="c1">// 在「正向转」和「反向转」之间取 min
+</span><span class="c1"></span>            <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="o">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">10</span> <span class="o">-</span> <span class="n">b</span><span class="o">);</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">min</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">ans</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="n">String</span> <span class="n">s</span><span class="o">,</span> <span class="n">t</span><span class="o">;</span>
+    <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">openLock</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">ds</span><span class="o">,</span> <span class="n">String</span> <span class="n">_t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#34;0000&#34;</span><span class="o">;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">_t</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">t</span><span class="o">))</span> <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">d</span> <span class="o">:</span> <span class="n">ds</span><span class="o">)</span> <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">d</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">s</span><span class="o">))</span> <span class="k">return</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+        
+        <span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">q</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PriorityQueue</span><span class="o">&lt;&gt;((</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)-&gt;</span><span class="n">a</span><span class="o">.</span><span class="na">val</span><span class="o">-</span><span class="n">b</span><span class="o">.</span><span class="na">val</span><span class="o">);</span>
+        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Node</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">Node</span> <span class="n">root</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="n">f</span><span class="o">(</span><span class="n">s</span><span class="o">),</span> <span class="n">0</span><span class="o">);</span>
+        <span class="n">q</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">root</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="n">root</span><span class="o">);</span>
+        <span class="k">while</span> <span class="o">(!</span><span class="n">q</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">Node</span> <span class="n">poll</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+            <span class="kt">char</span><span class="o">[]</span> <span class="n">pcs</span> <span class="o">=</span> <span class="n">poll</span><span class="o">.</span><span class="na">str</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+            <span class="kt">int</span> <span class="n">step</span> <span class="o">=</span> <span class="n">poll</span><span class="o">.</span><span class="na">step</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">poll</span><span class="o">.</span><span class="na">str</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">t</span><span class="o">))</span> <span class="k">return</span> <span class="n">step</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">4</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">1</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">j</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="k">continue</span><span class="o">;</span>
+                    <span class="kt">int</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="o">;</span>
+                    <span class="kt">int</span> <span class="n">next</span> <span class="o">=</span> <span class="o">(</span><span class="n">cur</span> <span class="o">+</span> <span class="n">j</span><span class="o">)</span> <span class="o">%</span> <span class="n">10</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">next</span> <span class="o">==</span> <span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="n">next</span> <span class="o">=</span> <span class="n">9</span><span class="o">;</span>
+
+                    <span class="kt">char</span><span class="o">[]</span> <span class="n">clone</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
+                    <span class="n">clone</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="kt">char</span><span class="o">)(</span><span class="n">next</span> <span class="o">+</span> <span class="sc">&#39;0&#39;</span><span class="o">);</span>
+                    <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">clone</span><span class="o">);</span>
+
+                    <span class="k">if</span> <span class="o">(</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">str</span><span class="o">))</span> <span class="k">continue</span><span class="o">;</span>
+                    <span class="c1">// 如果 str 还没搜索过，或者 str 的「最短距离」被更新，则入队
+</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">str</span><span class="o">)</span> <span class="o">||</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">str</span><span class="o">).</span><span class="na">step</span> <span class="o">&gt;</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span> <span class="o">+</span> <span class="n">f</span><span class="o">(</span><span class="n">str</span><span class="o">),</span> <span class="n">step</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
+                        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="n">node</span><span class="o">);</span>
+                        <span class="n">q</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/bfs/">BFS</a>
+        
+            <a href="/tags/leetcode/">Leetcode</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 815 - 公交路线</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode LCP 07 - 传递信息</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">剑指 Offer 56 - I. 数组中数字出现的次数</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">剑指 Offer 59 - I. 滑动窗口的最大值</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#题解--双向-bfs">题解  双向 BFS</a></li>
+        <li><a href="#题解--astar-算法">题解  AStar 算法</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='垃圾收集的主要场所是 JVM 堆.'><title>Java - JVM GC</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/java-jvm-ram_and_gc/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM GC'>
+<meta property='og:description' content='垃圾收集的主要场所是 JVM 堆.'>
+<meta property='og:url' content='https://winterorch.github.io/p/java-jvm-ram_and_gc/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='JVM' /><meta property='article:published_time' content='2021-03-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-03-17T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg' />
+<meta name="twitter:title" content="Java - JVM GC">
+<meta name="twitter:description" content="垃圾收集的主要场所是 JVM 堆."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java-jvm-ram_and_gc/">
+                
+                    <img src="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg" loading="lazy" alt="Featured image of post Java - JVM GC" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/java%E5%9F%BA%E7%A1%80/" style="background-color: #D26900; color: #fff;">
+                Java基础
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/java-jvm-ram_and_gc/">Java - JVM GC</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        垃圾收集的主要场所是 JVM 堆.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Mar 17, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h3 id="一垃圾收集算法">一、垃圾收集算法</h3>
+<blockquote>
+<p>下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现</p>
+</blockquote>
+<p><figure style="flex-grow: 151; flex-basis: 363px">
+		<a href="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01.jpg" data-size="640x422"><img src="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01.jpg"
+				srcset="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01_hub12b3faaf1b208ac8b97ef15133c8f43_47678_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01_hub12b3faaf1b208ac8b97ef15133c8f43_47678_1024x0_resize_q75_box.jpg 1024w"
+				width="640"
+				height="422"
+				loading="lazy"
+				alt="JDK1.8以前的Java堆分代">
+		</a>
+		
+		<figcaption>JDK1.8以前的Java堆分代</figcaption>
+		
+	</figure></p>
+<p>跟据 <code>Object</code> 生命周期分为三个层次</p>
+<ul>
+<li>Young Generation</li>
+<li>Old Generation</li>
+<li>Permanent Generation</li>
+</ul>
+<p>Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 <code>s0</code> 或 <code>s1</code> ，清理 Eden 和使用过的一块 Survivor。</p>
+<blockquote>
+<p>HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。</p>
+</blockquote>
+<p>Eden 区满时执行 Minor GC 清理可销毁对象，将不可销毁的迁移至其中一个存活区，而将另一个存活区直接清空，下一次 GC 时两个存活区角色交换，交换次数超过 15 （<code>MaxTenuringThreshold</code>）的进入 Old Generation。</p>
+<blockquote>
+<p><strong>复制算法（young代GC算法）</strong></p>
+<p>该算法会将内存区域分为两个大小一样的区域。GC回收时，遍历当前使用区域，只将正在引用的对象复制到另一个区域，因此复制成本较低，且复制过程中还会进行内存整理，不会出现“碎片”问题。缺点就是：需要两个大小一样的内存区域和生命周期短的对象。所以该算法不适合大内存对象和长生命周期的对象，适用于young代的SO/S1</p>
+</blockquote>
+<blockquote>
+<p><strong>Hotspot 的动态年龄阈值</strong></p>
+<p>Hotspot遍历对象时按年龄从小到大对其所占用大小进行累积，当累积的某个年龄大小超过了 <code>survivor</code> 区一半，取年龄与 <code>MaxTenuringThreshold</code> 中更小的作为新年龄阈值</p>
+</blockquote>
+<p>Old Generation 通过“标记-整理”算法，标记处仍存活对象，并将所有存活对象向一端移动以保证内存连续，清理掉剩余部分内存。当进入的对象超过剩余空间大小，则触发 Full GC。“标记-整理”好处是不需要额外内存区域。</p>
+<p>Permanent Generation 主要存放字节码、字符串常量池、静态变量、可持久化数据等。每次发生 Full GC 时，同时也会销毁 Permanent Generation 中的可销毁对象。</p>
+<blockquote>
+<p><strong>永久代</strong>实际上是HotSpot JVM对JVM方法区的实现。由于永久代内存经常不够或发生内存泄露，造成OOM(PermGen)，从JDK8开始废弃了永久代，替换为了<strong>本地内存</strong>(native memory) 中的 Metaspace。</p>
+</blockquote>
+<p><strong>元空间</strong>与永久代最大区别在于它不在虚拟机中，而是使用<!-- raw HTML omitted -->本地内存<!-- raw HTML omitted -->。两者都是对JVM规范中方法区的实现，用于存储类的信息、常量池、方法数据、方法代码等。</p>
+<blockquote>
+<p>字符串常量从JDK1.7开始由永久代转移到堆中(Java heap space)</p>
+</blockquote>
+<p><figure style="flex-grow: 233; flex-basis: 560px">
+		<a href="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326.jpg" data-size="906x388"><img src="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326.jpg"
+				srcset="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326_hu4d0caa410fc3e818e067235fbc466207_43085_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/584866-20170426154633834-741444326_hu4d0caa410fc3e818e067235fbc466207_43085_1024x0_resize_q75_box.jpg 1024w"
+				width="906"
+				height="388"
+				loading="lazy"
+				alt="永久代的变动">
+		</a>
+		
+		<figcaption>永久代的变动</figcaption>
+		
+	</figure></p>
+<hr>
+<h3 id="二经典垃圾收集器">二、经典垃圾收集器</h3>
+<p><figure style="flex-grow: 165; flex-basis: 396px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067.jpg" data-size="646x391"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_huc125b85596bf56800848a15061491627_33792_374ba125b9ba3c29f26ec0c4e4dafc10.jpg 480w, /p/java-jvm-ram_and_gc/_huc125b85596bf56800848a15061491627_33792_22263332518873fd5e9431c81e680d52.jpg 1024w"
+				width="646"
+				height="391"
+				loading="lazy"
+				alt="HotSpot中的垃圾收集器">
+		</a>
+		
+		<figcaption>HotSpot中的垃圾收集器</figcaption>
+		
+	</figure></p>
+<blockquote>
+<p>HotSpot 中的<strong>安全点</strong>一般设置在方法调用、循环跳转、异常跳转等地方，只在安全点位置建立根节点枚举，强制到大安全点后才暂停，进行垃圾收集。</p>
+</blockquote>
+<p>HotSpot 中有7个垃圾收集器，连线表示可以配合使用。</p>
+<ol>
+<li>
+<h5 id="serial"><strong>Serial</strong></h5>
+<p>串行的单线程收集器，简单高效。<!-- raw HTML omitted -->在 Client 场景下为默认 Young Generation 收集器<!-- raw HTML omitted -->，单线程收集效率高。Server 场景用于和 Parallel Scavenge 搭配使用。</p>
+</li>
+<li>
+<h5 id="parnew"><strong>ParNew</strong></h5>
+<p>Serial 的多线程版本。<!-- raw HTML omitted -->在 Server 场景下为默认 Young Generation 收集器<!-- raw HTML omitted -->，可以与 CMS 配合使用。</p>
+</li>
+<li>
+<h5 id="parallel-scavenge"><strong>Parallel Scavenge</strong></h5>
+<p>多线程。以“吞吐量”为优先考虑，即 CPU 运行用户代码的时间占总时间比值最高，CPU 用于垃圾回收的时间占总时间比值最低，而非其它垃圾收集器“尽可能缩短垃圾收集时用户线程的停顿时间”的目标，垃圾回收较为频繁。</p>
+<p>CPU效率更高，也适合后台运算任务，不适合对停顿和响应敏感的交互式程序。</p>
+<p>JVM中有配置以打开 GC 中新生代大小、Eden、S区自适应调节策略。虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量。</p>
+</li>
+<li>
+<h5 id="serial-old-收集器"><strong>Serial Old</strong> 收集器</h5>
+<p><figure style="flex-grow: 270; flex-basis: 650px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067.jpg" data-size="734x271"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_huc20527f54276b36fc12587954a293a6c_30720_76630a27aef49bb7de23fb5f3fab1f1d.jpg 480w, /p/java-jvm-ram_and_gc/_huc20527f54276b36fc12587954a293a6c_30720_54379a3176373c759f0fc3271188544a.jpg 1024w"
+				width="734"
+				height="271"
+				loading="lazy"
+				>
+		</a>
+		
+	</figure></p>
+<p>Serial 收集器的老年代版本，也是给 Client 场景下的虚拟机使用。如果用在 Server 场景下，它有两大用途：</p>
+<ul>
+<li>在 JDK 1.5 以及之前版本（Parallel Old 诞生以前）中与 Parallel Scavenge 收集器搭配使用。</li>
+<li>作为 CMS 收集器的后备预案，在并发收集发生 Concurrent Mode Failure 时使用。</li>
+</ul>
+</li>
+<li>
+<h5 id="parallel-old-收集器"><strong>Parallel Old 收集器</strong></h5>
+<p><figure style="flex-grow: 274; flex-basis: 657px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067.jpg" data-size="740x270"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_hueef91052027da21d38a698e2c7b0a515_32768_d649da0bdf888d0a5d274283dd409895.jpg 480w, /p/java-jvm-ram_and_gc/_hueef91052027da21d38a698e2c7b0a515_32768_ee62d5740d05e0425c488930000324a5.jpg 1024w"
+				width="740"
+				height="270"
+				loading="lazy"
+				>
+		</a>
+		
+	</figure></p>
+<p>是 Parallel Scavenge 收集器的老年代版本。</p>
+<p>在注重吞吐量以及 CPU 资源敏感的场合，都可以优先考虑 Parallel Scavenge 加 Parallel Old 收集器。</p>
+</li>
+<li>
+<h5 id="cms"><strong>CMS</strong></h5>
+<p><figure style="flex-grow: 277; flex-basis: 666px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067.jpg" data-size="733x264"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_hue5ca3b82e39af9a63b15c7449c6096e6_39936_72a30ff8d6df0189b35041862f14c84e.jpg 480w, /p/java-jvm-ram_and_gc/_hue5ca3b82e39af9a63b15c7449c6096e6_39936_0129a065244d24867f96319ee163e818.jpg 1024w"
+				width="733"
+				height="264"
+				loading="lazy"
+				>
+		</a>
+		
+	</figure></p>
+<p>CMS（Concurrent Mark Sweep），Mark Sweep 指的是标记 - 清除算法。</p>
+<p>分为以下四个流程：</p>
+<ul>
+<li><strong>初始标记</strong>：仅仅只是标记一下 GC Roots 能直接关联（一级连接，不遍历）到的对象，同时遍历新生代可直达地老年对象，速度很快，需要停顿。</li>
+<li><strong>并发标记</strong>：进行 GC Roots Tracing 的过程，它在整个回收过程中耗时最长，不需要停顿。</li>
+<li><strong>重新标记</strong>：为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，需要停顿。</li>
+<li><strong>并发清除</strong>： 清理删除掉标记阶段判断已经死亡的对象，不需要停顿。</li>
+</ul>
+<p>在整个过程中耗时最长的并发标记和并发清除过程中，收集器线程都可以与用户线程一起工作，不需要进行停顿。</p>
+<p>具有以下缺点：</p>
+<ul>
+<li>吞吐量低：对处理器资源敏感，低停顿时间是以牺牲吞吐量为代价的，导致 CPU 利用率不够高。因此 CMS 适用于四核以上的处理器。</li>
+<li>无法处理浮动垃圾，可能出现 Concurrent Mode Failure。浮动垃圾是指并发清除阶段由于用户线程继续运行而产生的垃圾，这部分垃圾只能到下一次 GC 时才能进行回收。由于浮动垃圾的存在，因此需要预留出一部分内存，意味着 CMS 收集不能像其它收集器那样等待老年代快满的时候再回收。如果预留的内存不够存放浮动垃圾，就会出现 Concurrent Mode Failure，这时虚拟机将临时启用 Serial Old 来替代 CMS。</li>
+<li>标记 - 清除算法导致的空间碎片，往往出现老年代空间剩余，但无法找到足够大连续空间来分配当前对象，不得不提前触发一次 Full GC。</li>
+</ul>
+</li>
+<li>
+<h5 id="g1"><strong>G1</strong></h5>
+<p>G1（Garbage-First），它是一款面向<strong>服务端应用</strong>的垃圾收集器，在<strong>多 CPU 和大内存的场景</strong>下有很好的性能。HotSpot 开发团队赋予它的使命是未来可以替换掉 CMS 收集器。</p>
+<p>堆被分为新生代和老年代，其它收集器进行收集的范围都是整个新生代或者老年代，而 G1 可以直接对新生代和老年代一起回收。</p>
+<p><figure style="flex-grow: 177; flex-basis: 427px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67.jpg" data-size="735x413"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_huf07e0273188795bf1b85dbf7fe1e2283_28672_81247275f1300ec09efc4db5e03567bd.jpg 480w, /p/java-jvm-ram_and_gc/_huf07e0273188795bf1b85dbf7fe1e2283_28672_0d8655b8da24fe44312840f73e6cf4f4.jpg 1024w"
+				width="735"
+				height="413"
+				loading="lazy"
+				alt="img">
+		</a>
+		
+		<figcaption>img</figcaption>
+		
+	</figure></p>
+<p><!-- raw HTML omitted -->G1 把堆划分成多个大小相等的<strong>独立区域</strong>（Region），新生代和老年代不再物理隔离。<!-- raw HTML omitted --></p>
+<p><figure style="flex-grow: 139; flex-basis: 334px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67.jpg" data-size="713x511"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_huf8a58e7b7f9cca3cbf2b94924ded6248_29696_49c5ff9c3d62e4565e73cbd0d191372b.jpg 480w, /p/java-jvm-ram_and_gc/_huf8a58e7b7f9cca3cbf2b94924ded6248_29696_00cb4697ef5ee94bda06ae34801c64b5.jpg 1024w"
+				width="713"
+				height="511"
+				loading="lazy"
+				alt="img">
+		</a>
+		
+		<figcaption>img</figcaption>
+		
+	</figure></p>
+<p>通过引入 Region 的概念，从而将原来的一整块内存空间划分成多个的小空间，使得每个小空间可以单独进行垃圾回收。这种划分方法带来了很大的灵活性，使得可预测的停顿时间模型成为可能。通过记录每个 Region 垃圾回收时间以及回收所获得的空间（这两个值是通过过去回收的经验获得），并维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的 Region。</p>
+<p>每个 Region 都有一个 Remembered Set，用来记录该 Region 对象的引用对象所在的 Region。通过使用 Remembered Set，在做可达性分析的时候就可以避免全堆扫描。</p>
+<blockquote>
+<p>但是这样设计也存在副作用，region 大小固定为 1MB 到 32 MB 间的 2的幂值数，尽量能划 2048 个左右同等大小的 region 。</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>因为大小固定，和大对象很难保证一致，容易造成空间浪费，也很容易令大对象很难找到连续空间存放。</p>
+</blockquote>
+<p><figure style="flex-grow: 306; flex-basis: 735px">
+		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067.jpg" data-size="763x249"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067.jpg"
+				srcset="/p/java-jvm-ram_and_gc/_hub533c5874b46ffc58619fcd23bdf83e7_37888_06a1df7256dcc09a87a63e468e1b07da.jpg 480w, /p/java-jvm-ram_and_gc/_hub533c5874b46ffc58619fcd23bdf83e7_37888_a303b3ee4753587e7219c1a2c75c7fdb.jpg 1024w"
+				width="763"
+				height="249"
+				loading="lazy"
+				alt="img">
+		</a>
+		
+		<figcaption>img</figcaption>
+		
+	</figure></p>
+<p>如果不计算维护 Remembered Set 的操作，G1 收集器的运作大致可划分为以下几个步骤：</p>
+<ul>
+<li><strong>初始标记</strong>：<strong>短暂停顿线程</strong>以标记 GC Roots 直接关联到的对象，并修改 TAMS (Next Top at Mark Start) 值，让下一并发阶段能在正确 Region 中创建新对象。</li>
+<li><strong>并发标记</strong>：从 GC Roots 开始对堆对象进行可达性分析，递归扫描堆中的对象图，找出存活的对象，<!-- raw HTML omitted -->耗时长，但可以<strong>并发</strong>执行<!-- raw HTML omitted -->。</li>
+<li><strong>最终标记</strong>：为了修正在并发标记阶段遗留的因用户程序继续运作而导致变动的标记记录，虚拟机将这段时间对象变化记录在线程的 Remembered Set Logs 里面，最终标记阶段需要把 Remembered Set Logs 的数据合并到 Remembered Set 中。这阶段需要<strong>短暂停顿</strong>线程，但是可并行执行。</li>
+<li><strong>筛选回收</strong>：首先对各个 Region 中的回收价值和成本进行排序，根据用户所期望的 GC <strong>停顿</strong>时间来制定回收计划。此阶段其实也可以做到与用户程序一起并发执行，但是因为只回收一部分 Region，时间是用户可控制的，而且停顿用户线程将大幅度提高收集效率。</li>
+</ul>
+<p>具备如下特点：</p>
+<ul>
+<li>空间整合：整体来看是基于“标记 - 整理”算法实现的收集器，从局部（两个 Region 之间）上来看是基于“复制”算法实现的，这意味着运行期间不会产生内存空间碎片。</li>
+<li>可预测的停顿：能让使用者明确指定在一个长度为 M 毫秒的时间片段内，消耗在 GC 上的时间不得超过 N 毫秒。</li>
+</ul>
+<blockquote>
+<p>除经典垃圾收集器外还有 Shenandoah 收集器（CAS并发）、ZGC 收集器（通过染色体指针减少GC中内存屏障的使用）等低延迟垃圾收集器，见以下博客</p>
+<p><a href="https://blog.csdn.net/qq_31709249/article/details/106711606">https://blog.csdn.net/qq_31709249/article/details/106711606</a></p>
+</blockquote>
+<hr>
+<h3 id="三内存分配与回收策略">三、内存分配与回收策略</h3>
+<p>Minor GC 和 Full GC</p>
+<ul>
+<li>Minor GC：回收新生代，因为新生代对象存活时间很短，因此 Minor GC 会频繁执行，执行的速度一般也会比较快。</li>
+<li>Full GC：回收老年代和新生代，老年代对象其存活时间长，因此 Full GC 很少执行，执行速度会比 Minor GC 慢很多。</li>
+</ul>
+<h4 id="内存分配策略">内存分配策略</h4>
+<h5 id="1-对象优先在-eden-分配">1. 对象优先在 Eden 分配</h5>
+<p>大多数情况下，对象在新生代 Eden 上分配，当 Eden 空间不够时，发起 Minor GC。</p>
+<blockquote>
+<ul>
+<li><strong>-Xmx：</strong> 最大堆大小</li>
+<li><strong>-Xms：</strong> 最小堆大小</li>
+<li><strong>-Xmn：</strong> 年轻代堆大小</li>
+<li><strong>-XXSurvivorRatio：</strong> 年轻代中Eden区与Survivor区的大小比值</li>
+</ul>
+</blockquote>
+<h5 id="2-大对象直接进入老年代">2. 大对象直接进入老年代</h5>
+<p>大对象是指需要连续内存空间的对象，最典型的大对象是那种很长的字符串以及数组。</p>
+<p>经常出现大对象会提前触发垃圾收集以获取足够的连续空间分配给大对象。</p>
+<blockquote>
+<p>-XX:PretenureSizeThreshold，大于此值的对象直接在老年代分配，避免在 Eden 和 Survivor 之间的大量内存复制。</p>
+</blockquote>
+<h5 id="3-长期存活的对象进入老年代">3. 长期存活的对象进入老年代</h5>
+<p>为对象定义年龄计数器，对象在 Eden 出生并经过 Minor GC 依然存活，将移动到 Survivor 中，年龄就增加 1 岁，增加到一定年龄则移动到老年代中。</p>
+<blockquote>
+<p>-XX:MaxTenuringThreshold 用来定义对象进入老年期的年龄阈值。</p>
+</blockquote>
+<h5 id="4-动态对象年龄判定">4. 动态对象年龄判定</h5>
+<p>虚拟机并不是永远要求对象的年龄必须达到 MaxTenuringThreshold 才能晋升老年代，如果在 Survivor 中相同年龄所有对象大小的总和大于 Survivor 空间的一半，则年龄大于或等于该年龄的对象可以直接进入老年代，无需等到 MaxTenuringThreshold 中要求的年龄。</p>
+<h5 id="5-空间分配担保">5. 空间分配担保</h5>
+<p>在发生 Minor GC 之前，虚拟机先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果条件成立的话，那么 Minor GC 可以确认是安全的。</p>
+<p>如果不成立的话虚拟机会查看 HandlePromotionFailure 的值是否允许担保失败，如果允许那么就会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试着进行一次 Minor GC；如果小于，或者 HandlePromotionFailure 的值不允许冒险，那么就要进行一次 Full GC。</p>
+<blockquote>
+<p>JDK 6 Update 24 后，如果老年代连续空间大于新生代对象总大小或历次晋升的平均大小，则直接 Minor GC，否则 Full GC。</p>
+</blockquote>
+<h4 id="full-gc-的触发条件">Full GC 的触发条件</h4>
+<p>对于 Minor GC，其触发条件非常简单，当 Eden 空间满时，就将触发一次 Minor GC。而 Full GC 则相对复杂，有以下条件：</p>
+<ol>
+<li>
+<p>调用 System.gc()</p>
+<p>只是建议虚拟机执行 Full GC，但是虚拟机<strong>不一定真正去执行</strong>。<strong>不建议</strong>使用这种方式，而是让虚拟机管理内存。</p>
+</li>
+<li>
+<p>老年代空间不足</p>
+<p>老年代空间不足的常见场景为前文所讲的大对象直接进入老年代、长期存活的对象进入老年代等。</p>
+<p>为了避免以上原因引起的 Full GC，<!-- raw HTML omitted -->应当尽量不要创建过大的对象以及数组<!-- raw HTML omitted -->。除此之外，可以通过 -Xmn 虚拟机参数调大新生代的大小，让对象尽量在新生代被回收掉，不进入老年代。还可以通过 -XX:MaxTenuringThreshold 调大对象进入老年代的年龄，让对象在新生代多存活一段时间。</p>
+</li>
+<li>
+<p>空间分配担保失败</p>
+<p>使用复制算法的 Minor GC 需要老年代的内存空间作担保，如果担保失败会执行一次 Full GC。具体内容请参考上面的第 5 小节。</p>
+</li>
+<li>
+<p>JDK 1.7 及以前的永久代空间不足</p>
+<p>在 JDK 1.7 及以前，HotSpot 虚拟机中的方法区是用永久代实现的，永久代中存放的为一些 Class 的信息、常量、静态变量等数据。</p>
+<p>当系统中要加载的类、反射的类和调用的方法较多时，永久代可能会被占满，在未配置为采用 CMS GC 的情况下也会执行 Full GC。如果经过 Full GC 仍然回收不了，那么虚拟机会抛出 java.lang.OutOfMemoryError。</p>
+<p>为避免以上原因引起的 Full GC，可采用的方法为增大永久代空间或转为使用 CMS GC。</p>
+</li>
+<li>
+<p>Concurrent Mode Failure</p>
+<p>执行 CMS GC 的过程中同时有对象要放入老年代，而此时老年代空间不足（可能是 GC 过程中浮动垃圾过多导致暂时性的空间不足），便会报 Concurrent Mode Failure 错误，并触发 Full GC。</p>
+</li>
+</ol>
+<hr>
+<h3 id="四可销毁对象">四、可销毁对象</h3>
+<blockquote>
+<p>Java 虚拟机不使用引用计数算法，因为两个对象如果循环引用，则引用计数器永远无法为 0。</p>
+</blockquote>
+<h4 id="可达性分析">可达性分析</h4>
+<p><figure style="flex-grow: 256; flex-basis: 615px">
+		<a href="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02.jpg" data-size="600x234"><img src="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02.jpg"
+				srcset="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02_hu820897081684813e6d8ebae4abd3e3d5_30966_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02_hu820897081684813e6d8ebae4abd3e3d5_30966_1024x0_resize_q75_box.jpg 1024w"
+				width="600"
+				height="234"
+				loading="lazy"
+				alt="可达树">
+		</a>
+		
+		<figcaption>可达树</figcaption>
+		
+	</figure></p>
+<p>根搜索方法，将所有 Java 对象构成“搜索树”结构，有一个根节点 <code>root</code>，每次从根节点触发进行搜索，遍历完后，不存在的变量成为可销毁对象。</p>
+<p><code>root</code> 包括所有正在运行线程栈上的引用变量、所有全局变量、所有 <code>ClassLoader</code> 。</p>
+<h4 id="类的卸载">类的卸载</h4>
+<p>类卸载必须满足很多条件，最基本的有：所有实例都被回收；<code>ClassLoader</code>已被回收；对应的<code>Class</code>对象没有在任何地方被引用。</p>
+<blockquote>
+<p>8u40 以后 G1 增加并默认开启 <code>ClassUnloadingWithConcurrentMark</code> ，在并发标记阶段结束后，JVM 直接进行类卸载。</p>
+</blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/java/">Java</a>
+        
+            <a href="/tags/jvm/">JVM</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/05.jpg" loading="lazy" data-key="" data-hash="/images/feature/abyss/05.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 接口与抽象类的区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/arknights/Penguin.jpg" loading="lazy" data-key="" data-hash="/images/feature/arknights/Penguin.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 抽象类</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Street2.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Street2.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 常用数据类型</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-common_questions/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" data-key="redis-common_questions" data-hash="/images/feature/scenes/Windmill.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 面试常见问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Arctic.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 依赖注入注解的区分</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#一垃圾收集算法">一、垃圾收集算法</a></li>
+        <li><a href="#二经典垃圾收集器">二、经典垃圾收集器</a>
+          <ol>
+            <li></li>
+          </ol>
+        </li>
+        <li><a href="#三内存分配与回收策略">三、内存分配与回收策略</a>
+          <ol>
+            <li><a href="#内存分配策略">内存分配策略</a></li>
+            <li><a href="#full-gc-的触发条件">Full GC 的触发条件</a></li>
+          </ol>
+        </li>
+        <li><a href="#四可销毁对象">四、可销毁对象</a>
+          <ol>
+            <li><a href="#可达性分析">可达性分析</a></li>
+            <li><a href="#类的卸载">类的卸载</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

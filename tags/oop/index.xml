@@ -5,15 +5,14 @@
     <link>https://winterorch.github.io/tags/oop/</link>
     <description>Recent content in OOP on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
+    <language>zh-cn</language>
     <lastBuildDate>Wed, 02 Jun 2021 20:04:58 +0130</lastBuildDate><atom:link href="https://winterorch.github.io/tags/oop/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>接口与抽象类的区别</title>
-      <link>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</link>
+      <title>Java - 接口与抽象类的区别</title>
+      <link>https://winterorch.github.io/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
       <pubDate>Wed, 02 Jun 2021 20:04:58 +0130</pubDate>
       
-      <guid>https://winterorch.github.io/posts/java-oop-polymorphism-interface_and_abstract/</guid>
+      <guid>https://winterorch.github.io/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
       <description>先简单过一下接口语法中的注意点。
 注意点   接口中的变量隐式指定为 public static final
   接口中的方法会被隐式指定为 public abstract （JDK 1.9 后允许 private，其它修饰符会报错）
@@ -31,11 +30,11 @@ public interface Hockey extends Sports, Event    接口与抽象类区别 接口
     </item>
     
     <item>
-      <title>Java 抽象类</title>
-      <link>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</link>
-      <pubDate>Sun, 30 May 2021 20:01:58 +0530</pubDate>
+      <title>Java - 抽象类</title>
+      <link>https://winterorch.github.io/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/</link>
+      <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/posts/java-oop-polymorphism-abstract_class/</guid>
+      <guid>https://winterorch.github.io/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/</guid>
       <description>语法 抽象类中可以存在
  构造方法 抽象方法 非抽象方法 成员变量 静态成员变量  总结：除了不能被实例化，抽象类几乎具有普通类的所有特性。
  注意点   抽象类不能被实例化，如果试图实例化抽象类，编译无法通过

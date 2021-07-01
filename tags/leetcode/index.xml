@@ -5,35 +5,34 @@
     <link>https://winterorch.github.io/tags/leetcode/</link>
     <description>Recent content in Leetcode on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>WinterOrch. 本站遵循 CC-BY-NC 4.0 协议</copyright>
-    <lastBuildDate>Sun, 27 Jun 2021 12:11:58 +0630</lastBuildDate><atom:link href="https://winterorch.github.io/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 27 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>LeetCode 815 - 公交路线</title>
-      <link>https://winterorch.github.io/posts/leetcode-815-bus_routes/</link>
-      <pubDate>Sun, 27 Jun 2021 12:11:58 +0630</pubDate>
+      <link>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</link>
+      <pubDate>Sun, 27 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/posts/leetcode-815-bus_routes/</guid>
+      <guid>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</guid>
       <description>[LeetCode] 815. Bus Routes We have a list of bus routes. Each routes[i] is a bus route that the i-th bus repeats forever. For example if routes[0] = [1, 5, 7], this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.
 We start at bus stop S (initially not on a bus), and we want to go to bus stop T. Travelling by buses only, what is the least number of buses we must take to reach our destination?</description>
     </item>
     
     <item>
       <title>LeetCode 752 - 打开转盘锁</title>
-      <link>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</link>
-      <pubDate>Thu, 24 Jun 2021 15:11:58 +0630</pubDate>
+      <link>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</link>
+      <pubDate>Thu, 24 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/posts/leetcode-752-open_the_lock/</guid>
+      <guid>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</guid>
       <description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;. The wheels can rotate freely and wrap around: for example we can turn &#39;9&#39; to be &#39;0&#39;, or &#39;0&#39; to be &#39;9&#39;. Each move consists of turning one wheel one slot.
 The lock initially starts at &#39;0000&#39;, a string representing the state of the 4 wheels.</description>
     </item>
     
     <item>
       <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
-      <link>https://winterorch.github.io/posts/leetcode-jianzhi-056/</link>
-      <pubDate>Sun, 20 Jun 2021 21:03:58 +0630</pubDate>
+      <link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</link>
+      <pubDate>Sun, 20 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-056/</guid>
+      <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</guid>
       <description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
 示例 1：
  输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]
@@ -48,10 +47,10 @@ for(int num : nums) n ^= num; 如果只有一个出现一次的数字，那答�
     
     <item>
       <title>剑指 Offer 59 - I. 滑动窗口的最大值</title>
-      <link>https://winterorch.github.io/posts/leetcode-jianzhi-059/</link>
-      <pubDate>Tue, 01 Jun 2021 17:45:58 +0630</pubDate>
+      <link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</link>
+      <pubDate>Tue, 01 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/posts/leetcode-jianzhi-059/</guid>
+      <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</guid>
       <description>剑指 Offer 59 - I. 滑动窗口的最大值 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
 示例 1：
  输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3 输出: [3,3,5,5,6,7] 解释:

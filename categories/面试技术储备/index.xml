@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>面试技术储备 on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/</link>
+    <description>Recent content in 面试技术储备 on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 30 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis - 常用数据类型</title>
+      <link>https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Wed, 30 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</guid>
+      <description>以下示例代码部分源自 [小专栏] 剖析面试最常见问题之Redis .
+ type name	#查看当前 key 的类型  String string 数据结构是简单的 key-value 类型。虽然 Redis 是用 C 语言写的，但是 Redis 并没有使用 C 的字符串表示，而是自己构建了一种 简单动态字符串（simple dynamic string，SDS）。相比于 C 的原生字符串，Redis 的 SDS 不光可以保存文本数据还可以保存二进制数据，并且获取字符串长度复杂度为 O(1)（C 字符串为 O(N)）,除此之外,Redis 的 SDS API 是安全的，不会造成缓冲区溢出。
+ 常用命令: set,get,strlen,exists,dect,incr,setex 等等 应用场景 ：大多数需要缓存的场景、需要计数的场景，比如用户的访问次数、热点文章的点赞转发数量等等  127.0.0.1:6379&amp;gt; set key value #设置 key-value 类型的值 OK 127.0.0.1:6379&amp;gt; get key # 根据 key 获得对应的 value &amp;#34;value&amp;#34; 127.0.0.1:6379&amp;gt; exists key # 判断某个 key 是否存在 (integer) 1 127.</description>
+    </item>
+    
+    <item>
+      <title>Redis - 面试常见问题</title>
+      <link>https://winterorch.github.io/p/redis-common_questions/</link>
+      <pubDate>Tue, 29 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/redis-common_questions/</guid>
+      <description>常见的内存数据库包括 Memcached 和 Redis。后者相较之下在 k/v 类型数据基础上提供了 list, set, zset, hash 等数据结构存储，并且可扩展性强，能够通过插件增加更多；同时具有容灾机制，支持数据持久化，也有原生集群模式，支持发布订阅模型、Lua 脚本、事务；并且支持更多编程语言，单线程模型更加高效。总而言之功能很强，应用很广。
+1. 简要介绍 Redis 是用 C 开发的内存数据库，非关系型数据库，读写速度快，广泛应用于缓存，也可以做分布式锁、消息队列。
+ Redis6.0 之前都是单线程处理，仅在4.0增加了对大键值对删除操作的“异步处理” 服务器内存使用完之后，将不用的数据存到磁盘上 过期数据的删除策略包括惰性删除与定期删除   2. 缓存的作用 访问数据库从硬盘中读取，过程较慢。如果用户访问数据为高频数据且不会经常改变，则可以存在缓存中，速度快。
+ 3. 删除策略   惰性删除
+只在取出 key 的时候才对数据进行过期检查。CPU负担小，但会残留很多过期 key
+  定期删除
+周期性取一批 key 执行删除过期 key 操作，通过限制删除操作执行时长和频率来减少删除操作对 CPU 影响
+  删除策略并不能清理所有过期 key ，过期 key 还需要内存淘汰机制解决。
+除了缓解内存消耗，设置过期时间也可以用于满足业务需要，比如验证码、登录Token的有效时间。
+ 4. 内存淘汰机制 跟据从中挑选淘汰数据的数据集不同，分为三大类：
+  从已设置过期时间的数据集中 volatile
+  volatile-lru (least recently used)</description>
+    </item>
+    
+    <item>
+      <title>Spring - 依赖注入注解的区分</title>
+      <link>https://winterorch.github.io/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/</link>
+      <pubDate>Thu, 24 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/</guid>
+      <description>Spring 支持的依赖注入有 @Autowired @Resource @Inject 三种
+@Autowired 来自 org.springframwork.beans.factory.annotation.Autowired ，装配顺序为：
+ 按 type 在上下文中查找匹配的 bean 如果有多个 bean，则按照 name 进行匹配  如有 @Qualifier ，则按指定的 name 进行匹配 如没有，则按变量名进行匹配   匹配不到就报错  @Autowired(required=false) 则注入失败不抛异常
+@Inject Spring 环境下和 @Autowired 相同，都依赖 AutowiredAnnotationBeanPostProcess 进行处理，但不能 (required=false)。@Inject 由 JSR-330 定义，可以切换到谷歌的 DI 框架——Guice。
+@Inject 在 Java EE 包内，SE 环境需要单独引入。
+@Resource JSR-250 定义。在 CommonAnnotationBeanPostProcessor 实现处理。同样有 name 和 type。装配顺序：
+ 如同时指定 name 和 type ，从上下文找到唯一匹配 bean 进行装配，找不到抛异常 如指定 name ，则到上下文找 id 匹配的 bean 进行装配，找不到抛异常 如指定 type ，则到上下文找类型匹配的唯一 bean 进行装配，找不到或找到不唯一都会抛异常 如果都没有指定，则默认按 byName 方式装配，找不到再按 byType 进行装配   IDEA 使用 @Autowired 时很常见警告 Field injection is not recommended。</description>
+    </item>
+    
+    <item>
+      <title>Spring - 常用注释</title>
+      <link>https://winterorch.github.io/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/</link>
+      <pubDate>Wed, 16 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/</guid>
+      <description>首先，在 Spring 4.X 之后（不用 Spring Boot 的话）使用注释需要添加 aop 依赖。虽然不需要这么做了，还是有助于了解 Spring Boot 到底为我们做了什么。
+&amp;lt;!-- https://mvnrepository.com/artifact/org.springframework/spring-aop --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-aop&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;{springframework.version}&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 而且需要在 XML 中添加约束并在 context 中配置扫描范围。
+&amp;lt;?xml version=&amp;#34;1.0&amp;#34; encoding=&amp;#34;UTF-8&amp;#34;?&amp;gt; &amp;lt;beans xmlns=&amp;#34;http://www.springframework.org/schema/beans&amp;#34; xmlns:xsi=&amp;#34;http://www.w3.org/2001/XMLSchema-instance&amp;#34; xmlns:context=&amp;#34;http://www.springframework.org/schema/context&amp;#34; xsi:schemaLocation=&amp;#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&amp;#34;&amp;gt; &amp;lt;context:annotation-config/&amp;gt; &amp;lt;/beans&amp;gt; 配置扫描范围
+&amp;lt;!--指定注解扫描包--&amp;gt; &amp;lt;context:component-scan base-package=&amp;#34;com.yourpackage&amp;#34;/&amp;gt; 接下来按类别整理一些最常用的注释。
+Bean 的扫描   @ComponentScan
+   @ComponentScan：通过注释方式配置扫描范围，将其下的 @Component 组件（包括@Controller、@Service、@Repository）纳入 IOC 容器. 只能作用于配置类，且 Spring Boot 的入口类不能被纳入到扫描范围中.
+ Spring Boot 默认的扫描范围是启动类所在包开始，当前包及子包下的所有文件
+ @Configuration @ComponentScan(&amp;#34;cc.mrbird.demo&amp;#34;) public class WebConfig { }  可以通过 excludeFilters 来排除一些组件的扫描，通过 @Filter 注释完成</description>
+    </item>
+    
+    <item>
+      <title>计算机网络 - 传输层</title>
+      <link>https://winterorch.github.io/p/computer_network-transport_layer/</link>
+      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/computer_network-transport_layer/</guid>
+      <description>网络层只把分组发送到目的主机，但是真正通信的并不是主机而是主机中的进程。传输层提供了进程间的逻辑通信，传输层向高层用户屏蔽了下面网络层的核心细节，使应用程序看起来像是在两个传输层实体之间有一条端到端的逻辑通信信道。
+ TCP 与 UDP 协议区别     连接 传输可靠性 传输形式 传输效率 所需资源 应用场景 首部字节     TCP 面向连接 可靠 字节流 低 多 要求数据可靠性 20 - 60   UDP 无连接 不可靠 数据报文段 高 少 要求通信效率 8     TCP（Transmission Control Protocol） TCP 提供面向连接的服务。在传送数据之前必须先建立连接，数据传送结束后要释放连接。 TCP 不提供广播或多播服务。由于 TCP 要提供可靠的，面向连接的传输服务（TCP的可靠体现在TCP在传递数据之前，会有三次握手来建立连接，而且在数据传递时，有确认、窗口、重传、拥塞控制机制，在数据传完后，还会断开连接用来节约系统资源），这一难以避免增加了许多开销，如确认，流量控制，计时器以及连接管理等。这不仅使协议数据单元的首部增大很多，还要占用许多处理机资源。TCP 一般用于文件传输、发送和接收邮件、远程登录等场景。
+
+  序号 ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。
+  确认号 ：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</description>
+    </item>
+    
+    <item>
+      <title>计算机网络 - 应用层</title>
+      <link>https://winterorch.github.io/p/computer_network-application_layer/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/computer_network-application_layer/</guid>
+      <description>常用端口及协议    应用 协议 端口号 传输层 备注     域名解析 DNS 53 UDP/TCP 长度超过 512 字节时使用 TCP   动态主机配置协议 DHCP 67/68 UDP    简单网络管理协议 SNMP 161/162 UDP    文件传送协议 FTP 20/21 TCP 控制连接 21，数据连接 20   远程终端协议 TELNET 23 TCP    超文本传送协议 HTTP 80 TCP    简单邮件传送协议 SMTP 25 TCP    邮件读取协议 POP3 110 TCP    网际报文存取协议 IMAP 143 TCP    超文本传送协议 HTTPS 443 TCP      域名系统 DNS ( Domain Name System ) 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。</description>
+    </item>
+    
+    <item>
+      <title>Java - JVM GC</title>
+      <link>https://winterorch.github.io/p/java-jvm-ram_and_gc/</link>
+      <pubDate>Wed, 17 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/java-jvm-ram_and_gc/</guid>
+      <description>一、垃圾收集算法  下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现
+ JDK1.8以前的Java堆分代
+跟据 Object 生命周期分为三个层次
+ Young Generation Old Generation Permanent Generation  Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 s0 或 s1 ，清理 Eden 和使用过的一块 Survivor。
+ HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。
+ Eden 区满时执行 Minor GC 清理可销毁对象，将不可销毁的迁移至其中一个存活区，而将另一个存活区直接清空，下一次 GC 时两个存活区角色交换，交换次数超过 15 （MaxTenuringThreshold）的进入 Old Generation。
+ 复制算法（young代GC算法）
+该算法会将内存区域分为两个大小一样的区域。GC回收时，遍历当前使用区域，只将正在引用的对象复制到另一个区域，因此复制成本较低，且复制过程中还会进行内存整理，不会出现“碎片”问题。缺点就是：需要两个大小一样的内存区域和生命周期短的对象。所以该算法不适合大内存对象和长生命周期的对象，适用于young代的SO/S1
+  Hotspot 的动态年龄阈值</description>
+    </item>
+    
+  </channel>
+</rss>

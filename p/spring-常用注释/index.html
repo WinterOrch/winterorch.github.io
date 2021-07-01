@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='@Annotation.'><title>Spring - 常用注释</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Spring - 常用注释'>
+<meta property='og:description' content='@Annotation.'>
+<meta property='og:url' content='https://winterorch.github.io/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spring' /><meta property='article:tag' content='@Annotation' /><meta property='article:published_time' content='2021-06-16T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-16T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/scenes/Fancy1.jpg' />
+<meta name="twitter:title" content="Spring - 常用注释">
+<meta name="twitter:description" content="@Annotation."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/scenes/Fancy1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/">
+                
+                    <img src="/images/feature/scenes/Fancy1.jpg" loading="lazy" alt="Featured image of post Spring - 常用注释" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/spring-framework/" >
+                Spring Framework
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/">Spring - 常用注释</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        @Annotation.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 16, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>首先，在 Spring 4.X 之后（不用 Spring Boot 的话）使用注释需要添加 aop 依赖。虽然不需要这么做了，还是有助于了解 Spring Boot 到底为我们做了什么。</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- https://mvnrepository.com/artifact/org.springframework/spring-aop --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-aop<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>{springframework.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div><p>而且需要在 XML 中添加约束并在 <code>context</code> 中配置扫描范围。</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&#34;http://www.springframework.org/schema/beans&#34;</span>
+      <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+      <span class="na">xmlns:context=</span><span class="s">&#34;http://www.springframework.org/schema/context&#34;</span>
+      <span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://www.springframework.org/schema/beans
+</span><span class="s">       http://www.springframework.org/schema/beans/spring-beans.xsd
+</span><span class="s">       http://www.springframework.org/schema/context
+</span><span class="s">       http://www.springframework.org/schema/context/spring-context.xsd&#34;</span><span class="nt">&gt;</span>
+
+	<span class="nt">&lt;context:annotation-config/&gt;</span>
+
+<span class="nt">&lt;/beans&gt;</span>
+</code></pre></div><p>配置扫描范围</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!--指定注解扫描包--&gt;</span>
+<span class="nt">&lt;context:component-scan</span> <span class="na">base-package=</span><span class="s">&#34;com.yourpackage&#34;</span><span class="nt">/&gt;</span>
+</code></pre></div><p>接下来按类别整理一些最常用的注释。</p>
+<!-- raw HTML omitted -->
+<h2 id="bean-的扫描"><strong>Bean 的扫描</strong></h2>
+<hr>
+<blockquote>
+<p><code>@ComponentScan</code></p>
+</blockquote>
+<ul>
+<li>
+<p><code>@ComponentScan</code>：通过注释方式配置扫描范围，将其下的 <code>@Component</code> 组件（包括<code>@Controller</code>、<code>@Service</code>、<code>@Repository</code>）纳入 IOC 容器. 只能作用于配置类，且 Spring Boot 的入口类不能被纳入到扫描范围中.</p>
+<blockquote>
+<p>Spring Boot 默认的扫描范围是启动类所在包开始，当前包及子包下的所有文件</p>
+</blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span><span class="o">(</span><span class="s">&#34;cc.mrbird.demo&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebConfig</span> <span class="o">{</span>
+
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p>可以通过 <code>excludeFilters</code> 来排除一些组件的扫描，通过 <code>@Filter</code> 注释完成</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;cc.mrbird.demo&#34;</span><span class="o">,</span>
+        <span class="n">excludeFilters</span> <span class="o">=</span> <span class="o">{</span>
+          			<span class="c1">// 将注解为 Controller 和 Repository 的类排除
+</span><span class="c1"></span>                <span class="nd">@Filter</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span> <span class="n">FilterType</span><span class="o">.</span><span class="na">ANNOTATION</span><span class="o">,</span>
+                        <span class="n">classes</span> <span class="o">=</span> <span class="o">{</span><span class="n">Controller</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">Repository</span><span class="o">.</span><span class="na">class</span><span class="o">}),</span>
+          			<span class="c1">// 排除所有 User 类（及子类、实现类）
+</span><span class="c1"></span>                <span class="nd">@Filter</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span> <span class="n">FilterType</span><span class="o">.</span><span class="na">ASSIGNABLE_TYPE</span><span class="o">,</span> <span class="n">classes</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebConfig</span> <span class="o">{</span>
+
+<span class="o">}</span>
+</code></pre></div><p>如上所示，可以跟据<strong>注释</strong>或直接指定排除相应<strong>类型</strong>（包括其子类、实现类）</p>
+<p><code>includeFilters</code>的作用和<code>excludeFilters</code>相反，其指定的是哪些组件需要被扫描：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;cc.mrbird.demo&#34;</span><span class="o">,</span>
+        <span class="n">includeFilters</span> <span class="o">=</span> <span class="o">{</span>
+          			<span class="c1">// 仅纳入注释为 Service 的类
+</span><span class="c1"></span>                <span class="nd">@Filter</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span> <span class="n">FilterType</span><span class="o">.</span><span class="na">ANNOTATION</span><span class="o">,</span> <span class="n">classes</span> <span class="o">=</span> <span class="n">Service</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">},</span> <span class="n">useDefaultFilters</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebConfig</span> <span class="o">{</span>
+
+<span class="o">}</span>
+</code></pre></div><p>通过实现 <code>org.springframework.core.type.filter.TypeFilter</code>接口可以自定义扫描策略，通过实现 <code>match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)</code> 方法，返回 <code>true</code> 说明匹配成功。</p>
+</blockquote>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="bean-的注册"><strong>Bean 的注册</strong></h2>
+<hr>
+<blockquote>
+<p><code>@Bean</code>, <code>@Component</code></p>
+</blockquote>
+<ul>
+<li>
+<p><code>@Bean</code>：通过注解向 IOC 容器注册默认为方法名的 Bean，也可以通过 <code>@Bean(&quot;{name}&quot;)</code> 来重新命名</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebConfig</span> <span class="o">{</span>
+    <span class="nd">@Bean</span><span class="o">()</span>
+    <span class="kd">public</span> <span class="n">User</span> <span class="nf">user</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">&#34;mrbirdy&#34;</span><span class="o">,</span> <span class="n">18</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p>实现了 <code>FactoryBean&lt;T&gt;</code> 接口的 Bean 是一类特殊的 Bean</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CherryFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">&lt;</span><span class="n">Cherry</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Cherry</span> <span class="nf">getObject</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Cherry</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">getObjectType</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Cherry</span><span class="o">.</span><span class="na">class</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isSingleton</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>如果 <code>isSingleton()</code> 为 <code>false</code> ，则每次会调用 <code>getObject()</code> 从中获取 Bean。</p>
+<p>通过加上前缀 <code>&amp;</code> 从工厂中取出对应的 Bean</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Object</span> <span class="n">cherryFactoryBean</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&#34;&amp;cherryFactoryBean&#34;</span><span class="o">);</span>
+</code></pre></div></blockquote>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><code>@Component</code>：<code>component-scan</code> 指定的扫描路径下所有被<code>@Controller</code>、<code>@Service</code>、<code>@Repository</code>和<code>@Component</code>注解标注的类都会被纳入IOC容器中</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Component</span><span class="o">(</span><span class="s">&#34;user&#34;</span><span class="o">)</span>
+<span class="c1">// 相当于配置文件中 &lt;bean id=&#34;user&#34; class=&#34;当前注解的类&#34;/&gt;
+</span><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+   <span class="kd">public</span> <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div><p>说明该类被Spring管理。<code>Component</code> 类的有参构造方法会被默认用作依赖注入，所以相比在成员变量上加 <code>@Autowire</code> 来注入依赖，更合适的方法是通过构造方法注入。</p>
+<p>衍生注解：按照MVC三层架构分层</p>
+<ul>
+<li><code>@Repository</code>：用于DAO层，数据库操作</li>
+<li><code>@Service</code>：用于Service层，复杂逻辑</li>
+<li><code>@Controller</code>：用于Controller层，接收用户请求并调用Service层返回数据</li>
+</ul>
+<p>连同<code>@Component</code>，四个注解功能一样，都代表将某个类注册到Spring中</p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="bean-的加载">Bean 的加载</h2>
+<hr>
+<blockquote>
+<p><code>@Scope</code>, <code>@Lazy</code>, <code>@Conditional</code></p>
+</blockquote>
+<ul>
+<li>
+<p><code>@Scope</code>：改变组件的作用域（默认 <code>singleton</code>）</p>
+<ol>
+<li><code>singleton</code>：单实例（默认）,在Spring IOC容器启动的时候会调用方法创建对象然后纳入到IOC容器中，以后每次获取都是直接从IOC容器中获取（<code>map.get()</code>）；</li>
+<li><code>prototype</code>：多实例，IOC容器启动的时候并不会去创建对象，而是在每次获取的时候才会去调用方法创建对象；</li>
+<li><code>request</code>：一个请求对应一个实例；</li>
+<li><code>session</code>：同一个session对应一个实例。</li>
+</ol>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><code>@Lazy</code>：懒加载（针对 <code>singleton</code> ）</p>
+<p>懒加载的单例不会马上调用方法创建对象并注册，只有当第一次被使用时才会调用方法创建对象并加入容器中。</p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><code>@Conditional</code>：条件加载，类似于前面 <code>@ComponentScan</code> 中的 <code>Filter</code></p>
+<p>使用<code>@Conditional</code>注解我们可以指定组件注册的条件，即满足特定条件才将组件纳入到 IOC 容器中。</p>
+<p>在使用该注解之前，我们需要创建一个类，实现<code>Condition</code>接口：</p>
+<pre><code>public class MyCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        return false;
+    }
+}
+</code></pre><p>该接口包含一个<code>matches</code>方法，包含两个入参:</p>
+<ol>
+<li><code>ConditionContext</code>：上下文信息；</li>
+<li><code>AnnotatedTypeMetadata</code>：注解信息。</li>
+</ol>
+<p>简单完善一下这个实现类:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCondition</span> <span class="kd">implements</span> <span class="n">Condition</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">matches</span><span class="o">(</span><span class="n">ConditionContext</span> <span class="n">context</span><span class="o">,</span> <span class="n">AnnotatedTypeMetadata</span> <span class="n">metadata</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">osName</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">().</span><span class="na">getProperty</span><span class="o">(</span><span class="s">&#34;os.name&#34;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">osName</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">osName</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="s">&#34;Windows&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>接着将这个条件添加到User Bean注册的地方：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Bean</span>
+<span class="nd">@Conditional</span><span class="o">(</span><span class="n">MyCondition</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="n">User</span> <span class="nf">user</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">&#34;mrbird&#34;</span><span class="o">,</span> <span class="n">18</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>在Windows环境下，User这个组件将被成功注册，如果是别的操作系统，这个组件将不会被注册到IOC容器中。</p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="属性注入">属性注入</h2>
+<hr>
+<blockquote>
+<p><code>@Value</code>, <code>@ConfigurationProperties</code>, <code>@PropertySource</code></p>
+</blockquote>
+<ul>
+<li>
+<p><code>@Value</code>:	Property注入</p>
+<p>可以直接用在成员变量上，也可以用在Setter上</p>
+<blockquote>
+<p><strong>需要注意的是 <code>@value</code>这种方式是不被推荐的，Spring 比较建议的是下面几种读取配置信息的方式。</strong></p>
+</blockquote>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><code>@ConfigurationProperties</code>: Properties 读取并与 bean 绑定</p>
+<blockquote>
+<p><strong><code>LibraryProperties</code> 类上加了 <code>@Component</code> 注解，我们可以像使用普通 bean 一样将其注入到类中使用。</strong></p>
+</blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.ConfigurationProperties</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+
+<span class="nd">@Component</span>
+<span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="n">prefix</span> <span class="o">=</span> <span class="s">&#34;library&#34;</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">LibraryProperties</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">location</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="n">books</span><span class="o">;</span>
+
+    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Book</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+        <span class="n">String</span> <span class="n">description</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>相应的配置文件内容</p>
+<pre><code class="language-properties" data-lang="properties">library:
+  location: 湖北武汉加油中国加油
+  books:
+    - name: 天才基本法
+      description: 二十二岁的林朝夕在父亲确诊阿尔茨海默病这天，得知自己暗恋多年的校园男神裴之即将出国深造的消息——对方考取的学校，恰是父亲当年为她放弃的那所。
+    - name: 时间的秩序
+      description: 为什么我们记得过去，而非未来？时间“流逝”意味着什么？是我们存在于时间之内，还是时间存在于我们之中？卡洛·罗韦利用诗意的文字，邀请我们思考这一亘古难题——时间的本质。
+    - name: 了不起的我
+      description: 如何养成一个新习惯？如何让心智变得更成熟？如何拥有高质量的关系？ 如何走出人生的艰难时刻？
+</code></pre><p>然后就可以通过 <code>private final LibraryProperties library</code> 注入 Property 对象了。</p>
+<p>题外话：<code>InitializingBean</code> 接口下的 <code>afterPropertiesSet()</code> 方法可以作为一个 Property 注入后的 AOP 使用，如下所示：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@SpringBootApplication</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ReadConfigPropertiesApplication</span> <span class="kd">implements</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LibraryProperties</span> <span class="n">library</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">ReadConfigPropertiesApplication</span><span class="o">(</span><span class="n">LibraryProperties</span> <span class="n">library</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">library</span> <span class="o">=</span> <span class="n">library</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">ReadConfigPropertiesApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterPropertiesSet</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">library</span><span class="o">.</span><span class="na">getLocation</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">library</span><span class="o">.</span><span class="na">getBooks</span><span class="o">());</span>    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p>如果 Property类上不加 <code>Component</code> ，就需要在 SpringBootApplication 上加 <code>@EnableConfigurationProperties</code> 来注册 Bean ，如下所示：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@SpringBootApplication</span>
+<span class="nd">@EnableConfigurationProperties</span><span class="o">(</span><span class="n">ProfileProperties</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ReadConfigPropertiesApplication</span> <span class="kd">implements</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+ <span class="kd">private</span> <span class="kd">final</span> <span class="n">ProfileProperties</span> <span class="n">profileProperties</span><span class="o">;</span>
+
+ <span class="kd">public</span> <span class="nf">ReadConfigPropertiesApplication</span><span class="o">(</span><span class="n">ProfileProperties</span> <span class="n">profileProperties</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">this</span><span class="o">.</span><span class="na">profileProperties</span> <span class="o">=</span> <span class="n">profileProperties</span><span class="o">;</span>
+ <span class="o">}</span>
+
+ <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+     <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">ReadConfigPropertiesApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+ <span class="o">}</span>
+
+ <span class="nd">@Override</span>
+ <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterPropertiesSet</span><span class="o">()</span> <span class="o">{</span>
+     <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">profileProperties</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+ <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></blockquote>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><code>@PropertySource</code>: 有单独文件的 properties 可以通过 <code>@PropertySource</code> 来读取</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Value</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.PropertySource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="nd">@Component</span>
+<span class="nd">@PropertySource</span><span class="o">(</span><span class="s">&#34;classpath:website.properties&#34;</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">WebSite</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">&#34;${url}&#34;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">url</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="校验注解">校验注解</h2>
+<blockquote>
+<p>这里可以参考 <a class="link" href="https://snailclimb.gitee.io/springboot-guide/#/./docs/spring-bean-validation"  target="_blank" rel="noopener"
+    >Spring Boot 指南</a></p>
+</blockquote>
+<hr>
+<p><strong>JSR 提供的校验注解</strong>:</p>
+<ul>
+<li><code>@Null</code> 被注释的元素必须为 null</li>
+<li><code>@NotNull</code> 被注释的元素必须不为 null</li>
+<li><code>@AssertTrue</code> 被注释的元素必须为 true</li>
+<li><code>@AssertFalse</code> 被注释的元素必须为 false</li>
+<li><code>@Min(value)</code> 被注释的元素必须是一个数字，其值必须大于等于指定的最小值</li>
+<li><code>@Max(value)</code> 被注释的元素必须是一个数字，其值必须小于等于指定的最大值</li>
+<li><code>@DecimalMin(value)</code> 被注释的元素必须是一个数字，其值必须大于等于指定的最小值</li>
+<li><code>@DecimalMax(value)</code> 被注释的元素必须是一个数字，其值必须小于等于指定的最大值</li>
+<li><code>@Size(max=, min=)</code> 被注释的元素的大小必须在指定的范围内</li>
+<li><code>@Digits (integer, fraction)</code> 被注释的元素必须是一个数字，其值必须在可接受的范围内</li>
+<li><code>@Past</code> 被注释的元素必须是一个过去的日期</li>
+<li><code>@Future</code> 被注释的元素必须是一个将来的日期</li>
+<li><code>@Pattern(regex=,flag=)</code> 被注释的元素必须符合指定的正则表达式</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+
+    <span class="nd">@NotNull</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">&#34;classId 不能为空&#34;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">classId</span><span class="o">;</span>
+
+    <span class="nd">@Size</span><span class="o">(</span><span class="n">max</span> <span class="o">=</span> <span class="n">33</span><span class="o">)</span>
+    <span class="nd">@NotNull</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">&#34;name 不能为空&#34;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nd">@Pattern</span><span class="o">(</span><span class="n">regexp</span> <span class="o">=</span> <span class="s">&#34;((^Man$|^Woman$|^UGM$))&#34;</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&#34;sex 值不在可选范围&#34;</span><span class="o">)</span>
+    <span class="nd">@NotNull</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">&#34;sex 不能为空&#34;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">sex</span><span class="o">;</span>
+
+    <span class="nd">@Email</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">&#34;email 格式不正确&#34;</span><span class="o">)</span>
+    <span class="nd">@NotNull</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">&#34;email 不能为空&#34;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">email</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre></div><p><strong>Hibernate Validator 提供的校验注解</strong>：</p>
+<ul>
+<li><code>@NotBlank(message =)</code> 验证字符串非 null，且长度必须大于 0</li>
+<li><code>@Email</code> 被注释的元素必须是电子邮箱地址</li>
+<li><code>@Length(min=,max=)</code> 被注释的字符串的大小必须在指定的范围内</li>
+<li><code>@NotEmpty</code> 被注释的字符串的必须非空</li>
+<li><code>@Range(min=,max=,message=)</code> 被注释的元素必须在合适的范围内</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="自动装配">自动装配</h2>
+<hr>
+<blockquote>
+<p><code>@Autowired</code>, <code>@Resource</code></p>
+</blockquote>
+<ul>
+<li><code>@Autowired</code></li>
+</ul>
+<p>自动装配，先<code>byType</code>再<code>byName</code>，如果不能唯一自动装配，则需要<code>@Qualifier(value=&quot;xxx&quot;)</code>.</p>
+<p>在成员变量上实现：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+   <span class="nd">@Autowired</span>
+   <span class="kd">private</span> <span class="n">Cat</span> <span class="n">cat</span><span class="o">;</span>
+   <span class="nd">@Autowired</span>
+   <span class="kd">private</span> <span class="n">Dog</span> <span class="n">dog</span><span class="o">;</span>
+   <span class="kd">private</span> <span class="n">String</span> <span class="n">str</span><span class="o">;</span>
+
+   <span class="kd">public</span> <span class="n">Cat</span> <span class="nf">getCat</span><span class="o">()</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">cat</span><span class="o">;</span>
+  <span class="o">}</span>
+   <span class="kd">public</span> <span class="n">Dog</span> <span class="nf">getDog</span><span class="o">()</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">dog</span><span class="o">;</span>
+  <span class="o">}</span>
+   <span class="kd">public</span> <span class="n">String</span> <span class="nf">getStr</span><span class="o">()</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">str</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>然后在XML中配置Bean</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;context:annotation-config/&gt;</span>
+
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&#34;dog&#34;</span> <span class="na">class=</span><span class="s">&#34;com.kuang.pojo.Dog&#34;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&#34;cat&#34;</span> <span class="na">class=</span><span class="s">&#34;com.kuang.pojo.Cat&#34;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&#34;user&#34;</span> <span class="na">class=</span><span class="s">&#34;com.kuang.pojo.User&#34;</span><span class="nt">/&gt;</span>
+</code></pre></div><ul>
+<li>
+<p><code>@Qualifer()</code>：如果bean名字不为类的默认名字，则要加<code>@Qualifer</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Autowired</span>
+<span class="nd">@Qualifier</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;cat2&#34;</span><span class="o">)</span>
+<span class="kd">private</span> <span class="n">Cat</span> <span class="n">cat</span><span class="o">;</span>
+<span class="nd">@Autowired</span>
+<span class="nd">@Qualifier</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;dog2&#34;</span><span class="o">)</span>
+<span class="kd">private</span> <span class="n">Dog</span> <span class="n">dog</span><span class="o">;</span>
+</code></pre></div></li>
+</ul>
+<pre><code>  
+&lt;/br&gt;
+  
+- #### `@Resource`
+
+  自动装配，先`byName`再`byType`，如果`name`属性指定，则只会按照名称进行装配.
+
+  默认按照名称进行装配，名称可以通过name属性进行指定。如果没有指定name属性，当注解写在字段上时，默认取字段名进行按照名称查找，如果注解写在setter方法上默认取属性名进行装配
+
+  ```java
+  public class User {
+     //如果允许对象为null，设置required = false,默认为true
+     @Resource(name = &quot;cat2&quot;)
+     private Cat cat;
+     @Resource
+     private Dog dog;
+     private String str;
+  }
+</code></pre><!-- raw HTML omitted -->
+<h2 id="事务">事务</h2>
+<hr>
+<blockquote>
+<p><code>@Transactional</code></p>
+</blockquote>
+<ul>
+<li>
+<p><code>@Transactional</code></p>
+<p>在 Service 的实现类中使用，将方法标注为 SQL 事务.</p>
+<p>首先需要在入口类上加入 <code>@EnableTransactionManagement</code> 注解以开启事务：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@EnableTransactionManagement</span>
+<span class="nd">@SpringBootApplication</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionApplication</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">TransactionApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>然后再 <code>@Service</code> 中标注事务：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Service</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserServiceImpl</span> <span class="kd">implements</span> <span class="n">UserService</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">UserServiceImpl</span><span class="o">(</span><span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">userMapper</span> <span class="o">=</span> <span class="n">userMapper</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Transactional</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUser</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">userMapper</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="c1">// 测试事务回滚
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">hasText</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getUsername</span><span class="o">()))</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">RuntimeException</span><span class="o">(</span><span class="s">&#34;username不能为空&#34;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>如果生效，当用户名为空（这里用的是 <code>org.springframework.util</code> 包下的 <code>hasText()</code> 方法，要求字符串不为 <code>null</code> 、长度大于0、不全为空），则会捕获到异常而进行回滚。</p>
+<blockquote>
+<p><code>@Transactional</code> 同样利用的是 Spring 的 AOP 机制, 这里有两个坑.</p>
+<p><strong>注意点一</strong></p>
+<p><!-- raw HTML omitted -->如果抛出的异常<strong>不是 <code>RuntimeException</code> 或者 <code>Error</code> ，也不是 <code>@Transactional</code> 注解指定的回滚异常类型</strong>，<strong>则不会进行事务回滚</strong>。<!-- raw HTML omitted --></p>
+<p>所以在自定义需要回滚的异常时，要么继承 <code>RuntimeException</code> ，要么直接在注释上标出来：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Transactional</span><span class="o">(</span><span class="n">rollbackFor</span> <span class="o">=</span> <span class="n">Exception</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUser</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">userMapper</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="c1">// 测试事务回滚
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">hasText</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getUsername</span><span class="o">()))</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">Exception</span><span class="o">(</span><span class="s">&#34;username不能为空&#34;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<p><strong>注意点二</strong></p>
+<p>如果我们在相同 <code>Service</code> 下的<strong>非事务方法中，对事务方法进行调用，事务同样不会生效</strong>。如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Service</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserServiceImpl</span> <span class="kd">implements</span> <span class="n">UserService</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">UserServiceImpl</span><span class="o">(</span><span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">userMapper</span> <span class="o">=</span> <span class="n">userMapper</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUserTest</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">saveUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Transactional</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUser</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">userMapper</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="c1">// 测试事务回滚
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">hasText</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getUsername</span><span class="o">()))</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">ParamInvalidException</span><span class="o">(</span><span class="s">&#34;username不能为空&#34;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>因为 Spring 事务控制通过 AOP 代理实现，通过代理目标对象来增强目标方法，而如果用 <code>this</code> 调用方法，<code>this</code> 绕过了代理类（实际上是代理类绕过原类，<code>this</code> 无视了代理类），直接用了类本身，从而没有触发事务。</p>
+<p>要让代理类重新生效有两种方法</p>
+<p>1、 从 IOC 中获取 Bean 后再调用：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUserTest</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">UserService</span> <span class="n">userService</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="n">UserService</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="n">userService</span><span class="o">.</span><span class="na">saveUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>2、 直接从 AOP 上下文取代理对象进行调用（需要引入 AOP Starter 依赖），且需要再在 SpringBoot 入口类中通过注解<code>@EnableAspectJAutoProxy(exposeProxy = true)</code>将当前代理对象暴露到 AOP 上下文中（通过 <code>AopContext</code> 的 <code>ThreadLocal</code> 实现）</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUserTest</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">UserService</span> <span class="n">userService</span> <span class="o">=</span> <span class="o">(</span><span class="n">UserService</span><span class="o">)</span> <span class="n">AopContext</span><span class="o">.</span><span class="na">currentProxy</span><span class="o">();</span>
+    <span class="n">userService</span><span class="o">.</span><span class="na">saveUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>总之是有种为了舍近求远又额外兜了一大圈的感觉，个人认为写事务就不要代入编程优雅方面的考虑了，没必要在方法单一职责上那么较真。</p>
+</blockquote>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring/">Spring</a>
+        
+            <a href="/tags/annotation/">@Annotation</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Arctic.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 依赖注入注解的区分</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Street2.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Street2.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 常用数据类型</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-common_questions/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" data-key="redis-common_questions" data-hash="/images/feature/scenes/Windmill.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 面试常见问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-transport_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/09.jpg" loading="lazy" data-key="computer_network-transport_layer" data-hash="/images/feature/abyss/09.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 传输层</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-application_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/10.jpg" loading="lazy" data-key="computer_network-application_layer" data-hash="/images/feature/abyss/10.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 应用层</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#bean-的扫描"><strong>Bean 的扫描</strong></a></li>
+    <li><a href="#bean-的注册"><strong>Bean 的注册</strong></a></li>
+    <li><a href="#bean-的加载">Bean 的加载</a></li>
+    <li><a href="#属性注入">属性注入</a></li>
+    <li><a href="#校验注解">校验注解</a></li>
+    <li><a href="#自动装配">自动装配</a></li>
+    <li><a href="#事务">事务</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

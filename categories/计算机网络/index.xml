@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>计算机网络 on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+    <description>Recent content in 计算机网络 on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 02 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络 - 传输层</title>
+      <link>https://winterorch.github.io/p/computer_network-transport_layer/</link>
+      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/computer_network-transport_layer/</guid>
+      <description>网络层只把分组发送到目的主机，但是真正通信的并不是主机而是主机中的进程。传输层提供了进程间的逻辑通信，传输层向高层用户屏蔽了下面网络层的核心细节，使应用程序看起来像是在两个传输层实体之间有一条端到端的逻辑通信信道。
+ TCP 与 UDP 协议区别     连接 传输可靠性 传输形式 传输效率 所需资源 应用场景 首部字节     TCP 面向连接 可靠 字节流 低 多 要求数据可靠性 20 - 60   UDP 无连接 不可靠 数据报文段 高 少 要求通信效率 8     TCP（Transmission Control Protocol） TCP 提供面向连接的服务。在传送数据之前必须先建立连接，数据传送结束后要释放连接。 TCP 不提供广播或多播服务。由于 TCP 要提供可靠的，面向连接的传输服务（TCP的可靠体现在TCP在传递数据之前，会有三次握手来建立连接，而且在数据传递时，有确认、窗口、重传、拥塞控制机制，在数据传完后，还会断开连接用来节约系统资源），这一难以避免增加了许多开销，如确认，流量控制，计时器以及连接管理等。这不仅使协议数据单元的首部增大很多，还要占用许多处理机资源。TCP 一般用于文件传输、发送和接收邮件、远程登录等场景。
+
+  序号 ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。
+  确认号 ：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</description>
+    </item>
+    
+    <item>
+      <title>计算机网络 - 应用层</title>
+      <link>https://winterorch.github.io/p/computer_network-application_layer/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/computer_network-application_layer/</guid>
+      <description>常用端口及协议    应用 协议 端口号 传输层 备注     域名解析 DNS 53 UDP/TCP 长度超过 512 字节时使用 TCP   动态主机配置协议 DHCP 67/68 UDP    简单网络管理协议 SNMP 161/162 UDP    文件传送协议 FTP 20/21 TCP 控制连接 21，数据连接 20   远程终端协议 TELNET 23 TCP    超文本传送协议 HTTP 80 TCP    简单邮件传送协议 SMTP 25 TCP    邮件读取协议 POP3 110 TCP    网际报文存取协议 IMAP 143 TCP    超文本传送协议 HTTPS 443 TCP      域名系统 DNS ( Domain Name System ) 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。</description>
+    </item>
+    
+  </channel>
+</rss>

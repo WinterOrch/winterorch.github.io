@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合).'><title>Spring - 依赖注入注解的区分</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Spring - 依赖注入注解的区分'>
+<meta property='og:description' content='Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合).'>
+<meta property='og:url' content='https://winterorch.github.io/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spring' /><meta property='article:published_time' content='2021-06-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-24T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/scenes/Arctic.jpg' />
+<meta name="twitter:title" content="Spring - 依赖注入注解的区分">
+<meta name="twitter:description" content="Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/scenes/Arctic.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
+                
+                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" alt="Featured image of post Spring - 依赖注入注解的区分" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/spring-framework/" >
+                Spring Framework
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">Spring - 依赖注入注解的区分</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        Redis基于C语言实现了自己的数据类型，主要包括五种：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合).
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jun 24, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>Spring 支持的依赖注入有 <code>@Autowired</code> <code>@Resource</code> <code>@Inject</code> 三种</p>
+<h3 id="autowired">@Autowired</h3>
+<p>来自 <code>org.springframwork.beans.factory.annotation.Autowired</code> ，装配顺序为：</p>
+<ul>
+<li>按 <code>type</code> 在上下文中查找匹配的 bean</li>
+<li>如果有多个 bean，则按照 <code>name</code> 进行匹配
+<ul>
+<li>如有 <code>@Qualifier</code> ，则按指定的 name 进行匹配</li>
+<li>如没有，则按变量名进行匹配</li>
+</ul>
+</li>
+<li>匹配不到就报错</li>
+</ul>
+<p><code>@Autowired(required=false)</code> 则注入失败不抛异常</p>
+<h3 id="inject">@Inject</h3>
+<p>Spring 环境下和 <code>@Autowired</code> 相同，都依赖 <code>AutowiredAnnotationBeanPostProcess</code> 进行处理，但不能 <code>(required=false)</code>。<code>@Inject</code> 由 JSR-330 定义，可以切换到谷歌的 DI 框架——Guice。</p>
+<p><code>@Inject</code> 在 Java EE 包内，SE 环境需要单独引入。</p>
+<h3 id="resource">@Resource</h3>
+<p>JSR-250 定义。在 <code>CommonAnnotationBeanPostProcessor</code> 实现处理。同样有 <code>name</code> 和 <code>type</code>。装配顺序：</p>
+<ul>
+<li>如同时指定 <code>name</code> 和 <code>type</code> ，从上下文找到唯一匹配 bean 进行装配，找不到抛异常</li>
+<li>如指定 <code>name</code> ，则到上下文找 <code>id</code> 匹配的 bean 进行装配，找不到抛异常</li>
+<li>如指定 <code>type</code> ，则到上下文找类型匹配的唯一 bean 进行装配，找不到或找到不唯一都会抛异常</li>
+<li>如果都没有指定，则默认按 <code>byName</code> 方式装配，找不到再按 <code>byType</code> 进行装配</li>
+</ul>
+<hr>
+<p>IDEA 使用 <code>@Autowired</code> 时很常见警告 Field injection is not recommended。</p>
+<p>Spring 团队建议永远使用构造方法，也就是 <code>c-args</code> 进行依赖注入。IDEA 对这一警告的默认修改方式也是——创建一个构造器进行依赖注入。并且，跟据 Spring 团队建议，对必须的依赖，应当使用断言进行确认</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Assert</span><span class="o">.</span><span class="na">notNull</span><span class="o">(</span><span class="n">svc</span><span class="o">,</span> <span class="s">&#34;svc must not be null&#34;</span><span class="o">);</span>
+</code></pre></div><p>为什么不能用成员依赖注入呢？</p>
+<p>field 注入虽然简洁，但存在问题：</p>
+<ol>
+<li>由于添加依赖过于简单（加个注释），我们很容易无意识地向一个类注入大量依赖，这违反了单一职责原理，因为我们过去通过构造器进行注入，而要是你的构造器出现大量入参，那很容易意识到自己的代码结构不对劲。打个比方——原本要数着钞票买东西的，一下子变成移动支付，点一下付钱了，就容易到了月底为账单发愁，因为我们金钱意识变薄弱了。解决方法就是——继续用构造器注入，因此对于强制依赖，Spring推荐用 <code>c-args</code> 注入。</li>
+<li>依赖注入与容器本身耦合了，即——类唯一的正常工作方式就是通过容器反射进行实例化，这就像是集成测试一样，不像个健康的类，就像一个人原本你把饭给他就能自己吃，现在非要注射进去一样。为了让类能在容器外使用，自然还是要用 <code>c-args</code> 和 <code>s-args</code>。</li>
+<li>属性注入不能用来注入 <code>final</code> 变量。</li>
+</ol>
+<hr>
+<p>因此 Spring 给出建议：<code>constructor-based</code> 和 <code>setter-based</code> DI 可以混用，</p>
+<ul>
+<li>
+<p>强制依赖就用 <code>constructor-based</code></p>
+<p>很好理解，类离开强制依赖就无法工作，这和构造方法职能相吻合，也能注入 <code>final</code> 变量。构造器可以保证这些变量的值不会是 null 。</p>
+</li>
+<li>
+<p>可选、可变依赖用 <code>setter-based</code></p>
+<p><code>setter</code> 值应被用于注入非必须依赖，这些依赖可以很方便地被改变或重新注入，否则会需要大量的 null 检查。</p>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring/">Spring</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E5%B8%B8%E7%94%A8%E6%B3%A8%E9%87%8A/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Fancy1.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Fancy1.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 常用注释</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Street2.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Street2.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 常用数据类型</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-common_questions/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" data-key="redis-common_questions" data-hash="/images/feature/scenes/Windmill.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 面试常见问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-transport_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/09.jpg" loading="lazy" data-key="computer_network-transport_layer" data-hash="/images/feature/abyss/09.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 传输层</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/computer_network-application_layer/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/10.jpg" loading="lazy" data-key="computer_network-application_layer" data-hash="/images/feature/abyss/10.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络 - 应用层</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#autowired">@Autowired</a></li>
+        <li><a href="#inject">@Inject</a></li>
+        <li><a href="#resource">@Resource</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
