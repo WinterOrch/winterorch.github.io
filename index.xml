@@ -137,10 +137,9 @@
         <guid>https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</guid>
         <description>&lt;img src="https://winterorch.github.io/images/feature/scenes/Street2.jpg" alt="Featured image of post Redis - 常用数据类型" /&gt;&lt;p&gt;以下示例代码部分源自 [小专栏] &lt;a class=&#34;link&#34; href=&#34;https://xiaozhuanlan.com/topic/6845397012&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;&lt;strong&gt;剖析面试最常见问题之Redis&lt;/strong&gt;&lt;/a&gt; .&lt;/p&gt;
-&lt;h3 id=&#34;heading&#34;&gt;&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt; name		&lt;span class=&#34;c1&#34;&gt;#查看当前 key 的类型&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
-&lt;h3 id=&#34;string&#34;&gt;String&lt;/h3&gt;
+&lt;h2 id=&#34;string&#34;&gt;String&lt;/h2&gt;
 &lt;p&gt;string 数据结构是简单的 key-value 类型。虽然 Redis 是用 C 语言写的，但是 Redis 并没有使用 C 的字符串表示，而是自己构建了一种 &lt;strong&gt;简单动态字符串&lt;/strong&gt;（simple dynamic string，&lt;strong&gt;SDS&lt;/strong&gt;）。相比于 C 的原生字符串，Redis 的 SDS 不光可以保存文本数据还可以保存二进制数据，并且获取字符串长度复杂度为 O(1)（C 字符串为 O(N)）,除此之外,Redis 的 SDS API 是安全的，不会造成缓冲区溢出。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;常用命令:&lt;/strong&gt; &lt;code&gt;set,get,strlen,exists,dect,incr,setex&lt;/code&gt; 等等&lt;/li&gt;
@@ -169,7 +168,7 @@ OK
 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
 127.0.0.1:6379&amp;gt; get number
 &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;设置过期对所有数据类型都适用&#34;&gt;&lt;strong&gt;设置过期（对所有数据类型都适用）&lt;/strong&gt;&lt;/h4&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;设置过期通用&#34;&gt;&lt;strong&gt;设置过期（通用）&lt;/strong&gt;&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; expire key  &lt;span class=&#34;m&#34;&gt;60&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 数据在 60s 后过期&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
 127.0.0.1:6379&amp;gt; setex key &lt;span class=&#34;m&#34;&gt;60&lt;/span&gt; value &lt;span class=&#34;c1&#34;&gt;# 数据在 60s 后过期 (setex:[set] + [ex]pire)&lt;/span&gt;
@@ -178,20 +177,7 @@ OK
 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;56&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;ziplist-压缩列表&#34;&gt;ZipList 压缩列表&lt;/h3&gt;
-&lt;p&gt;压缩列表本质是字节数组，可以包含任意多个元素，每个元素可以是字节数组或整数。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;编码&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://image-static.segmentfault.com/230/743/2307433878-5c0e7ad049f11_articlex&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;zlbytes&lt;/code&gt;：字节长度，占4字节，因此ZipList最长 $2^{32} - 1$ 字节&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;zltail&lt;/code&gt;：为元素相对起始地址的偏移量，占4字节&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;zllen&lt;/code&gt;：列表元素数目，占2字节，当数目超过 $2^{16}-1$ 时字段无效，只能通过遍历获取数目&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;entryX&lt;/code&gt;：若干元素&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;zlend&lt;/code&gt;：结尾字节，&lt;code&gt;0xFF&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;list-链表&#34;&gt;List 链表&lt;/h3&gt;
+&lt;h2 id=&#34;list-链表&#34;&gt;List 链表&lt;/h2&gt;
 &lt;p&gt;当列表中存储数据量较大，列表通过双向循环链表实现。可以支持反向查找和遍历，更方便操作，不过带来了部分额外的内存开销。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;常用命令:&lt;/strong&gt; &lt;code&gt;rpush,lpop,lpush,rpop,lrange、llen&lt;/code&gt; 等。&lt;/li&gt;
@@ -233,7 +219,20 @@ OK
 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;hash-无序散列表&#34;&gt;Hash 无序散列表&lt;/h3&gt;
+&lt;h2 id=&#34;ziplist-压缩列表&#34;&gt;ZipList 压缩列表&lt;/h2&gt;
+&lt;p&gt;压缩列表本质是字节数组，可以包含任意多个元素，每个元素可以是字节数组或整数。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;编码&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://image-static.segmentfault.com/230/743/2307433878-5c0e7ad049f11_articlex&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;zlbytes&lt;/code&gt;：字节长度，占4字节，因此ZipList最长 $2^{32} - 1$ 字节&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;zltail&lt;/code&gt;：为元素相对起始地址的偏移量，占4字节&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;zllen&lt;/code&gt;：列表元素数目，占2字节，当数目超过 $2^{16}-1$ 时字段无效，只能通过遍历获取数目&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;entryX&lt;/code&gt;：若干元素&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;zlend&lt;/code&gt;：结尾字节，&lt;code&gt;0xFF&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;hash-无序散列表&#34;&gt;Hash 无序散列表&lt;/h2&gt;
 &lt;p&gt;存储&lt;strong&gt;键值对&lt;/strong&gt;。当数据量较小，使用ZipList存储，否则使用&lt;strong&gt;散列表&lt;/strong&gt;(使用MurmurHash2作为哈希函数)。&lt;/p&gt;
 &lt;p&gt;当负载因子大于1，触发扩容，将散列表扩大为2倍。当负载因子小于0.1，触发缩容，缩小为实际负载的2倍大小。&lt;/p&gt;
 &lt;ul&gt;
@@ -268,7 +267,7 @@ OK
 &lt;span class=&#34;s2&#34;&gt;&amp;#34;GuideGeGe&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h4 id=&#34;set-无序集合&#34;&gt;Set 无序集合&lt;/h4&gt;
+&lt;h2 id=&#34;set-无序集合&#34;&gt;Set 无序集合&lt;/h2&gt;
 &lt;p&gt;集合中的元素没有先后顺序，不允许重复数据。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;常用命令：&lt;/strong&gt; &lt;code&gt;sadd,spop,smembers,sismember,scard,sinterstore,sunion&lt;/code&gt; 等。&lt;/li&gt;
@@ -291,9 +290,20 @@ OK
 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
 127.0.0.1:6379&amp;gt; smembers mySet3
 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;
+127.0.0.1:6379&amp;gt; sunion mySet mySet2 &lt;span class=&#34;c1&#34;&gt;# 获取 mySet 和 mySet2 的并集并打印&lt;/span&gt;
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;value3&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过以下的案例可知Set是无序的&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;127.0.0.1:6379&amp;gt; sadd myset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+127.0.0.1:6379&amp;gt; spop myset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;5&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h4 id=&#34;sortedset-有序集合&#34;&gt;SortedSet 有序集合&lt;/h4&gt;
+&lt;h2 id=&#34;sortedset-有序集合&#34;&gt;SortedSet 有序集合&lt;/h2&gt;
 &lt;p&gt;存储键值对，有序集合的值被称为分值(score)，必须为浮点数。SortedSet 是唯一既可以跟据成员访问，又可以跟据分值以及分值排列顺序访问元素的结构。有点像是 Java 中 HashMap 和 TreeSet 的结合体。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;常用命令：&lt;/strong&gt; &lt;code&gt;zadd,zcard,zscore,zrange,zrevrange,zrem&lt;/code&gt; 等。&lt;/li&gt;
@@ -319,7 +329,7 @@ OK
 2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;bitmap&#34;&gt;bitmap&lt;/h3&gt;
+&lt;h2 id=&#34;bitmap&#34;&gt;bitmap&lt;/h2&gt;
 &lt;p&gt;适用只需要一个 bit 位来表示某个元素对应值或者状态的情况，如是否签到、是否登录等 Java 中使用 &lt;code&gt;bool&lt;/code&gt; 的场景，加之 &lt;code&gt;bitmap&lt;/code&gt; 可以统计设为 1 的位的数量&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;常用命令：&lt;/strong&gt; &lt;code&gt;setbit&lt;/code&gt; 、&lt;code&gt;getbit&lt;/code&gt; 、&lt;code&gt;bitcount&lt;/code&gt;、&lt;code&gt;bitop&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# SETBIT 会返回之前位的值（默认是 0）这里会生成 7 个位&lt;/span&gt;
@@ -358,7 +368,7 @@ OK
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;实际上，如果需要统计日活、月活用户这种，Redis 有一个非常对口的数据结构——HyperLoglog，原理其实类似于布隆滤波器，也是一个哈希过滤器，有一定的误警率，因此一般用于统计日活用户数量之类对精确度没有很高要求的数据。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;乐观锁&#34;&gt;乐观锁&lt;/h3&gt;
+&lt;h2 id=&#34;乐观锁&#34;&gt;乐观锁&lt;/h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;对应数据库中的 &lt;code&gt;version&lt;/code&gt; 设计&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -367,7 +377,19 @@ OK
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;unwatch		&lt;span class=&#34;c1&#34;&gt;# 失败，乐观锁已经失效&lt;/span&gt;
 
 watch money		&lt;span class=&#34;c1&#34;&gt;# 添加新的乐观锁&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;链接&#34;&gt;链接&lt;/h2&gt;
+&lt;p&gt;你可以在《Redis设计与实现》的下述页码找到对应数据结构的常用命令：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;string&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;P68&lt;/li&gt;
+&lt;li&gt;list&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;P71&lt;/li&gt;
+&lt;li&gt;hash&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;P74&lt;/li&gt;
+&lt;li&gt;set&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;P77&lt;/li&gt;
+&lt;li&gt;sorted set&amp;mdash;&amp;ndash;P81&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
 </description>
         </item>
         <item>
@@ -377,18 +399,17 @@ watch money		&lt;span class=&#34;c1&#34;&gt;# 添加新的乐观锁&lt;/span&gt;
         
         <guid>https://winterorch.github.io/p/redis-common_questions/</guid>
         <description>&lt;img src="https://winterorch.github.io/images/feature/scenes/Windmill.jpg" alt="Featured image of post Redis - 面试常见问题" /&gt;&lt;p&gt;常见的内存数据库包括 Memcached 和 Redis。后者相较之下在 k/v 类型数据基础上提供了 list, set, zset, hash 等数据结构存储，并且可扩展性强，能够通过插件增加更多；同时具有容灾机制，支持数据持久化，也有原生集群模式，支持发布订阅模型、Lua 脚本、事务；并且支持更多编程语言，单线程模型更加高效。总而言之功能很强，应用很广。&lt;/p&gt;
-&lt;h3 id=&#34;1--简要介绍&#34;&gt;1.  简要介绍&lt;/h3&gt;
+&lt;h2 id=&#34;简要介绍&#34;&gt;简要介绍&lt;/h2&gt;
 &lt;p&gt;Redis 是用 C 开发的内存数据库，非关系型数据库，读写速度快，广泛应用于缓存，也可以做分布式锁、消息队列。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Redis6.0 之前都是&lt;strong&gt;单线程处理&lt;/strong&gt;，仅在4.0增加了对大键值对删除操作的“异步处理”&lt;/li&gt;
 &lt;li&gt;服务器&lt;strong&gt;内存使用完&lt;/strong&gt;之后，将不用的数据存到磁盘上&lt;/li&gt;
 &lt;li&gt;过期数据的&lt;strong&gt;删除策略&lt;/strong&gt;包括惰性删除与定期删除&lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;2--缓存的作用&#34;&gt;2.  缓存的作用&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;缓存的作用&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;访问数据库从硬盘中读取，过程较慢。如果用户访问数据为高频数据且不会经常改变，则可以存在缓存中，速度快。&lt;/p&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;3--删除策略&#34;&gt;3.  删除策略&lt;/h3&gt;
+&lt;h2 id=&#34;删除策略和内存淘汰机制&#34;&gt;删除策略和内存淘汰机制&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;惰性删除&lt;/strong&gt;&lt;/p&gt;
@@ -401,9 +422,7 @@ watch money		&lt;span class=&#34;c1&#34;&gt;# 添加新的乐观锁&lt;/span&gt;
 &lt;/ul&gt;
 &lt;p&gt;删除策略并不能清理所有过期 &lt;code&gt;key&lt;/code&gt; ，过期 &lt;code&gt;key&lt;/code&gt; 还需要&lt;strong&gt;内存淘汰机制&lt;/strong&gt;解决。&lt;/p&gt;
 &lt;p&gt;除了缓解内存消耗，设置过期时间也可以用于满足业务需要，比如验证码、登录Token的有效时间。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;4--内存淘汰机制&#34;&gt;4.  内存淘汰机制&lt;/h3&gt;
-&lt;p&gt;跟据从中挑选淘汰数据的数据集不同，分为三大类：&lt;/p&gt;
+&lt;p&gt;内存淘汰机制跟据从中挑选淘汰数据的数据集不同，分为三大类：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;从&lt;strong&gt;已设置过期时间的数据集&lt;/strong&gt;中 &lt;code&gt;volatile&lt;/code&gt;&lt;/p&gt;
@@ -467,7 +486,7 @@ watch money		&lt;span class=&#34;c1&#34;&gt;# 添加新的乐观锁&lt;/span&gt;
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;如图所示，Redis通过一个过期字典（类似HashTable）来保存数据过期时间，对应内存淘汰机制中 &lt;code&gt;server.db[i].expires&lt;/code&gt; 。&lt;/p&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;5--持久化机制&#34;&gt;5.  持久化机制&lt;/h3&gt;
+&lt;h2 id=&#34;持久化机制&#34;&gt;持久化机制&lt;/h2&gt;
 &lt;p&gt;为了保证Redis挂掉后再重启数据可以进行恢复，需要将内存数据写入硬盘。两种持久化机制分别是快照 (&lt;strong&gt;snapshotting, RDB&lt;/strong&gt;) 和只追加文件 (&lt;strong&gt;append-only file, AOF&lt;/strong&gt;) 。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;RDB 记录的是内存快照，AOF 记录的是执行过的所有命令。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;快照持久化是 Redis 默认采用的持久化方式，可以将快照复制到其他服务器从而创建具相同数据的服务器副本，在 Redis.conf 配置文件中默认有此下配置：&lt;/p&gt;
@@ -481,6 +500,7 @@ save &lt;span class=&#34;m&#34;&gt;60&lt;/span&gt; &lt;span class=&#34;m&#34;&gt
 &lt;li&gt;&lt;code&gt;bgsave&lt;/code&gt; 命令 &lt;code&gt;fork()&lt;/code&gt; 一个子线程在后台异步进行快照操作，&lt;strong&gt;同样会阻塞&lt;/strong&gt;，但只发生在 &lt;code&gt;fork()&lt;/code&gt; 阶段，时间较短。RDB 快照持久化期间父进程修改的数据不会被保存。&lt;/li&gt;
 &lt;li&gt;自动，通过配置完成&lt;/li&gt;
 &lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
 &lt;p&gt;AOF 持久化 的实时性更好，因此已成为主流的持久化方案。默认情况下 Redis 没有开启 AOF（append only file）方式的持久化，可以通过 appendonly 参数开启：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;appendonly yes
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;开启 AOF 持久化后每执行一条会更改 Redis 中的数据的命令，Redis 就会将该命令写入硬盘中的 AOF 文件。AOF 文件的保存位置和 RDB 文件的位置相同，都是通过 dir 参数设置的，默认的文件名是 appendonly.aof。&lt;/p&gt;
@@ -491,18 +511,10 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;appendfsync everysec&lt;/code&gt; 比较好&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;优点&lt;/strong&gt;：写入性能非常高；即时日志文件过大出现后台重写也不会影响客户端读写（&lt;code&gt;fork()&lt;/code&gt;新线程进行重写）；记录方式可读，适合用作紧急恢复&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;缺点&lt;/strong&gt;：日志文件更大，且会带来持续IO，对QPS影响更大&lt;/p&gt;
-&lt;h5 id=&#34;总结&#34;&gt;总结&lt;/h5&gt;
+&lt;p&gt;&lt;strong&gt;总结&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Redis 重启时优先载入 AOF，因为 AOF 数据集一般更加完整，但 RDB 更适合用于备份数据库，快速重启，且没有 AOF 潜在 BUG&lt;/p&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;6--redis-60-之前为什么不使用多线程&#34;&gt;6.  Redis 6.0 之前为什么不使用多线程&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;单线程开发、维护容易&lt;/li&gt;
-&lt;li&gt;Redis性能瓶颈在内存和网络，CPU瓶颈不明显&lt;/li&gt;
-&lt;li&gt;多线程带来了死锁、线程上下文切换等问题，甚至可能影响性能&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;6.0 后引入多线程也是为了提高网络 IO 读写性能，仅用在网络数据读写这类耗时操作上，无需担心线程安全问题。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;7--事务-transaction&#34;&gt;7.  事务 (Transaction)&lt;/h3&gt;
+&lt;h2 id=&#34;redis事务&#34;&gt;Redis事务&lt;/h2&gt;
 &lt;p&gt;关系型数据库的事务具备四大特性（ACID），合起来就是：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -541,7 +553,7 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;p&gt;当命令出现错误，其它命令可以正常执行，只有错误命令抛出异常&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;8_1-缓存穿透攻击&#34;&gt;8_1. 缓存穿透攻击&lt;/h3&gt;
+&lt;h2 id=&#34;缓存穿透攻击&#34;&gt;缓存穿透攻击&lt;/h2&gt;
 &lt;p&gt;黑客制造大量不存在 &lt;code&gt;key&lt;/code&gt; 的请求，导致请求直接落到数据库进行查询，没有经过缓存层。&lt;/p&gt;
 &lt;p&gt;要解决这一问题，最基本是要做好参数校验，不合法的参数直接抛异常给客户端。&lt;/p&gt;
 &lt;ul&gt;
@@ -555,7 +567,7 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;p&gt;先用布隆过滤器判断请求值是否存在，实际上就是哈希校验&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;8_2-缓存击穿&#34;&gt;8_2. 缓存击穿&lt;/h3&gt;
+&lt;h2 id=&#34;缓存击穿&#34;&gt;缓存击穿&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;key&lt;/code&gt; 失效的瞬间，大量并发集中访问，直接落在数据库上。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -567,7 +579,7 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;p&gt;分布式锁来保证对每个 &lt;code&gt;key&lt;/code&gt; 同时只有一个线程查询后端服务，其它线程没有获得分布式锁的权限，只需要等待，从而将高并发压力转移到分布式锁&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;8_3-缓存雪崩&#34;&gt;8_3. 缓存雪崩&lt;/h3&gt;
+&lt;h2 id=&#34;缓存雪崩&#34;&gt;缓存雪崩&lt;/h2&gt;
 &lt;p&gt;服务器宕机或断网形成缓存雪崩，对数据库造成压力不可预知，很可能瞬间将数据库压垮。&lt;/p&gt;
 &lt;p&gt;实际上就是压力累积超过临界导致的，&lt;/p&gt;
 &lt;ul&gt;
@@ -576,16 +588,22 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;li&gt;&lt;strong&gt;数据预热&lt;/strong&gt;，预访问数据，使得尽可能多的数据被加载到缓存中，但要注意设置不同的过期时间，使缓存失效的时间点尽量均匀&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;9-单线程模型&#34;&gt;9. 单线程模型&lt;/h3&gt;
+&lt;h2 id=&#34;单线程模型&#34;&gt;单线程模型&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;单线程开发、维护容易&lt;/li&gt;
+&lt;li&gt;Redis性能瓶颈在内存和网络，CPU瓶颈不明显&lt;/li&gt;
+&lt;li&gt;多线程带来了死锁、线程上下文切换等问题，甚至可能影响性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6.0 后引入多线程也是为了提高网络 IO 读写性能，仅用在网络数据读写这类耗时操作上，无需担心线程安全问题。&lt;/p&gt;
 &lt;p&gt;Redis 事件处理模型对应其中单线程的&lt;strong&gt;文件事件处理器&lt;/strong&gt;(File Event Handler)，因此是单线程模型。通过 IO 多路复用来监听大量连接，跟据套接字执行任务关联不同的事件处理器，不需要创建多余线程来监听连接。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;虽然文件事件处理器以单线程方式运行，但通过使用 I/O 多路复用程序来监听多个套接字&lt;/strong&gt;，文件事件处理器既实现了高性能的网络通信模型，又可以很好地与 Redis 服务器中其他同样以单线程方式运行的模块进行对接，这保持了 Redis 内部单线程设计的简单性。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;10-常见缓存读写策略及如何保证缓存数据库数据一致&#34;&gt;10. 常见缓存读写策略及如何保证缓存数据库数据一致&lt;/h3&gt;
+&lt;h2 id=&#34;缓存读写策略&#34;&gt;缓存读写策略&lt;/h2&gt;
 &lt;p&gt;缓存读写策略实际上也就是缓存和数据库间的位置关系，主要有以下三种&lt;/p&gt;
-&lt;h4 id=&#34;1-旁路缓存模式-cache-aside-pattern&#34;&gt;1) 旁路缓存模式 (Cache Aside Pattern)&lt;/h4&gt;
+&lt;h3 id=&#34;旁路缓存模式&#34;&gt;旁路缓存模式&lt;/h3&gt;
 &lt;p&gt;适用&lt;strong&gt;读请求较多&lt;/strong&gt;的场景&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;写：&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -603,7 +621,7 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;/ul&gt;
 &lt;p&gt;缺点一、 首次请求数据一定不在 cache ，但是这一问题可以通过热点数据的提前缓存解决。&lt;/p&gt;
 &lt;p&gt;缺点二、 写操作如果频繁，则 cache 数据被频繁删除，缓存命中率降低，缓存很大程度上被架空。在强一致场景下需要锁/分布锁保证更新 cache 时不存在线程问题；弱一致场景下可以 cache 和 DB 一起更新，cache 设置较短的过期事件以提高缓存命中率。&lt;/p&gt;
-&lt;h4 id=&#34;2-读写穿透模式-readwrite-through-pattern&#34;&gt;2) 读写穿透模式 (Read/Write Through Pattern)&lt;/h4&gt;
+&lt;h3 id=&#34;读写穿透模式&#34;&gt;读写穿透模式&lt;/h3&gt;
 &lt;p&gt;cache 负责将数据读取和写入 DB，作为服务端和 DB 间的中间件。然而相当难实现，因为 Redis 不提供 DB 读写功能。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;写：&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -616,34 +634,34 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;li&gt;没读到就从 DB 加载到 cache，然后返回响应&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;由于 Redis 不提供 DB 读写，这一模式实际上只是在旁路模式上进行了封装。同样具有首次请求数据不在 cache 问题。&lt;/p&gt;
-&lt;h4 id=&#34;3-异步缓存写入-write-behind-pattern&#34;&gt;3) 异步缓存写入 (Write Behind Pattern)&lt;/h4&gt;
+&lt;h3 id=&#34;异步缓存写入&#34;&gt;异步缓存写入&lt;/h3&gt;
 &lt;p&gt;和 读写穿透模式 相似，但只更新缓存，不直接更新 DB，用异步批量的方式来更新 DB。消息队列中消息异步写入磁盘、MySQL 的 InnoDB Buffer Pool 机制都用到这种策略。&lt;/p&gt;
 &lt;p&gt;DB 的写性能非常高，适合数据频繁变化，数据一致性要求又不高的场景，如浏览量、点赞量。&lt;/p&gt;
 &lt;p&gt;缺点很明显，数据一致性很难维护，cache 可能在数据异步更新前宕机。&lt;/p&gt;
-&lt;h4 id=&#34;如何保证缓存数据库数据一致&#34;&gt;如何保证缓存数据库数据一致&lt;/h4&gt;
+&lt;h3 id=&#34;如何保证缓存数据库数据一致&#34;&gt;如何保证缓存数据库数据一致&lt;/h3&gt;
 &lt;p&gt;旁路缓存模式下，可以增加 cache 更新重试机制——如果 cache 服务不可用而暂时无法删除缓存，就隔一段时间再试，多次失败就将更新失败 key 存入队列，等缓存恢复后进行删除。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;11-redis-cluster&#34;&gt;11. Redis Cluster&lt;/h3&gt;
+&lt;h2 id=&#34;redis-cluster&#34;&gt;Redis Cluster&lt;/h2&gt;
 &lt;p&gt;Redis 集群主要解决的是性能问题，在缓存数据量过大的情况下将数据分散到各台 Redis 主机上，可以看作是一种&lt;strong&gt;负载均衡&lt;/strong&gt;手段，方便业务进行横向拓展。&lt;/p&gt;
 &lt;p&gt;Redis Cluster 有多个节点，是去中心化的分布式结构，每个节点都负责数据读写操作，各节点间会进行通信。通过分片 (sharding) 来进行数据管理，提供复制和故障转移功能。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
-&lt;h4 id=&#34;1-hash-slot&#34;&gt;1) Hash Slot&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;Hash Slot&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;共 16384 个槽被平均分配给节点进行管理，每个节点对自己负责的槽进行读写操作。各个节点间彼此通信，知晓其它节点负责管理的槽范围。&lt;/p&gt;
 &lt;p&gt;作为一个分布式系统，各结点需要互相通信来维护一份所有其它示例的状态信息，基于 Gossip 协议实现数据的最终一致性。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
-&lt;h4 id=&#34;2-访问流程&#34;&gt;2) 访问流程&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;访问流程&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;客户端访问任意节点时，对数据 &lt;code&gt;key&lt;/code&gt; 按照 CRC16 进行 Hash 计算，然后对运算结果模 16384 ，判断槽是否在当前节点管理范围内：如果在，则执行命令，返回结果；如果不在，返回moved重定向异常，之后由客户端跟据重定向异常中目标节点信息去发送命令。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
-&lt;h4 id=&#34;3-迁移&#34;&gt;3) 迁移&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;迁移&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;如果节点在迁移过程中收到客户端命令，会返回 ASK 重定向异常。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;12-redis-replication&#34;&gt;12. Redis Replication&lt;/h3&gt;
+&lt;h2 id=&#34;redis-replication&#34;&gt;Redis Replication&lt;/h2&gt;
 &lt;p&gt;Redis 主从主要解决的是可用性问题，读吞吐量过大情况下，可以通过一主多从来提高可用性和读吞吐量，从机多少取决于读吞吐量大小。&lt;/p&gt;
 &lt;p&gt;从机只能读，不能写。主机断开连接，从机仍然连接到主机，只是没有任何写操作传入，如果主机上线，从机依然可以直接获取。通过指令 &lt;code&gt;SLAVEOF no one&lt;/code&gt; 来脱离从机身份。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
-&lt;h4 id=&#34;1-复制&#34;&gt;1) 复制&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;复制&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;code&gt;SYNC&lt;/code&gt;&lt;/p&gt;
@@ -666,7 +684,7 @@ appendfsync no        #让操作系统决定何时进行同步
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;!-- raw HTML omitted --&gt;
-&lt;h4 id=&#34;2-哨兵&#34;&gt;2) 哨兵&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;哨兵&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;主从的问题在于一旦主机宕机，从机晋升，将需要人工重新配置其余所有从机，复制新的主机，并改变应用方主机地址，为此需要一个（实际上一般是多个）哨兵来干这件事。&lt;/p&gt;
 &lt;p&gt;单个哨兵如果检测到主服务器宕机，不会马上进行 &lt;code&gt;failover&lt;/code&gt; ，而是认为主服务器“&lt;strong&gt;主观下线&lt;/strong&gt;”。当检测到主服务器不可用的哨兵达到一定数量，则哨兵间进行投票，决定接替的从机，切换成功后，通过发布订阅模式，让各个哨兵把监控的从服务器实现切换主机，称为“&lt;strong&gt;客观下线&lt;/strong&gt;”。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;客观下线&lt;/strong&gt;后，即使原主机重新上线，也只能作为新主机的从机。&lt;/p&gt;
@@ -1039,10 +1057,8 @@ Output: -1
 &lt;p&gt;看到有 &lt;code&gt;deadends&lt;/code&gt; 其实就比较明显了——这是个走迷宫问题，而且因为有四位密码，所以其实是个四维迷宫。维数并不会增加解法的复杂程度，倒是会严重增加敲代码的繁琐程度。一开始是打算真的和迷宫一样，用四维数组做的，后来发现参数实在太多了，光敲一个位置就要 &lt;code&gt;mem[i0][i1][i2][i3]&lt;/code&gt; 这样来一遍，实在有点头皮发麻，改用 &lt;code&gt;String&lt;/code&gt; 和 &lt;code&gt;Map&lt;/code&gt; 来做记忆化了。&lt;/p&gt;
 &lt;p&gt;还是当作迷宫来解，因此思想是 BFS ，因为入口和出口都是唯一确定的，前后都可以作为 BFS 的起点，因此可以通过双向 BFS 来收缩搜索范围。&lt;/p&gt;
 &lt;p&gt;首先把 &lt;code&gt;deadends&lt;/code&gt; 存到一个 &lt;code&gt;HashSet&lt;/code&gt; 里，方便查验。BFS 需要前后两个队列，分别维护一个记忆化搜索表，记录到 &lt;code&gt;key&lt;/code&gt; 位置的步长。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt; &lt;span class=&#34;n&#34;&gt;Deque&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;d1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ArrayDeque&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;(),&lt;/span&gt;
-						  &lt;span class=&#34;n&#34;&gt;d2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ArrayDeque&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
-&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;(),&lt;/span&gt; 
-									 &lt;span class=&#34;n&#34;&gt;m2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt; &lt;span class=&#34;n&#34;&gt;Deque&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;d1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ArrayDeque&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;d2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ArrayDeque&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;d1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;addLast&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;m1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;d2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;addLast&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
@@ -3085,309 +3101,6 @@ Output: -1
 &lt;p&gt;8u40 以后 G1 增加并默认开启 &lt;code&gt;ClassUnloadingWithConcurrentMark&lt;/code&gt; ，在并发标记阶段结束后，JVM 直接进行类卸载。&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
-        </item>
-        <item>
-        <title>Chinese Test</title>
-        <link>https://winterorch.github.io/p/test-chinese/</link>
-        <pubDate>Wed, 09 Sep 2020 00:00:00 +0000</pubDate>
-        
-        <guid>https://winterorch.github.io/p/test-chinese/</guid>
-        <description>&lt;img src="https://winterorch.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash.jpg" alt="Featured image of post Chinese Test" /&gt;&lt;h2 id=&#34;正文测试&#34;&gt;正文测试&lt;/h2&gt;
-&lt;p&gt;而这些并不是完全重要，更加重要的问题是， 带着这些问题，我们来审视一下学生会退会。 既然如何， 对我个人而言，学生会退会不仅仅是一个重大的事件，还可能会改变我的人生。 我们不得不面对一个非常尴尬的事实，那就是， 可是，即使是这样，学生会退会的出现仍然代表了一定的意义。 学生会退会，发生了会如何，不发生又会如何。 经过上述讨论， 生活中，若学生会退会出现了，我们就不得不考虑它出现了的事实。 学生会退会，到底应该如何实现。 这样看来， 在这种困难的抉择下，本人思来想去，寝食难安。 对我个人而言，学生会退会不仅仅是一个重大的事件，还可能会改变我的人生。 就我个人来说，学生会退会对我的意义，不能不说非常重大。 莎士比亚曾经提到过，人的一生是短的，但如果卑劣地过这一生，就太长了。这似乎解答了我的疑惑。 莫扎特说过一句富有哲理的话，谁和我一样用功，谁就会和我一样成功。这启发了我， 对我个人而言，学生会退会不仅仅是一个重大的事件，还可能会改变我的人生。 学生会退会，到底应该如何实现。 一般来说， 从这个角度来看， 这种事实对本人来说意义重大，相信对这个世界也是有一定意义的。 在这种困难的抉择下，本人思来想去，寝食难安。 了解清楚学生会退会到底是一种怎么样的存在，是解决一切问题的关键。 一般来说， 生活中，若学生会退会出现了，我们就不得不考虑它出现了的事实。 问题的关键究竟为何？ 而这些并不是完全重要，更加重要的问题是。&lt;/p&gt;
-&lt;p&gt;奥斯特洛夫斯基曾经说过，共同的事业，共同的斗争，可以使人们产生忍受一切的力量。　带着这句话，我们还要更加慎重的审视这个问题： 一般来讲，我们都必须务必慎重的考虑考虑。 既然如此， 这种事实对本人来说意义重大，相信对这个世界也是有一定意义的。 带着这些问题，我们来审视一下学生会退会。 我认为， 我认为， 在这种困难的抉择下，本人思来想去，寝食难安。 问题的关键究竟为何？ 每个人都不得不面对这些问题。 在面对这种问题时， 要想清楚，学生会退会，到底是一种怎么样的存在。 我认为， 既然如此， 每个人都不得不面对这些问题。 在面对这种问题时， 那么， 我认为， 学生会退会因何而发生。&lt;/p&gt;
-&lt;h2 id=&#34;引用&#34;&gt;引用&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;思念是最暖的忧伤像一双翅膀&lt;br&gt;
-让我停不了飞不远在过往游荡&lt;br&gt;
-不告而别的你 就算为了我着想&lt;br&gt;
-这么沉痛的呵护 我怎么能翱翔&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=3aypp_YlBzI&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;最暖的憂傷 - 田馥甄&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&#34;图片&#34;&gt;图片&lt;/h2&gt;
-&lt;p&gt;&lt;figure style=&#34;flex-grow: 66; flex-basis: 160px&#34;&gt;
-		&lt;a href=&#34;https://winterorch.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash.jpg&#34; data-size=&#34;667x1000&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash.jpg&#34;
-				srcset=&#34;https://winterorch.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash_hu595aaf3b3dbbb41af5aed8d3958cc9f9_13854_480x0_resize_q75_box.jpg 480w, https://winterorch.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash_hu595aaf3b3dbbb41af5aed8d3958cc9f9_13854_1024x0_resize_q75_box.jpg 1024w&#34;
-				width=&#34;667&#34;
-				height=&#34;1000&#34;
-				loading=&#34;lazy&#34;
-				alt=&#34;Photo by Florian Klauer on Unsplash&#34;&gt;
-		&lt;/a&gt;
-		
-		&lt;figcaption&gt;Photo by Florian Klauer on Unsplash&lt;/figcaption&gt;
-		
-	&lt;/figure&gt;  &lt;figure style=&#34;flex-grow: 149; flex-basis: 359px&#34;&gt;
-		&lt;a href=&#34;https://winterorch.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash.jpg&#34; data-size=&#34;1000x667&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash.jpg&#34;
-				srcset=&#34;https://winterorch.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash_hu0a3f1163de68d0b9471979ebf0ecf11e_32400_480x0_resize_q75_box.jpg 480w, https://winterorch.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash_hu0a3f1163de68d0b9471979ebf0ecf11e_32400_1024x0_resize_q75_box.jpg 1024w&#34;
-				width=&#34;1000&#34;
-				height=&#34;667&#34;
-				loading=&#34;lazy&#34;
-				alt=&#34;Photo by Luca Bravo on Unsplash&#34;&gt;
-		&lt;/a&gt;
-		
-		&lt;figcaption&gt;Photo by Luca Bravo on Unsplash&lt;/figcaption&gt;
-		
-	&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;&lt;figure style=&#34;flex-grow: 133; flex-basis: 320px&#34;&gt;
-		&lt;a href=&#34;https://winterorch.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash.jpg&#34; data-size=&#34;1000x750&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash.jpg&#34;
-				srcset=&#34;https://winterorch.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash_hu45a5e3ad5e058da6a00650ed8fd40bea_15530_480x0_resize_q75_box.jpg 480w, https://winterorch.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash_hu45a5e3ad5e058da6a00650ed8fd40bea_15530_1024x0_resize_q75_box.jpg 1024w&#34;
-				width=&#34;1000&#34;
-				height=&#34;750&#34;
-				loading=&#34;lazy&#34;
-				alt=&#34;Photo by Helena Hertz on Unsplash&#34;&gt;
-		&lt;/a&gt;
-		
-		&lt;figcaption&gt;Photo by Helena Hertz on Unsplash&lt;/figcaption&gt;
-		
-	&lt;/figure&gt;  &lt;figure style=&#34;flex-grow: 66; flex-basis: 160px&#34;&gt;
-		&lt;a href=&#34;https://winterorch.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash.jpg&#34; data-size=&#34;667x1000&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash.jpg&#34;
-				srcset=&#34;https://winterorch.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash_hub241c2a9c7a2caf7e16a2a5bbc7141ff_18711_480x0_resize_q75_box.jpg 480w, https://winterorch.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash_hub241c2a9c7a2caf7e16a2a5bbc7141ff_18711_1024x0_resize_q75_box.jpg 1024w&#34;
-				width=&#34;667&#34;
-				height=&#34;1000&#34;
-				loading=&#34;lazy&#34;
-				alt=&#34;Photo by Hudai Gayiran on Unsplash&#34;&gt;
-		&lt;/a&gt;
-		
-		&lt;figcaption&gt;Photo by Hudai Gayiran on Unsplash&lt;/figcaption&gt;
-		
-	&lt;/figure&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;![&lt;span class=&#34;nt&#34;&gt;Photo by Florian Klauer on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;florian-klauer-nptLmg6jqDo-unsplash.jpg&lt;/span&gt;)  ![&lt;span class=&#34;nt&#34;&gt;Photo by Luca Bravo on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;luca-bravo-alS7ewQ41M8-unsplash.jpg&lt;/span&gt;) 
-
-![&lt;span class=&#34;nt&#34;&gt;Photo by Helena Hertz on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;helena-hertz-wWZzXlDpMog-unsplash.jpg&lt;/span&gt;)  ![&lt;span class=&#34;nt&#34;&gt;Photo by Hudai Gayiran on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;hudai-gayiran-3Od_VKcDEAA-unsplash.jpg&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;相册语法来自 &lt;a class=&#34;link&#34; href=&#34;https://typlog.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Typlog&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        <item>
-        <title>Markdown Syntax Guide</title>
-        <link>https://winterorch.github.io/p/markdown-syntax-guide/</link>
-        <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://winterorch.github.io/p/markdown-syntax-guide/</guid>
-        <description>&lt;img src="https://winterorch.github.io/p/markdown-syntax-guide/pawel-czerwinski-8uZPynIu-rQ-unsplash.jpg" alt="Featured image of post Markdown Syntax Guide" /&gt;&lt;p&gt;This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.&lt;/p&gt;
-&lt;h2 id=&#34;headings&#34;&gt;Headings&lt;/h2&gt;
-&lt;p&gt;The following HTML &lt;code&gt;&amp;lt;h1&amp;gt;&lt;/code&gt;—&lt;code&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; elements represent six levels of section headings. &lt;code&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; is the highest section level while &lt;code&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; is the lowest.&lt;/p&gt;
-&lt;h1 id=&#34;h1&#34;&gt;H1&lt;/h1&gt;
-&lt;h2 id=&#34;h2&#34;&gt;H2&lt;/h2&gt;
-&lt;h3 id=&#34;h3&#34;&gt;H3&lt;/h3&gt;
-&lt;h4 id=&#34;h4&#34;&gt;H4&lt;/h4&gt;
-&lt;h5 id=&#34;h5&#34;&gt;H5&lt;/h5&gt;
-&lt;h6 id=&#34;h6&#34;&gt;H6&lt;/h6&gt;
-&lt;h2 id=&#34;paragraph&#34;&gt;Paragraph&lt;/h2&gt;
-&lt;p&gt;Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur? Quianimin porecus evelectur, cum que nis nust voloribus ratem aut omnimi, sitatur? Quiatem. Nam, omnis sum am facea corem alique molestrunt et eos evelece arcillit ut aut eos eos nus, sin conecerem erum fuga. Ri oditatquam, ad quibus unda veliamenimin cusam et facea ipsamus es exerum sitate dolores editium rerore eost, temped molorro ratiae volorro te reribus dolorer sperchicium faceata tiustia prat.&lt;/p&gt;
-&lt;p&gt;Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sapicia is sinveli squiatum, core et que aut hariosam ex eat.&lt;/p&gt;
-&lt;h2 id=&#34;blockquotes&#34;&gt;Blockquotes&lt;/h2&gt;
-&lt;p&gt;The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a &lt;code&gt;footer&lt;/code&gt; or &lt;code&gt;cite&lt;/code&gt; element, and optionally with in-line changes such as annotations and abbreviations.&lt;/p&gt;
-&lt;h4 id=&#34;blockquote-without-attribution&#34;&gt;Blockquote without attribution&lt;/h4&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Tiam, ad mint andaepu dandae nostion secatur sequo quae.
-&lt;strong&gt;Note&lt;/strong&gt; that you can use &lt;em&gt;Markdown syntax&lt;/em&gt; within a blockquote.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h4 id=&#34;blockquote-with-attribution&#34;&gt;Blockquote with attribution&lt;/h4&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Don&amp;rsquo;t communicate by sharing memory, share memory by communicating.&lt;!-- raw HTML omitted --&gt;
-— &lt;!-- raw HTML omitted --&gt;Rob Pike&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&#34;tables&#34;&gt;Tables&lt;/h2&gt;
-&lt;p&gt;Tables aren&amp;rsquo;t part of the core Markdown spec, but Hugo supports supports them out-of-the-box.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Name&lt;/th&gt;
-&lt;th&gt;Age&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Bob&lt;/td&gt;
-&lt;td&gt;27&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Alice&lt;/td&gt;
-&lt;td&gt;23&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h4 id=&#34;inline-markdown-within-tables&#34;&gt;Inline Markdown within tables&lt;/h4&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Italics&lt;/th&gt;
-&lt;th&gt;Bold&lt;/th&gt;
-&lt;th&gt;Code&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;em&gt;italics&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;&lt;strong&gt;bold&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;code&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;code-blocks&#34;&gt;Code Blocks&lt;/h2&gt;
-&lt;h4 id=&#34;code-block-with-backticks&#34;&gt;Code block with backticks&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;!doctype html&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;lang&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;en&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;charset&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;utf-8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Example HTML5 Document&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Test&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;code-block-indented-with-four-spaces&#34;&gt;Code block indented with four spaces&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;&amp;lt;!doctype html&amp;gt;
-&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;
-&amp;lt;head&amp;gt;
-  &amp;lt;meta charset=&amp;quot;utf-8&amp;quot;&amp;gt;
-  &amp;lt;title&amp;gt;Example HTML5 Document&amp;lt;/title&amp;gt;
-&amp;lt;/head&amp;gt;
-&amp;lt;body&amp;gt;
-  &amp;lt;p&amp;gt;Test&amp;lt;/p&amp;gt;
-&amp;lt;/body&amp;gt;
-&amp;lt;/html&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h4 id=&#34;code-block-with-hugos-internal-highlight-shortcode&#34;&gt;Code block with Hugo&amp;rsquo;s internal highlight shortcode&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;!doctype html&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;lang&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;en&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;charset&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;utf-8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Example HTML5 Document&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Test&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id=&#34;list-types&#34;&gt;List Types&lt;/h2&gt;
-&lt;h4 id=&#34;ordered-list&#34;&gt;Ordered List&lt;/h4&gt;
-&lt;ol&gt;
-&lt;li&gt;First item&lt;/li&gt;
-&lt;li&gt;Second item&lt;/li&gt;
-&lt;li&gt;Third item&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&#34;unordered-list&#34;&gt;Unordered List&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;List item&lt;/li&gt;
-&lt;li&gt;Another item&lt;/li&gt;
-&lt;li&gt;And another item&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;nested-list&#34;&gt;Nested list&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Fruit
-&lt;ul&gt;
-&lt;li&gt;Apple&lt;/li&gt;
-&lt;li&gt;Orange&lt;/li&gt;
-&lt;li&gt;Banana&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Dairy
-&lt;ul&gt;
-&lt;li&gt;Milk&lt;/li&gt;
-&lt;li&gt;Cheese&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;other-elements--abbr-sub-sup-kbd-mark&#34;&gt;Other Elements — abbr, sub, sup, kbd, mark&lt;/h2&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;GIF&lt;!-- raw HTML omitted --&gt; is a bitmap image format.&lt;/p&gt;
-&lt;p&gt;H&lt;!-- raw HTML omitted --&gt;2&lt;!-- raw HTML omitted --&gt;O&lt;/p&gt;
-&lt;p&gt;X&lt;!-- raw HTML omitted --&gt;n&lt;!-- raw HTML omitted --&gt; + Y&lt;!-- raw HTML omitted --&gt;n&lt;!-- raw HTML omitted --&gt; = Z&lt;!-- raw HTML omitted --&gt;n&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;p&gt;Press &lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;CTRL&lt;!-- raw HTML omitted --&gt;+&lt;!-- raw HTML omitted --&gt;ALT&lt;!-- raw HTML omitted --&gt;+&lt;!-- raw HTML omitted --&gt;Delete&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt; to end the session.&lt;/p&gt;
-&lt;p&gt;Most &lt;!-- raw HTML omitted --&gt;salamanders&lt;!-- raw HTML omitted --&gt; are nocturnal, and hunt for insects, worms, and other small creatures.&lt;/p&gt;
-&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
-&lt;p&gt;The above quote is excerpted from Rob Pike&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=PAAkCSZUG1c&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;talk&lt;/a&gt; during Gopherfest, November 18, 2015.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/section&gt;</description>
-        </item>
-        <item>
-        <title>Placeholder Text</title>
-        <link>https://winterorch.github.io/p/placeholder-text/</link>
-        <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://winterorch.github.io/p/placeholder-text/</guid>
-        <description>&lt;img src="https://winterorch.github.io/p/placeholder-text/matt-le-SJSpo9hQf7s-unsplash.jpg" alt="Featured image of post Placeholder Text" /&gt;&lt;p&gt;Lorem est tota propiore conpellat pectoribus de pectora summo.&lt;/p&gt;
-&lt;p&gt;Redit teque digerit hominumque toris verebor lumina non cervice subde tollit usus habet Arctonque, furores quas nec ferunt. Quoque montibus nunc caluere tempus inhospita parcite confusaque translucet patri vestro qui optatis lumine cognoscere flos nubis! Fronde ipsamque patulos Dryopen deorum.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Exierant elisi ambit vivere dedere&lt;/li&gt;
-&lt;li&gt;Duce pollice&lt;/li&gt;
-&lt;li&gt;Eris modo&lt;/li&gt;
-&lt;li&gt;Spargitque ferrea quos palude&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Rursus nulli murmur; hastile inridet ut ab gravi sententia! Nomine potitus silentia flumen, sustinet placuit petis in dilapsa erat sunt. Atria tractus malis.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Comas hunc haec pietate fetum procerum dixit&lt;/li&gt;
-&lt;li&gt;Post torum vates letum Tiresia&lt;/li&gt;
-&lt;li&gt;Flumen querellas&lt;/li&gt;
-&lt;li&gt;Arcanaque montibus omnes&lt;/li&gt;
-&lt;li&gt;Quidem et&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h1 id=&#34;vagus-elidunt&#34;&gt;Vagus elidunt&lt;/h1&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Canons_of_page_construction#Van_de_Graaf_canon&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;The Van de Graaf Canon&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;mane-refeci-capiebant-unda-mulcebat&#34;&gt;Mane refeci capiebant unda mulcebat&lt;/h2&gt;
-&lt;p&gt;Victa caducifer, malo vulnere contra dicere aurato, ludit regale, voca! Retorsit colit est profanae esse virescere furit nec; iaculi matertera et visa est, viribus. Divesque creatis, tecta novat collumque vulnus est, parvas. &lt;strong&gt;Faces illo pepulere&lt;/strong&gt; tempus adest. Tendit flamma, ab opes virum sustinet, sidus sequendo urbis.&lt;/p&gt;
-&lt;p&gt;Iubar proles corpore raptos vero auctor imperium; sed et huic: manus caeli Lelegas tu lux. Verbis obstitit intus oblectamina fixis linguisque ausus sperare Echionides cornuaque tenent clausit possit. Omnia putatur. Praeteritae refert ausus; ferebant e primus lora nutat, vici quae mea ipse. Et iter nil spectatae vulnus haerentia iuste et exercebat, sui et.&lt;/p&gt;
-&lt;p&gt;Eurytus Hector, materna ipsumque ut Politen, nec, nate, ignari, vernum cohaesit sequitur. Vel &lt;strong&gt;mitis temploque&lt;/strong&gt; vocatus, inque alis, &lt;em&gt;oculos nomen&lt;/em&gt; non silvis corpore coniunx ne displicet illa. Crescunt non unus, vidit visa quantum inmiti flumina mortis facto sic: undique a alios vincula sunt iactata abdita! Suspenderat ego fuit tendit: luna, ante urbem Propoetides &lt;strong&gt;parte&lt;/strong&gt;.&lt;/p&gt;</description>
-        </item>
-        <item>
-        <title>Math Typesetting</title>
-        <link>https://winterorch.github.io/p/math-typesetting/</link>
-        <pubDate>Fri, 08 Mar 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://winterorch.github.io/p/math-typesetting/</guid>
-        <description>&lt;p&gt;Mathematical notation in a Hugo project can be enabled by using third party JavaScript libraries.&lt;/p&gt;
-&lt;p&gt;In this example we will be using &lt;a class=&#34;link&#34; href=&#34;https://katex.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;KaTeX&lt;/a&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Create a partial under &lt;code&gt;/layouts/partials/math.html&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Within this partial reference the &lt;a class=&#34;link&#34; href=&#34;https://katex.org/docs/autorender.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Auto-render Extension&lt;/a&gt; or host these scripts locally.&lt;/li&gt;
-&lt;li&gt;Include the partial in your templates like so:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; or .Params.math .Site.Params.math &lt;span class=&#34;o&#34;&gt;}}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt; partial &lt;span class=&#34;s2&#34;&gt;&amp;#34;math.html&amp;#34;&lt;/span&gt; . &lt;span class=&#34;o&#34;&gt;}}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt; end &lt;span class=&#34;o&#34;&gt;}}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;To enable KaTex globally set the parameter &lt;code&gt;math&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; in a project&amp;rsquo;s configuration&lt;/li&gt;
-&lt;li&gt;To enable KaTex on a per page basis include the parameter &lt;code&gt;math: true&lt;/code&gt; in content files&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Use the online reference of &lt;a class=&#34;link&#34; href=&#34;https://katex.org/docs/supported.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Supported TeX Functions&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;examples&#34;&gt;Examples&lt;/h3&gt;
-
-&lt;p&gt;Block math:
-$$
-\varphi = 1+\frac{1} {1+\frac{1} {1+\frac{1} {1+\cdots} } } 
-$$&lt;/p&gt;</description>
-        </item>
-        <item>
-        <title>Emoji Support</title>
-        <link>https://winterorch.github.io/p/emoji-support/</link>
-        <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://winterorch.github.io/p/emoji-support/</guid>
-        <description>&lt;img src="https://winterorch.github.io/p/emoji-support/the-creative-exchange-d2zvqp3fpro-unsplash.jpg" alt="Featured image of post Emoji Support" /&gt;&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;
-&lt;p&gt;The &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/functions/emojify/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;&lt;code&gt;emojify&lt;/code&gt;&lt;/a&gt; function can be called directly in templates or &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/templates/shortcode-templates/#inline-shortcodes&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Inline Shortcodes&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;To enable emoji globally, set &lt;code&gt;enableEmoji&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; in your site&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/getting-started/configuration/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;configuration&lt;/a&gt; and then you can type emoji shorthand codes directly in content files; e.g.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;The &lt;a class=&#34;link&#34; href=&#34;http://www.emoji-cheat-sheet.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Emoji cheat sheet&lt;/a&gt; is a useful reference for emoji shorthand codes.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;N.B.&lt;/strong&gt; The above steps enable Unicode Standard emoji characters and sequences in Hugo, however the rendering of these glyphs depends on the browser and the platform. To style the emoji you can either use a third party emoji font or a font stack; e.g.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;.emoji {
-  font-family: Apple Color Emoji, Segoe UI Emoji, NotoColorEmoji, Segoe UI Symbol, Android Emoji, EmojiSymbols;
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
         </item>
         
     </channel>
