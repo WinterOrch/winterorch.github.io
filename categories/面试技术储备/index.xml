@@ -6,7 +6,28 @@
     <description>Recent content in 面试技术储备 on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 30 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 02 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Netty - 基础知识</title>
+      <link>https://winterorch.github.io/p/netty_basic/</link>
+      <pubDate>Fri, 02 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/netty_basic/</guid>
+      <description>NIO 与 AIO 模型 NIO（一般用同步非阻塞模式，如果阻塞就是 BIO 了）：服务器实现模式为一个请求一个线程，客户端发送连接请求全部注册到多路复用器上，多路复用器轮询到连接有 I/O 请求时才启动一个线程进行处理（解决了连接多而 I/O 少时资源占用问题）。
+NIO模型
+AIO（异步非阻塞）：服务器实现模式为一个有效请求一个线程，客户端I/O请求由OS先完成再通知服务器应用启动线程进行处理。
+那么，为什么 Netty 选择 NIO 模型呢？
+ 由于 UNIX 系统上 AIO 不成熟，底层仍然使用 EPOLL，没有很好实现 AIO，且 JDK 加了一层封装，因此实际速度并不比 NIO (epoll) 快。
+Netty 整体架构为 Reactor 模型，AIO 为 Proactor 模型，整合起来复杂且冗余度高。
+AIO 接收数据需要预分配内存，NIO 接收时才分配。AIO 对连接数量高但流量小的情况内存浪费大。
+ Netty常见应用场景   作为 RPC 框架的网络通信工具
+分布式系统不同服务节点之间相互调用需要 RPC 框架
+  实现简单的 HTTP 服务器
+  实现即时通讯系统
+  实现消息推动系统
+  扩展：Java NIO  Selector</description>
+    </item>
+    
     <item>
       <title>Redis - 常用数据类型</title>
       <link>https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</link>

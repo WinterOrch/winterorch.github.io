@@ -6,7 +6,28 @@
     <description>Recent content in Posts on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 02 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Netty - 基础知识</title>
+      <link>https://winterorch.github.io/p/netty_basic/</link>
+      <pubDate>Fri, 02 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/netty_basic/</guid>
+      <description>NIO 与 AIO 模型 NIO（一般用同步非阻塞模式，如果阻塞就是 BIO 了）：服务器实现模式为一个请求一个线程，客户端发送连接请求全部注册到多路复用器上，多路复用器轮询到连接有 I/O 请求时才启动一个线程进行处理（解决了连接多而 I/O 少时资源占用问题）。
+NIO模型
+AIO（异步非阻塞）：服务器实现模式为一个有效请求一个线程，客户端I/O请求由OS先完成再通知服务器应用启动线程进行处理。
+那么，为什么 Netty 选择 NIO 模型呢？
+ 由于 UNIX 系统上 AIO 不成熟，底层仍然使用 EPOLL，没有很好实现 AIO，且 JDK 加了一层封装，因此实际速度并不比 NIO (epoll) 快。
+Netty 整体架构为 Reactor 模型，AIO 为 Proactor 模型，整合起来复杂且冗余度高。
+AIO 接收数据需要预分配内存，NIO 接收时才分配。AIO 对连接数量高但流量小的情况内存浪费大。
+ Netty常见应用场景   作为 RPC 框架的网络通信工具
+分布式系统不同服务节点之间相互调用需要 RPC 框架
+  实现简单的 HTTP 服务器
+  实现即时通讯系统
+  实现消息推动系统
+  扩展：Java NIO  Selector</description>
+    </item>
+    
     <item>
       <title>LeetCode LCP 07 - 传递信息</title>
       <link>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</link>
@@ -219,6 +240,17 @@ public interface Hockey extends Sports, Event    接口与抽象类区别 接口
 构造函数目的是初始化实例，我们知道抽象类和虚基类都没有实例化的需求，将构造函数定义为虚函数是没有意义的。
 可以先回顾一下虚函数的作用过程——通过指针或者引用来调用虚函数的时候能够调用到子类的对应成员函数。而构造函数是在创建对象时自动调用的，调用这一函数的指针或引用所对应的对象还不存在，也就决定了构造函数不能是虚函数。
   2.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 354 - 俄罗斯套娃信封问题</title>
+      <link>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</guid>
+      <description>LeetCode 354. Russian Doll Envelopes You have a number of envelopes with widths and heights given as a pair of integers (w, h). One envelope can fit into another if and only if both the width and height of one envelope is greater than the width and height of the other envelope.
+What is the maximum number of envelopes can you Russian doll? (put one inside other)
+Example: Given envelopes = [[5,4],[6,4],[6,7],[2,3]], the maximum number of envelopes you can Russian doll is 3 ([2,3] =&amp;gt; [5,4] =&amp;gt; [6,7]).</description>
     </item>
     
     <item>

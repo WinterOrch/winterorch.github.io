@@ -6,7 +6,287 @@
         <description>Recent content on 图拉国营噄茶馆</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 02 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Netty - 基础知识</title>
+        <link>https://winterorch.github.io/p/netty_basic/</link>
+        <pubDate>Fri, 02 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/netty_basic/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Ikarus-256.jpg" alt="Featured image of post Netty - 基础知识" /&gt;&lt;h2 id=&#34;nio-与-aio-模型&#34;&gt;NIO 与 AIO 模型&lt;/h2&gt;
+&lt;p&gt;NIO（一般用同步非阻塞模式，如果阻塞就是 BIO 了）：服务器实现模式为一个请求一个线程，客户端发送连接请求全部注册到多路复用器上，&lt;strong&gt;多路复用器&lt;/strong&gt;轮询到连接有 I/O 请求时才启动一个线程进行处理（解决了连接多而 I/O 少时资源占用问题）。&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 261; flex-basis: 628px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/image-20210518104803139.png&#34; data-size=&#34;1102x421&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/image-20210518104803139.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;1102&#34;
+				height=&#34;421&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;NIO模型&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;NIO模型&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;AIO（异步非阻塞）：服务器实现模式为一个有效请求一个线程，客户端I/O请求由OS先完成再通知服务器应用启动线程进行处理。&lt;/p&gt;
+&lt;p&gt;那么，为什么 Netty 选择 NIO 模型呢？&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于 UNIX 系统上 AIO 不成熟，底层仍然使用 EPOLL，没有很好实现 AIO，且 JDK 加了一层封装，因此实际速度并不比 NIO (epoll) 快。&lt;/p&gt;
+&lt;p&gt;Netty 整体架构为 Reactor 模型，AIO 为 Proactor 模型，整合起来复杂且冗余度高。&lt;/p&gt;
+&lt;p&gt;AIO 接收数据需要预分配内存，NIO 接收时才分配。AIO 对连接数量高但流量小的情况内存浪费大。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;netty常见应用场景&#34;&gt;Netty常见应用场景&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;作为 RPC 框架的网络通信工具&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;分布式系统不同服务节点之间相互调用需要 RPC 框架&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;实现简单的 HTTP 服务器&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;实现即时通讯系统&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;实现消息推动系统&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id=&#34;扩展java-nio&#34;&gt;扩展：Java NIO&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Selector&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;多路复用器 &lt;code&gt;Selector&lt;/code&gt; 建立在非阻塞基础上。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;Channel&lt;/code&gt; 被注册到 &lt;code&gt;Selector&lt;/code&gt; 上，&lt;code&gt;FileChannel&lt;/code&gt; 不支持非阻塞&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;n&#34;&gt;channel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;configureBlocking&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;false&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// 注册
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SelectionKey&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;key&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;channel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;register&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;selector&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SelectionKey&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;OP_READ&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;第二个参数表明感兴趣事件，通过掩码形式传入：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;SelectionKey.OP_READ&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对应 00000001，通道中有数据可以进行读取&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SelectionKey.OP_WRITE&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对应 00000100，可以往通道中写入数据&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SelectionKey.OP_CONNECT&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对应 00001000，成功建立 TCP 连接&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SelectionKey.OP_ACCEPT&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对应 00010000，接受 TCP 连接&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果要监听多个事件，指定多位即可&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;调用 &lt;code&gt;select()&lt;/code&gt; 方法获取通道信息，用于判断是否又感兴趣事件发生&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;异步 IO&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Java 异步 IO 提供了返回 &lt;code&gt;Future&lt;/code&gt; 实例和使用回调函数 &lt;code&gt;CompletionHandler&lt;/code&gt; 两种方式。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id=&#34;扩展linux-epoll&#34;&gt;扩展：Linux Epoll&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Linux 下的 Epoll 实例（&lt;code&gt;epfd&lt;/code&gt; 通过本地方法 &lt;code&gt;epoll_create&lt;/code&gt; 创建）用文件描述符表示，程序中注册的 Socket Channel 都会放到 Selector（Epoll）内部的 &lt;code&gt;channel&lt;/code&gt; 集合中。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;epoll_create&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;//	创建epoll实例，返回文件描述符用于epoll接口后续调用
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当多路复用器进行 &lt;code&gt;select&lt;/code&gt; ，通过本地方法 &lt;code&gt;epollCtl&lt;/code&gt; 将事件注册到 &lt;code&gt;epfd&lt;/code&gt; 上进行监听。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;epoll_ctl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;epfd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;op&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;epoll_event&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;event&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;//	用文件描述符epfd引用的epoll实例，对目标文件描述符fd执行op操作
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;本地方法 &lt;code&gt;epollWait&lt;/code&gt; 阻塞等待读写事件发生，如果发生则由 OS 通过中断程序调用回调函数放到 Epoll 内的就绪事件列表 &lt;code&gt;rdlist&lt;/code&gt; 。因此如果 &lt;code&gt;rdlist&lt;/code&gt; 中已经有了 socket 引用，&lt;code&gt;epoll_wait&lt;/code&gt; 返回，如果为空则阻塞进程。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;Epoll Select Poll 三种底层机制的差异&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;select&lt;/strong&gt; 基于对所有 &lt;code&gt;channel&lt;/code&gt; 的轮询遍历，每次调用都进行线性遍历，时间复杂度 $O(n)$ ，由于在数组上实现，最大连接有上限。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;poll&lt;/strong&gt; 同样是对 &lt;code&gt;channel&lt;/code&gt; 进行轮询，但在链表上实现，最大连接无上限。&lt;/p&gt;
+&lt;p&gt;以上两种方法的共同问题是——要直到哪几个通道准备好了，需要自己进行一次遍历。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;epoll&lt;/strong&gt; 通过回调，底层用哈希表实现，每当有 IO 事件就绪，系统注册的回调函数被调用，时间复杂度 $O(1)$ 。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;netty-支持的三种-reactor-线程模型&#34;&gt;Netty 支持的三种 Reactor 线程模型&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Reactor 单线程模型&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;所有 I/O 操作在同一 NIO 线程上完成，NIO 线程有以下任务：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;作为 Server ，接收 Client 的 TCP 连接&lt;/li&gt;
+&lt;li&gt;作为 Client ，向 Server 发起 TCP 连接&lt;/li&gt;
+&lt;li&gt;读取通信对端的请求或应答消息&lt;/li&gt;
+&lt;li&gt;向通信对端发送消息请求或应答消息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 229; flex-basis: 551px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121112287-1483895090.png&#34; data-size=&#34;597x260&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121112287-1483895090.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;597&#34;
+				height=&#34;260&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;如上图所示，套接字分离、Accept 新连接、分派请求等全部由一个线程完成，对于小容量场景可行，但高负载下一定无法支撑，会造成大量消息积压、大量超时重发请求进一步拥塞系统资源，造成节点故障。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;Reactor 多线程模型&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I/O 操作由一组 NIO 线程协作完成：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;专门的 NIO 线程 —— Acceptor 用于监听 Server ，接收 Client 的 TCP 连接请求；&lt;/li&gt;
+&lt;li&gt;网络 I/O 操作——读、写等由一个 NIO 线程池负责，包含一个任务队列和 N 各可用线程，由这些 NIO 线程负责消息的读取、解码、编码和发送；&lt;/li&gt;
+&lt;li&gt;一个 NIO 线程处理多条连接，而一个连接只对应一个 NIO 线程，防止发生并发操作问题。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 154; flex-basis: 370px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121127162-471886539.png&#34; data-size=&#34;611x396&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121127162-471886539.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;611&#34;
+				height=&#34;396&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;相比第一种模式，多线程模型已经极大减轻了 Reactor 线程的工作量，但是如果有百万数量的并发连接，而 Reactor 需要对握手信息进行安全认证，这则非常损耗性能。因此这一部分工作可以再分。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;主从 Reactor 多线程模型&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;再将新创建 Channel 注册到线程池这一工作分离出来，交给“从 Reactor”做，主 Reactor 仅负责完成登录、握手、安全认证，一旦链路成功，将链路注册到给后端 从 Reactor 线程，由它分发到后续线程池进行 I/O 操作。通常，从 Reactor 个数可与 CPU 个数相同（实际上，如果我们在 Netty 起服务端的时候调用默认的无参构造方法 &lt;code&gt;NioEventLoopGroup()&lt;/code&gt; 构造 &lt;code&gt;workerGroup&lt;/code&gt;，会起 &lt;code&gt;NettyRuntime.availableProcessors() * 2&lt;/code&gt; ，也就是两倍 CPU 核数的线程，作为从 Reactor 线程池）。&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 150; flex-basis: 360px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121145006-1931312241.png&#34; data-size=&#34;623x415&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121145006-1931312241.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;623&#34;
+				height=&#34;415&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;除上述三种之外，Netty NIO 的默认模式其实是在主从 Reactor 基础上去掉线程池，Netty中的Boss类充当mainReactor，NioWorker类充当subReactor（默认 NioWorker的个数是 &lt;code&gt;Runtime.getRuntime().availableProcessors()&lt;/code&gt; ）。在处理新来的请求时，NioWorker读完已收到的数据到 &lt;code&gt;ChannelBuffer&lt;/code&gt; 中，之后触发 &lt;code&gt;ChannelPipeline&lt;/code&gt; 中的 &lt;code&gt;ChannelHandler&lt;/code&gt; 流。&lt;/p&gt;
+&lt;p&gt;Netty 是&lt;strong&gt;事件驱动&lt;/strong&gt;的，可以通过 &lt;code&gt;ChannelHandler&lt;/code&gt; 链来（ &lt;code&gt;ChannelPipline&lt;/code&gt; ）控制执行流向。因为&lt;code&gt;ChannelHandler&lt;/code&gt; 链的执行过程在 subReactor 中是同步的，所以如果业务处理 handler 耗时长，将严重影响可支持的并发数，例如涉及数据库操作或其它阻塞交互模块时这些问题就会被放大，必须回到第三种模型上，通过线程池化解决。 Netty内置的ChannelHandler实现类–&lt;code&gt;ExecutionHandler&lt;/code&gt;可以满足，因为仍然是 &lt;code&gt;Handler&lt;/code&gt; ，仍然可以加入到 &lt;code&gt;Pipeline&lt;/code&gt; 中，对使用者来说只是添加一行代码而已。&lt;/p&gt;
+&lt;p&gt;对于 &lt;code&gt;ExecutionHandler&lt;/code&gt; 需要的线程池模型，Netty提供了两种可选：
+&lt;strong&gt;1）&lt;/strong&gt; MemoryAwareThreadPoolExecutor 可控制Executor中待处理任务的上限（超过上限时，后续进来的任务将被阻塞），并可控制单个Channel待处理任务的上限；
+&lt;strong&gt;2）&lt;/strong&gt; OrderedMemoryAwareThreadPoolExecutor 是 MemoryAwareThreadPoolExecutor 的子类，它还可以保证同一Channel中处理的事件流的顺序性，这主要是控制事件在异步处理模式下可能出现的错误的事件顺序，但它并不保证同一Channel中的事件都在一个线程中执行（通常也没必要）。一般来说，OrderedMemoryAwareThreadPoolExecutor 是个很不错的选择，当然，如果有额外需要，也可以自行实现。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;netty-中会起多少线程&#34;&gt;Netty 中会起多少线程&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;ServerBootstrap&lt;/code&gt; 启动时，通常 &lt;code&gt;bossGroup&lt;/code&gt; 只需设置为 1，&lt;code&gt;ServerSocketChannel&lt;/code&gt; 在初始化阶段也只会注册到一个 &lt;code&gt;EventLoop&lt;/code&gt; 上，用不到多个线程。&lt;/p&gt;
+&lt;p&gt;而 IO 线程，为了充分利用 CPU，减少线程上下文切换开销，通常设置为 CPU 核数的两倍（我们知道英特尔的超线程技术，逻辑线程的个数也通常是 CPU 核数的两倍，猜测都是出于利用 CPU 性能的考虑）。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;netty-事件驱动机制&#34;&gt;Netty 事件驱动机制&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;事件队列（event queue）接收事件入口，存储待处理事件&lt;/li&gt;
+&lt;li&gt;分发器（event mediator）将不同事件分发到不同业务逻辑单元&lt;/li&gt;
+&lt;li&gt;事件通道（event channel）为分发器与处理器之间的联系渠道&lt;/li&gt;
+&lt;li&gt;事件处理器（event processor）实现业务逻辑，处理完成后会发出事件，触发下一步操作&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 129; flex-basis: 311px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/11222983-71d582050fe05761.png&#34; data-size=&#34;750x578&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/11222983-71d582050fe05761.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;750&#34;
+				height=&#34;578&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ChannelPipeline&lt;/code&gt;是&lt;code&gt;ChannelHandler&lt;/code&gt;的集合，类似拦截器概念，&lt;code&gt;Channel&lt;/code&gt;作为网络操作的抽象类，是&lt;code&gt;ChannelEvent&lt;/code&gt;的生产者，&lt;code&gt;ChannelEvent&lt;/code&gt;是数据或状态的载体。&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 122; flex-basis: 294px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/11222983-973f17ed9994f4b8.png&#34; data-size=&#34;437x356&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/11222983-973f17ed9994f4b8.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;437&#34;
+				height=&#34;356&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;所有事件都来自 &lt;code&gt;ChannelEvent&lt;/code&gt; 接口，涵盖监听接口、建立连接、读写数据等网络通讯各个阶段。事件处理者为 &lt;code&gt;ChannelHandler&lt;/code&gt; ，连接处理、协议编解码、超时等机制都通过 &lt;code&gt;Handler&lt;/code&gt; 完成。&lt;/p&gt;
+&lt;p&gt;这种响应模式就类似于 AWT 中的 Reactor Pattern。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;netty-的无锁化串行理念&#34;&gt;Netty 的无锁化串行理念&lt;/h2&gt;
+&lt;p&gt;其实 Redis 也是这样，我们知道并行处理可以提升并发性能，但是如果访问处理不当会带来严重的锁竞争，轻者带来部分效率损耗，重者整体性能下降。串行化设计，即消息的处理在同一线程内完成，期间不进行线程切换，避免竞争和同步锁。这对于 Redis、Netty 这样以简单高效为重的低层中间件非常有利。&lt;/p&gt;
+&lt;p&gt;不同之处在于，Redis 单机下就是单线程的，而 Netty 本身默认就是多线程并行，只是每一 &lt;code&gt;NioEventLoop&lt;/code&gt; 中通过 &lt;code&gt;ChannelPipeline&lt;/code&gt; 处理消息，除非配置异步 &lt;code&gt;Handler&lt;/code&gt; 否则不进行线程处理，从性能角度看是最优的。&lt;/p&gt;
+&lt;p&gt;在实际使用中也要注意这一点，&lt;strong&gt;不要阻塞 &lt;code&gt;EventLoop&lt;/code&gt;&lt;/strong&gt; 。在耗时操作时，尽量使用 &lt;code&gt;Future&lt;/code&gt; ，同时也尽量减少锁的使用。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;netty-核心组件&#34;&gt;Netty 核心组件&lt;/h2&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 176; flex-basis: 424px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png&#34; data-size=&#34;1030x582&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;1030&#34;
+				height=&#34;582&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这一部分主要介绍 Netty 中核心组件的功能，引用框中会补充一些实际使用中的调优技巧.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id=&#34;eventloopgroup&#34;&gt;EventLoopGroup&lt;/h3&gt;
+&lt;p&gt;如图所示，两个 &lt;code&gt;EventLoopGroup&lt;/code&gt; 实际上也就是两个线程池，&lt;code&gt;Boss&lt;/code&gt; 仅负责接收连接，只需要一个线程，内部封装有一个&lt;code&gt;Selector&lt;/code&gt;，&lt;code&gt;Worker&lt;/code&gt; 负责具体 IO 处理，每个都有绑定的&lt;code&gt;Selector&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;EventloopGroup&lt;/code&gt; 将为每个新创建的 &lt;code&gt;Channel&lt;/code&gt; 分配一个 &lt;code&gt;EventLoop&lt;/code&gt; 。每个 &lt;code&gt;Channel&lt;/code&gt; 的整个生命周期内，所有操作都由相同的 &lt;code&gt;Thread&lt;/code&gt; 执行。&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 165; flex-basis: 396px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/image-20210518164909861.png&#34; data-size=&#34;677x410&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/image-20210518164909861.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;677&#34;
+				height=&#34;410&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;EventLoop&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;EventLoop&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id=&#34;channel&#34;&gt;Channel&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Channel&lt;/code&gt; 为 &lt;code&gt;Netty&lt;/code&gt; &lt;strong&gt;网络操作（读写等操作）抽象类&lt;/strong&gt;，&lt;code&gt;EventLoop&lt;/code&gt; 负责处理注册到其上的 &lt;code&gt;Channel&lt;/code&gt; 的 I/O 操作，两个组件配合进行 I/O 操作。&lt;code&gt;Channel&lt;/code&gt; 对 Java 原生的 &lt;code&gt;ServerSocketChannel&lt;/code&gt; 和 &lt;code&gt;SocketChannel&lt;/code&gt; 进行封装，得到了 &lt;code&gt;NioServerSocketChannel&lt;/code&gt; 和 &lt;code&gt;NioSocketChannel&lt;/code&gt; ，UDP 对应的是 &lt;code&gt;NioDatagramChannel&lt;/code&gt; 。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;n&#34;&gt;ServerBootstrap&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ServerBootstrap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;group&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bossGroup&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;workerGroup&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+ &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;channel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;NioServerSocketChannel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)......&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如上图所示，&lt;code&gt;channel&lt;/code&gt; 通过传一个 &lt;code&gt;.class&lt;/code&gt; 对象给 &lt;code&gt;Bootstrap&lt;/code&gt; ，很明显是工厂模式通过反射方式来创建实例，这一实例的实际实例化时机，也就是源码中 &lt;code&gt;.newChannel()&lt;/code&gt; 调用，是在 &lt;code&gt;Bootstrap&lt;/code&gt; 进行 &lt;code&gt;bind(PORT)&lt;/code&gt; （对服务端而言）和 &lt;code&gt;connect(HOST, PORT)&lt;/code&gt; （对客户端而言）时。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对于两个指定端点可以使用唯一 &lt;code&gt;Channel&lt;/code&gt; ，在第一次创建后保存 &lt;code&gt;Channel&lt;/code&gt; ，对同一 IP 地址下一次通信中复用而不需要重新建立。但这样做也需要保存不同 IP 的 &lt;code&gt;Channel&lt;/code&gt; ，在初始化时可能存在一些并发问题，很多实际项目都有相应解决方法，https://mp.weixin.qq.com/s/JRsbK1Un2av9GKmJ8DK7IQ 介绍了一些解决方案。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id=&#34;handler&#34;&gt;Handler&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;handler&lt;/code&gt; 其实就是一种 AOP，负责接收到请求后的处理过程。通过 &lt;code&gt;childHandler()&lt;/code&gt; 和 &lt;code&gt;ChannelInitializer&lt;/code&gt; 可以指定多个 &lt;code&gt;handler&lt;/code&gt; 组成 &lt;code&gt;Pipeline&lt;/code&gt; ，类似拦截器概念，涉及 &lt;code&gt;handler&lt;/code&gt; 的执行顺序。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Bootstrap&lt;/code&gt; 通过传入一个 &lt;code&gt;ChannelInitializer&lt;/code&gt; 的实现类，在这个实现类中向 &lt;code&gt;ChannelPipeline&lt;/code&gt; 中添加一系列 &lt;code&gt;Handler&lt;/code&gt; ，这些 &lt;code&gt;Handler&lt;/code&gt; 分别负责信息处理的某个环节。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;以在 Netty 中进行 SSL 通信为例，首先加入的是 &lt;code&gt;SslContext&lt;/code&gt; 实体提供的 Handler，用于进行加解密；然后需要加入一个 &lt;code&gt;DelimiterBasedFrameDecoder&lt;/code&gt; ，这个编解码器通过分隔符拆分解决包尺寸过大造成的 TCP 粘包等问题；之后就是数据的编解码器，如 Netty 为 String 通信提供的 &lt;code&gt;StringDecoder&lt;/code&gt; 和 &lt;code&gt;StringEncoder&lt;/code&gt; ；最后便是我们业务自己的 Handler ，用于按业务逻辑处理消息。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id=&#34;future&#34;&gt;Future&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Future&amp;lt;V&amp;gt;&lt;/code&gt; 接口继承自 &lt;code&gt;java.util.concurrent.Future&amp;lt;V&amp;gt;&lt;/code&gt; ，同样用于异步调用。增加了 &lt;code&gt;sync()&lt;/code&gt; 和 &lt;code&gt;await()&lt;/code&gt; 用于阻塞等待，还添加了 &lt;code&gt;Listeners&lt;/code&gt; 用于任务结束后回调。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Promise&lt;/code&gt; 接口继承自 &lt;code&gt;Future&lt;/code&gt; ，实例内部是一个任务，其中的 &lt;code&gt;setSuccess(V result)&lt;/code&gt; 和 &lt;code&gt;setFailure(Throwable t)&lt;/code&gt; 会在执行任务的线程完成后调用。&lt;/p&gt;
+&lt;p&gt;这一回调可能是 &lt;code&gt;Listeners&lt;/code&gt; 回调函数进行（不一定是由线程自己执行，也可能是新线程或其他线程），也可能是从 &lt;code&gt;await()&lt;/code&gt; 中返回。&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 228; flex-basis: 548px&#34;&gt;
+		&lt;a href=&#34;https://winterorch.github.io/p/netty_basic/7.png&#34; data-size=&#34;1942x850&#34;&gt;&lt;img src=&#34;https://winterorch.github.io/p/netty_basic/7.png&#34;
+				srcset=&#34;https://winterorch.github.io/p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_480x0_resize_box_2.png 480w, https://winterorch.github.io/p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;1942&#34;
+				height=&#34;850&#34;
+				loading=&#34;lazy&#34;
+				&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;netty-中的零拷贝&#34;&gt;Netty 中的零拷贝&lt;/h2&gt;
+&lt;p&gt;在 &lt;code&gt;Bootstrap&lt;/code&gt; 配置参数的时候，使用 &lt;code&gt;.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)&lt;/code&gt; 来指定一个池化的 Allocator，并且使用 &lt;code&gt;ByteBuf buf = allocator.directBuffer()&lt;/code&gt; 来获取 &lt;code&gt;Bytebuf&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;PooledByteBufAllocator&lt;/code&gt; 会帮你复用（无需 &lt;code&gt;release&lt;/code&gt;，除非你后面还需要用到同一个 &lt;code&gt;bytebuf&lt;/code&gt;）而不是每次都重新分配 &lt;code&gt;ByteBuf&lt;/code&gt;。在IO操作中，分配&lt;strong&gt;直接内存&lt;/strong&gt;而不是JVM的堆空间，避免了在发送数据时，从JVM到直接内存的拷贝过程，这也就是 Zero Copy 的含义。Java NIO 中也有 Zero Copy Buffer 技术。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+</description>
+        </item>
+        <item>
         <title>LeetCode LCP 07 - 传递信息</title>
         <link>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</link>
         <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
@@ -2786,6 +3066,88 @@ Output: -1
 &lt;/blockquote&gt;
 &lt;p&gt;但是抽象类中从一开始就不存在这个问题——因为抽象类并不只能包含抽象方法，还能包含普通方法，而 Java 中普通方法本身就是“虚函数”，允许子类重写。那么如果想要一个默认实现，直接写普通方法就行了。Java 语言设计抽象类的目的本就是方便代码重用，但在设计接口之初并没有把这一需求囊括进来。&lt;/p&gt;
 &lt;p&gt;而&lt;strong&gt;抽象方法&lt;/strong&gt;，仅用于标识子类&lt;strong&gt;必须实现&lt;/strong&gt;的方法（&lt;!-- raw HTML omitted --&gt;有一种特殊情况除外，就是&lt;strong&gt;子类也是抽象类&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;）。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>LeetCode 354 - 俄罗斯套娃信封问题</title>
+        <link>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</link>
+        <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</guid>
+        <description>&lt;h1 id=&#34;leetcode-354-russian-doll-envelopeshttpsleetcode-cncomproblemsrussian-doll-envelopes&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/russian-doll-envelopes/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;LeetCode 354. Russian Doll Envelopes&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;You have a number of envelopes with widths and heights given as a pair of integers &lt;code&gt;(w, h)&lt;/code&gt;. One envelope can fit into another if and only if both the width and height of one envelope is greater than the width and height of the other envelope.&lt;/p&gt;
+&lt;p&gt;What is the maximum number of envelopes can you Russian doll? (put one inside other)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt;
+Given envelopes = &lt;code&gt;[[5,4],[6,4],[6,7],[2,3]]&lt;/code&gt;, the maximum number of envelopes you can Russian doll is &lt;code&gt;3&lt;/code&gt; ([2,3] =&amp;gt; [5,4] =&amp;gt; [6,7]).&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;大信封装小信封，为了方便DP，先进行排序，按宽度升序。出现了问题，高度怎么排呢？如果是单纯的暴力DP，那两个循环，高度其实是无所谓的，满足宽度、高度都更大就行了，怎么排都可以，如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Solution&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;public&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;maxEnvelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;vector&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;pair&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;vector&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;sort&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;begin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;end&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;());&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;first&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;first&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;second&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;second&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+                &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+            &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]);&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;但是其实可以优化速度。首先知道，宽度相同的一组信封肯定只能用一张。那用那张呢？应该趋向于高度尽量小的那张，这样更可能套的上宽度更大的信封。&lt;/p&gt;
+&lt;p&gt;因为宽度已经是升序了，我们实际上只需要&lt;!-- raw HTML omitted --&gt;用一个数组按升序保存所有&lt;strong&gt;高度&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;就可以了（实际上是一个大顶堆）。那问题来了，万一有很多张同一宽度不同高度的信封那不是没法区分，会全被加进来了吗？很简单，我们排序的时候加一个规则——&lt;strong&gt;&lt;!-- raw HTML omitted --&gt;宽度相同的信封按高度降序排&lt;!-- raw HTML omitted --&gt;&lt;/strong&gt;。这样，首先加进来的一定是同一宽度中最高的信封，同一宽度下后加的一定是比较短的信封，自然不可能把前面的装下，也就不会出现同一宽度加多次的情况。&lt;/p&gt;
+&lt;p&gt;但前面说了，同一宽度下我们其实最希望用最短的那张，更短的我们是希望拿来把最外面那张替掉的。那么我们拿着这张更短信封的高度在数组（堆）中二分搜索，&lt;!-- raw HTML omitted --&gt;搜索的其实是&lt;strong&gt;第一个大于此高度的位置&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;，然后把这个位置上的高度替掉。如果是能满足要求（比最外层小比次外层大），那自然可以把最外面这张替掉。&lt;/p&gt;
+&lt;p&gt;这里可能有疑问，那万一替掉的不是最外层，把里面宽度更小的替掉了呢？这里用的DP方法确实存在这样的问题，数组里存储的并不是实际可行的一个套娃方案，但是我们的信封其实并不关心里面啊，最外面一个是对的就行了，加上我们的高度是降序排列的，替也只能往前面小的替，也就是往里层替，不会影响最外层，更不会影响我们最关心的问题——能套几层。所以这一方法是完全可行的，完整代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Leet354_RussianDollEnvelopes&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;maxEnvelopes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[][]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      	&lt;span class=&#34;c1&#34;&gt;//虽然Java类库用起来简单，但还是会比写lambda慢一点
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;c1&#34;&gt;//Arrays.sort(envelopes, Comparator.comparingInt((int[] array) -&amp;gt; array[0])
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;c1&#34;&gt;//                                 .thenComparing(array -&amp;gt; -array[1]));
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;Arrays&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;sort&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;e1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;e1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;c1&#34;&gt;// 宽度升序
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;                &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;];&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;c1&#34;&gt;// 高度降序
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;                &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;];&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;});&lt;/span&gt;
+
+        &lt;span class=&#34;c1&#34;&gt;// 由于主序是宽度，只要关注高度就可以了
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ArrayList&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelope&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelopes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;left&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;right&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;envelope&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;];&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;left&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;right&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mid&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;left&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;right&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;left&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;left&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mid&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;right&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;right&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;right&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[][]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;env&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;200&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;300&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;500&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;400&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;250&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;370&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;360&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;},{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;380&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}};&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;Leet354_RussianDollEnvelopes&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ins&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Leet354_RussianDollEnvelopes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+
+        &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ins&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;maxEnvelopes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;env&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;));&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个其实就是Leet300用的方法。&lt;/p&gt;
 </description>
         </item>
         <item>
