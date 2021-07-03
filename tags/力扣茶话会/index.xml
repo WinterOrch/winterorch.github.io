@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>力扣茶话会 on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/</link>
+    <description>Recent content in 力扣茶话会 on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 347 - 前 K 个高频元素</title>
+      <link>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</guid>
+      <description>LeetCode 347. Top K Frequent Elements Given a non-empty array of integers, return the k most frequent elements.
+Example 1:
+Input: nums = [1,1,1,2,2,3], k = 2 Output: [1,2] Example 2:
+Input: nums = [1], k = 1 Output: [1] Note:
+ You may assume k is always valid, 1 ≤ k ≤ number of unique elements. Your algorithm&amp;rsquo;s time complexity must be better than O( n log n ), where n is the array&amp;rsquo;s size.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 451 - 根据字符出现频率排序</title>
+      <link>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</guid>
+      <description>[LeetCode] 451. Sort Characters By Frequency 题目： 给定一个字符串，请将字符串里的字符按照出现的频率降序排列。
+示例 1:
+ 输入: &amp;ldquo;tree&amp;rdquo;
+输出: &amp;ldquo;eert&amp;rdquo;
+解释: &amp;lsquo;e&amp;rsquo;出现两次，&amp;lsquo;r&amp;rsquo;和&amp;rsquo;t&amp;rsquo;都只出现一次。 因此&amp;rsquo;e&amp;rsquo;必须出现在&amp;rsquo;r&amp;rsquo;和&amp;rsquo;t&amp;rsquo;之前。此外，&amp;ldquo;eetr&amp;quot;也是一个有效的答案。
+ 示例2：
+ 输入: &amp;ldquo;cccaaa&amp;rdquo;
+输出: &amp;ldquo;cccaaa&amp;rdquo;
+解释: &amp;lsquo;c&amp;rsquo;和&amp;rsquo;a&amp;rsquo;都出现三次。此外，&amp;ldquo;aaaccc&amp;quot;也是有效的答案。 注意&amp;quot;cacaca&amp;quot;是不正确的，因为相同的字母必须放在一起。
+ 示例3：
+ 输入: &amp;ldquo;Aabb&amp;rdquo;
+输出: &amp;ldquo;bbAa&amp;rdquo;
+解释: 此外，&amp;ldquo;bbaA&amp;quot;也是一个有效的答案，但&amp;quot;Aabb&amp;quot;是不正确的。 注意&amp;rsquo;A&amp;rsquo;和&amp;rsquo;a&amp;rsquo;被认为是两种不同的字符。
+  题解 思路1：HashMap计数+排序 字符串里的字符和出现频率形成一对K-V组合，解决按频率排序题目的第一思路是建一个HashMap统计出现频率，跟据一个从频率(Map的value)到原字符(Map的key)的反向映射，通过排序输出，主要步骤抽象如下：
+ 使用HashMap记录字符出现的频率 将HashMap转化成List按value进行降序排序 遍历List，将字符按出现次数降序放入答案中  代码如下：
+class Solution { public String frequencySort(String s) { StringBuilder sb = new StringBuilder(); // 1. 使用HashMap记录字符出现的频率  Map&amp;lt;Character, Integer&amp;gt; map = new HashMap&amp;lt;&amp;gt;(); for(int i = 0; i &amp;lt; s.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 815 - 公交路线</title>
+      <link>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</link>
+      <pubDate>Sun, 27 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</guid>
+      <description>[LeetCode] 815. Bus Routes We have a list of bus routes. Each routes[i] is a bus route that the i-th bus repeats forever. For example if routes[0] = [1, 5, 7], this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.
+We start at bus stop S (initially not on a bus), and we want to go to bus stop T. Travelling by buses only, what is the least number of buses we must take to reach our destination?</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 752 - 打开转盘锁</title>
+      <link>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</link>
+      <pubDate>Thu, 24 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</guid>
+      <description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;. The wheels can rotate freely and wrap around: for example we can turn &#39;9&#39; to be &#39;0&#39;, or &#39;0&#39; to be &#39;9&#39;. Each move consists of turning one wheel one slot.
+The lock initially starts at &#39;0000&#39;, a string representing the state of the 4 wheels.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 354 - 俄罗斯套娃信封问题</title>
+      <link>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</guid>
+      <description>LeetCode 354. Russian Doll Envelopes You have a number of envelopes with widths and heights given as a pair of integers (w, h). One envelope can fit into another if and only if both the width and height of one envelope is greater than the width and height of the other envelope.
+What is the maximum number of envelopes can you Russian doll? (put one inside other)
+Example: Given envelopes = [[5,4],[6,4],[6,7],[2,3]], the maximum number of envelopes you can Russian doll is 3 ([2,3] =&amp;gt; [5,4] =&amp;gt; [6,7]).</description>
+    </item>
+    
+  </channel>
+</rss>

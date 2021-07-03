@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='频率统计，计数排序.'><title>LeetCode 451 - 根据字符出现频率排序</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode 451 - 根据字符出现频率排序'>
+<meta property='og:description' content='频率统计，计数排序.'>
+<meta property='og:url' content='https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='HashMap' /><meta property='article:tag' content='计数排序' /><meta property='article:tag' content='力扣茶话会' /><meta property='article:published_time' content='2021-07-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-03T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="LeetCode 451 - 根据字符出现频率排序">
+<meta name="twitter:description" content="频率统计，计数排序.">
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/leetcode/" style="background-color: #7B7B7B; color: #fff;">
+                Leetcode
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/">LeetCode 451 - 根据字符出现频率排序</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        频率统计，计数排序.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 03, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h1 id="leetcode-451-sort-characters-by-frequencyhttpsleetcode-cncomproblemssort-characters-by-frequency"><a class="link" href="https://leetcode-cn.com/problems/sort-characters-by-frequency/"  target="_blank" rel="noopener"
+    >[LeetCode] 451. Sort Characters By Frequency</a></h1>
+<h2 id="题目">题目：</h2>
+<p>给定一个字符串，请将字符串里的字符按照出现的频率降序排列。</p>
+<p><strong>示例 1:</strong></p>
+<blockquote>
+<p><strong>输入:</strong>
+&ldquo;tree&rdquo;</p>
+<p><strong>输出:</strong>
+&ldquo;eert&rdquo;</p>
+<p><strong>解释:</strong>
+&lsquo;e&rsquo;出现两次，&lsquo;r&rsquo;和&rsquo;t&rsquo;都只出现一次。
+因此&rsquo;e&rsquo;必须出现在&rsquo;r&rsquo;和&rsquo;t&rsquo;之前。此外，&ldquo;eetr&quot;也是一个有效的答案。</p>
+</blockquote>
+<p><strong>示例2：</strong></p>
+<blockquote>
+<p><strong>输入:</strong>
+&ldquo;cccaaa&rdquo;</p>
+<p><strong>输出:</strong>
+&ldquo;cccaaa&rdquo;</p>
+<p><strong>解释:</strong>
+&lsquo;c&rsquo;和&rsquo;a&rsquo;都出现三次。此外，&ldquo;aaaccc&quot;也是有效的答案。
+注意&quot;cacaca&quot;是不正确的，因为相同的字母必须放在一起。</p>
+</blockquote>
+<p><strong>示例3：</strong></p>
+<blockquote>
+<p><strong>输入:</strong>
+&ldquo;Aabb&rdquo;</p>
+<p><strong>输出:</strong>
+&ldquo;bbAa&rdquo;</p>
+<p><strong>解释:</strong>
+此外，&ldquo;bbaA&quot;也是一个有效的答案，但&quot;Aabb&quot;是不正确的。
+注意&rsquo;A&rsquo;和&rsquo;a&rsquo;被认为是两种不同的字符。</p>
+</blockquote>
+<!-- raw HTML omitted -->
+<hr>
+<h2 id="题解">题解</h2>
+<h3 id="思路1hashmap计数排序">思路1：HashMap计数+排序</h3>
+<p>字符串里的字符和出现频率形成一对K-V组合，解决按频率排序题目的第一思路是建一个<code>HashMap</code>统计出现频率，跟据一个从频率(<code>Map</code>的<code>value</code>)到原字符(<code>Map</code>的<code>key</code>)的反向映射，通过排序输出，主要步骤抽象如下：</p>
+<ol>
+<li>使用HashMap记录字符出现的频率</li>
+<li>将HashMap转化成List按value进行降序排序</li>
+<li>遍历List，将字符按出现次数降序放入答案中</li>
+</ol>
+<p>代码如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">frequencySort</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+        
+        <span class="c1">// 1. 使用HashMap记录字符出现的频率
+</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="n">i</span><span class="o">++){</span>
+            <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">),</span> <span class="n">map</span><span class="o">.</span><span class="na">getOrDefault</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">),</span> <span class="n">0</span><span class="o">)</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="c1">// 2. 将HashMap转化成List按value进行排序
+</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">l</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">());</span>
+        <span class="n">Collections</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">l</span><span class="o">,</span> <span class="o">(</span><span class="n">o1</span><span class="o">,</span> <span class="n">o2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">o2</span><span class="o">.</span><span class="na">getValue</span><span class="o">()</span> <span class="o">-</span> <span class="n">o1</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+        <span class="o">});</span>
+
+        <span class="c1">//3. 遍历List，将字符按出现次数放入答案中
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">l</span><span class="o">){</span>
+            <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="kt">int</span> <span class="n">time</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="k">while</span><span class="o">(</span><span class="n">time</span><span class="o">--</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">){</span>
+                <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p><strong>时间复杂度：</strong><code>O(n+klogk)</code>
+<strong>空间复杂度：</strong><code>O(n+k)</code></p>
+<p>这是一个不错的解题手法，向面试官展示了出色的API调用技术——当然我们还可以对时间复杂度进行优化：如果我们以字符出现的最大频率作为长度声明一个数组，用于存放每个频率出现过的字符，那么排序的时间复杂度可以进一步降低至<code>O(k)</code>，下面将介绍这种被称作<strong>桶排序</strong>的排序方法。</p>
+<h3 id="思路2hashmap计数桶排序">思路2：HashMap计数+桶排序</h3>
+<p>桶排序的思路网上比我讲解得更清楚，因此在此主要阐述针对该题的解题思路：</p>
+<ol>
+<li>使用<code>HashMap</code>记录字符出现的频率，<strong>并记录字符出现的最大频率</strong></li>
+<li>创建桶，用于存放每个频率出现过的字符</li>
+<li>遍历桶，将字符按出现次数降序放入答案中</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">frequencySort</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+        
+        <span class="c1">//1 使用HashMap记录字符出现的频率，并记录字符出现的最大频率
+</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="kt">int</span> <span class="n">max</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="n">i</span><span class="o">++){</span>
+            <span class="kt">int</span> <span class="n">curFreq</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">getOrDefault</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">),</span> <span class="n">0</span><span class="o">)</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+            <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">),</span> <span class="n">curFreq</span><span class="o">);</span>
+            <span class="n">max</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">max</span><span class="o">,</span> <span class="n">curFreq</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//2.1 创建桶
+</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">&gt;[]</span> <span class="n">buckets</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">[</span><span class="n">max</span><span class="o">];</span>
+        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max</span><span class="o">;</span> <span class="n">i</span><span class="o">++){</span>
+            <span class="n">buckets</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">&gt;();</span>
+        <span class="o">}</span>
+        <span class="c1">//2.2 存放每个频率出现过的字符
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">()){</span>
+            <span class="n">buckets</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()</span> <span class="o">-</span> <span class="n">1</span><span class="o">].</span><span class="na">add</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//3 遍历桶，将字符按出现次数降序放入答案中
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">max</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--){</span>
+            <span class="k">for</span><span class="o">(</span><span class="kt">char</span> <span class="n">c</span> <span class="o">:</span> <span class="n">buckets</span><span class="o">[</span><span class="n">i</span><span class="o">]){</span>
+                <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="o">;</span> <span class="n">j</span><span class="o">++){</span>
+                    <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p><strong>时间复杂度：</strong><code>O(n+k)</code>
+<strong>空间复杂度：</strong><code>O(n+k)</code></p>
+<p>和思路一主要的不同点是使用桶排序将排序的时间复杂度降到了k，做出了一些微小的贡献。但是在某些极端的面试官面前，我们的操作还是在库函数里边玩泥巴。我的室友就曾遇到过阿里的面试官死活不让调用<code>HashMap</code>的接口——“想要用哈希表就自己手写一个！”，对方如是说道。</p>
+<p>手撸<code>HashMap</code>的确是有难度，但是对于这种规整的数据（ASCII码字符），也可以使用数组模拟<code>Map</code>的方法实现：声明一个长度为256位的数组，将出现的频率按照ASCII值存入数组即可。</p>
+<h3 id="思路2改进数组模拟map桶排序">思路2改进：数组模拟Map+桶排序</h3>
+<p>我们知道，<code>HashMap</code>效率并不高，加上Java的伪泛型设计，<code>Map</code>用起来并不如C++ STL那么方便，这道题统计频率的对象又是字符，最多不过0-256，完全可以用一个数组来进行统计。思路还是不变的。</p>
+<ol>
+<li>使用Map数组记录字符出现的频率，<strong>并记录字符出现的最大频率</strong></li>
+<li>创建桶，用于存放每个频率出现过的字符</li>
+<li>遍历桶，将字符按出现次数降序放入答案中</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">frequencySort</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">3</span><span class="o">)</span>
+            <span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+        <span class="n">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+        
+        <span class="c1">//1 使用Map数组记录字符出现的频率，并记录字符出现的最大频率
+</span><span class="c1"></span>        <span class="kt">int</span><span class="o">[]</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">256</span><span class="o">];</span>
+        <span class="kt">char</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">max</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">length</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">char</span> <span class="n">c</span> <span class="o">:</span> <span class="n">arr</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">map</span><span class="o">[</span><span class="n">c</span><span class="o">]++;</span>
+            <span class="n">max</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">max</span><span class="o">,</span> <span class="n">map</span><span class="o">[</span><span class="n">c</span><span class="o">]);</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//2.1 创建桶
+</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">&gt;[]</span> <span class="n">buckets</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">[</span><span class="n">max</span><span class="o">];</span>
+        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max</span><span class="o">;</span> <span class="n">i</span><span class="o">++){</span>
+            <span class="n">buckets</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Character</span><span class="o">&gt;();</span>
+        <span class="o">}</span>
+        <span class="c1">//2.2 存放每个频率出现过的字符
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">256</span><span class="o">;</span> <span class="n">i</span><span class="o">++){</span>
+            <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">){</span>
+                <span class="n">buckets</span><span class="o">[</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">1</span><span class="o">].</span><span class="na">add</span><span class="o">((</span><span class="kt">char</span><span class="o">)</span> <span class="n">i</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//3 遍历桶，将字符按出现次数降序放入答案中
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">max</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--){</span>
+            <span class="k">for</span><span class="o">(</span><span class="kt">char</span> <span class="n">c</span> <span class="o">:</span> <span class="n">buckets</span><span class="o">[</span><span class="n">i</span><span class="o">]){</span>
+                <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="o">;</span> <span class="n">j</span><span class="o">++){</span>
+                    <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>时间消耗从 22 ms 优化到 6 ms。</p>
+<h3 id="思路2改进数组模拟map计数排序">思路2改进：数组模拟Map+计数排序</h3>
+<p>这道题要求按序输出，我们可以直接进行计数排序，将时间复杂度降到 O(n) 。</p>
+<p>参考数组<code>reference[i]</code>存的是出现<code>i</code>次字符的个数，用于输出时进行参考。再从头进行一次累加，从而确定在输出序列中的序号。这就是<strong>计数排序</strong>的思路。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">String</span> <span class="nf">frequencySort</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">3</span><span class="o">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+    <span class="n">StringBuilder</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+    <span class="kt">char</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">256</span><span class="o">];</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">char</span> <span class="n">c</span> <span class="o">:</span> <span class="n">arr</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">map</span><span class="o">[</span><span class="n">c</span><span class="o">]++;</span>
+    <span class="o">}</span>
+    <span class="kt">int</span> <span class="n">maxOccurrence</span> <span class="o">=</span> <span class="n">1</span><span class="o">,</span> <span class="n">len</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">reference</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">arr</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">1</span><span class="o">];</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">occur</span> <span class="o">:</span> <span class="n">map</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">occur</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">reference</span><span class="o">[</span><span class="n">occur</span><span class="o">]++;</span>
+            <span class="n">len</span><span class="o">++;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">occur</span> <span class="o">&gt;</span> <span class="n">maxOccurrence</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">maxOccurrence</span> <span class="o">=</span> <span class="n">occur</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">maxOccurrence</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">reference</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+=</span> <span class="n">reference</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">];</span>
+    <span class="o">}</span>
+    <span class="c1">//我们先利用参考数组将所有字符进行排序，相同频率的字符放入时减一，从而错开位置。
+</span><span class="c1"></span>    <span class="kt">char</span><span class="o">[]</span> <span class="n">dict</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="o">[</span><span class="n">len</span><span class="o">];</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">char</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">256</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">dict</span><span class="o">[</span><span class="n">len</span> <span class="o">-</span> <span class="n">1</span> <span class="o">-</span> <span class="o">--</span><span class="n">reference</span><span class="o">[</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]]]</span> <span class="o">=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">char</span> <span class="n">tmp</span> <span class="o">:</span> <span class="n">dict</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">map</span><span class="o">[</span><span class="n">tmp</span><span class="o">];</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">res</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">tmp</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><p>时间可以优化到 4 ms。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/hashmap/">HashMap</a>
+        
+            <a href="/tags/%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F/">计数排序</a>
+        
+            <a href="/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/">力扣茶话会</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 347 - 前 K 个高频元素</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 815 - 公交路线</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 752 - 打开转盘锁</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 354 - 俄罗斯套娃信封问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode LCP 07 - 传递信息</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#题目">题目：</a></li>
+    <li><a href="#题解">题解</a>
+      <ol>
+        <li><a href="#思路1hashmap计数排序">思路1：HashMap计数+排序</a></li>
+        <li><a href="#思路2hashmap计数桶排序">思路2：HashMap计数+桶排序</a></li>
+        <li><a href="#思路2改进数组模拟map桶排序">思路2改进：数组模拟Map+桶排序</a></li>
+        <li><a href="#思路2改进数组模拟map计数排序">思路2改进：数组模拟Map+计数排序</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

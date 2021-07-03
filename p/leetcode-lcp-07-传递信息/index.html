@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='LCP 07. 传递信息 题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
  有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人  给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
  示例1：
  示例 1：
@@ -12,7 +12,7 @@
 <link rel='canonical' href='https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode LCP 07 - 传递信息'>
-<meta property='og:description' content='题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+<meta property='og:description' content='LCP 07. 传递信息 题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
  有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人  给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
  示例1：
  示例 1：
@@ -21,9 +21,9 @@
 解释：信息从小 A 编号 0 处开始，经 3 轮传递，到达编号 4。共有 3 种方案，分别是 0-&amp;gt;2-&amp;gt;0-&amp;gt;4， 0-&amp;gt;2-&amp;gt;1-&amp;gt;4， 0-&amp;gt;2-&amp;gt;3-&amp;gt;4。'>
 <meta property='og:url' content='https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='动态规划' /><meta property='article:tag' content='DFS' /><meta property='article:tag' content='BFS' /><meta property='article:published_time' content='2021-07-01T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-01T00:00:00&#43;00:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='动态规划' /><meta property='article:tag' content='DFS' /><meta property='article:tag' content='BFS' /><meta property='article:tag' content='力扣下午茶' /><meta property='article:published_time' content='2021-07-01T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-01T00:00:00&#43;00:00'/>
 <meta name="twitter:title" content="LeetCode LCP 07 - 传递信息">
-<meta name="twitter:description" content="题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+<meta name="twitter:description" content="LCP 07. 传递信息 题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
  有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人  给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
  示例1：
  示例 1：
@@ -32,7 +32,7 @@
 解释：信息从小 A 编号 0 处开始，经 3 轮传递，到达编号 4。共有 3 种方案，分别是 0-&amp;gt;2-&amp;gt;0-&amp;gt;4， 0-&amp;gt;2-&amp;gt;1-&amp;gt;4， 0-&amp;gt;2-&amp;gt;3-&amp;gt;4。">
     </head>
     <body class="
-    article-page 
+    article-page has-toc
 ">
     <script>
         (function() {
@@ -58,141 +58,22 @@
 </script>
 <div class="container main-container flex 
     
-        on-phone--column extended
+        extended
     
 ">
     
-        <aside class="sidebar left-sidebar sticky">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header class="site-info">
-        
-            <figure class="site-avatar">
-                
-                    
-                    
-                    
-                        
-                        <img src="/img/avatar_hu49c03114a9ce8ad2bc0bd62c0ddb3f2a_7280_300x0_resize_q75_box.jpg" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-
-                
-                    <span class="emoji">😪</span>
-                
-            </figure>
-        
-        <h1 class="site-name"><a href="https://winterorch.github.io">图拉国营噄茶馆</a></h1>
-        <h2 class="site-description">拓海的86再快，也追不上夏树的奔驰</h2>
-    </header>
-
-    <ol class="menu" id="main-menu">
-        
-        
-        
-
-        <li >
-            <a href='/'>
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+  <polyline points="15 6 9 12 15 18" />
 </svg>
 
 
 
-                
-                <span>Home</span>
+                <span>返回</span>
             </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/about/'>
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="7" r="4" />
-  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-</svg>
-
-
-
-                
-                <span>About</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/archives/'>
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>Archives</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/search/'>
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>Search</span>
-            </a>
-        </li>
-        
-
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                <span>暗色模式</span>
-            </li>
-        
-    </ol>
-</aside>
-
+        </div>
     
 <main class="main full-width">
     <article class="main-article">
@@ -227,7 +108,9 @@
 </header>
 
     <section class="article-content">
-    <h1 id="题目"><strong>题目：</strong></h1>
+    <h1 id="lcp-07-传递信息httpsleetcode-cncomproblemschuan-di-xin-xi"><a class="link" href="https://leetcode-cn.com/problems/chuan-di-xin-xi/"  target="_blank" rel="noopener"
+    >LCP 07. 传递信息</a></h1>
+<h2 id="题目"><strong>题目：</strong></h2>
 <blockquote>
 <p>小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：</p>
 <ol>
@@ -252,8 +135,8 @@
 </blockquote>
 <p><strong>leetcode链接：<a class="link" href="https://leetcode-cn.com/problems/chuan-di-xin-xi/"  target="_blank" rel="noopener"
     >LCP 07. 传递信息</a></strong></p>
-<h1 id="题解">题解：</h1>
-<p><strong>思路1：dfs</strong></p>
+<h2 id="题解">题解：</h2>
+<h3 id="思路1dfs"><strong>思路1：dfs</strong></h3>
 <p>题目中的<code>relation</code>很容易抽象成<strong>有向图</strong>，而对于可行路径的查找也很自然地联想到使用<strong>深度优先搜索</strong>。主要步骤归纳如下：</p>
 <ul>
 <li>有向图初始化</li>
@@ -328,7 +211,7 @@
 </ul>
 <p>相应的bfs方法也可以解决本题，在此不再赘述</p>
 <p>但两者的时间复杂度显而易见地大，翻评论区却发现了一种更巧妙的方法——动态规划。</p>
-<p><strong>思路2：动态规划</strong></p>
+<h3 id="思路2动态规划"><strong>思路2：动态规划</strong></h3>
 <div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kt">int</span> <span class="nf">numWays</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">,</span> <span class="kt">int</span><span class="o">[][]</span> <span class="n">relation</span><span class="o">,</span> <span class="kt">int</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
         <span class="kt">int</span><span class="o">[][]</span> <span class="n">dp</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">k</span> <span class="o">+</span> <span class="n">1</span><span class="o">][</span><span class="n">n</span><span class="o">];</span>
@@ -355,6 +238,8 @@
             <a href="/tags/dfs/">DFS</a>
         
             <a href="/tags/bfs/">BFS</a>
+        
+            <a href="/tags/%E5%8A%9B%E6%89%A3%E4%B8%8B%E5%8D%88%E8%8C%B6/">力扣下午茶</a>
         
     </section>
 
@@ -409,18 +294,6 @@
                 
                     
 <article class="">
-    <a href="/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">LeetCode 354 - 俄罗斯套娃信封问题</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
     <a href="/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/">
         
         
@@ -439,6 +312,18 @@
 
         <div class="article-details">
             <h2 class="article-title">剑指 Offer 59 - I. 滑动窗口的最大值</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 354 - 俄罗斯套娃信封问题</h2>
         </div>
     </a>
 </article>
@@ -589,6 +474,38 @@
             >
 
             </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#题目"><strong>题目：</strong></a></li>
+    <li><a href="#题解">题解：</a>
+      <ol>
+        <li><a href="#思路1dfs"><strong>思路1：dfs</strong></a></li>
+        <li><a href="#思路2动态规划"><strong>思路2：动态规划</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
     
 
         </div>

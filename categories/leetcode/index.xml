@@ -6,14 +6,51 @@
     <description>Recent content in Leetcode on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 347 - 前 K 个高频元素</title>
+      <link>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</guid>
+      <description>LeetCode 347. Top K Frequent Elements Given a non-empty array of integers, return the k most frequent elements.
+Example 1:
+Input: nums = [1,1,1,2,2,3], k = 2 Output: [1,2] Example 2:
+Input: nums = [1], k = 1 Output: [1] Note:
+ You may assume k is always valid, 1 ≤ k ≤ number of unique elements. Your algorithm&amp;rsquo;s time complexity must be better than O( n log n ), where n is the array&amp;rsquo;s size.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 451 - 根据字符出现频率排序</title>
+      <link>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</guid>
+      <description>[LeetCode] 451. Sort Characters By Frequency 题目： 给定一个字符串，请将字符串里的字符按照出现的频率降序排列。
+示例 1:
+ 输入: &amp;ldquo;tree&amp;rdquo;
+输出: &amp;ldquo;eert&amp;rdquo;
+解释: &amp;lsquo;e&amp;rsquo;出现两次，&amp;lsquo;r&amp;rsquo;和&amp;rsquo;t&amp;rsquo;都只出现一次。 因此&amp;rsquo;e&amp;rsquo;必须出现在&amp;rsquo;r&amp;rsquo;和&amp;rsquo;t&amp;rsquo;之前。此外，&amp;ldquo;eetr&amp;quot;也是一个有效的答案。
+ 示例2：
+ 输入: &amp;ldquo;cccaaa&amp;rdquo;
+输出: &amp;ldquo;cccaaa&amp;rdquo;
+解释: &amp;lsquo;c&amp;rsquo;和&amp;rsquo;a&amp;rsquo;都出现三次。此外，&amp;ldquo;aaaccc&amp;quot;也是有效的答案。 注意&amp;quot;cacaca&amp;quot;是不正确的，因为相同的字母必须放在一起。
+ 示例3：
+ 输入: &amp;ldquo;Aabb&amp;rdquo;
+输出: &amp;ldquo;bbAa&amp;rdquo;
+解释: 此外，&amp;ldquo;bbaA&amp;quot;也是一个有效的答案，但&amp;quot;Aabb&amp;quot;是不正确的。 注意&amp;rsquo;A&amp;rsquo;和&amp;rsquo;a&amp;rsquo;被认为是两种不同的字符。
+  题解 思路1：HashMap计数+排序 字符串里的字符和出现频率形成一对K-V组合，解决按频率排序题目的第一思路是建一个HashMap统计出现频率，跟据一个从频率(Map的value)到原字符(Map的key)的反向映射，通过排序输出，主要步骤抽象如下：
+ 使用HashMap记录字符出现的频率 将HashMap转化成List按value进行降序排序 遍历List，将字符按出现次数降序放入答案中  代码如下：
+class Solution { public String frequencySort(String s) { StringBuilder sb = new StringBuilder(); // 1. 使用HashMap记录字符出现的频率  Map&amp;lt;Character, Integer&amp;gt; map = new HashMap&amp;lt;&amp;gt;(); for(int i = 0; i &amp;lt; s.</description>
+    </item>
+    
     <item>
       <title>LeetCode LCP 07 - 传递信息</title>
       <link>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</link>
       <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
       
       <guid>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</guid>
-      <description>题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+      <description>LCP 07. 传递信息 题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
  有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人  给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
  示例1：
  示例 1：

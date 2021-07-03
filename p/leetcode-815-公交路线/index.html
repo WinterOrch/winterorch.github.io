@@ -9,7 +9,7 @@
 <meta property='og:description' content='BFS与图压缩.'>
 <meta property='og:url' content='https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='BFS' /><meta property='article:tag' content='Graph' /><meta property='article:tag' content='Leetcode' /><meta property='article:published_time' content='2021-06-27T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-27T00:00:00&#43;00:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='BFS' /><meta property='article:tag' content='Graph' /><meta property='article:tag' content='力扣茶话会' /><meta property='article:published_time' content='2021-06-27T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-06-27T00:00:00&#43;00:00'/>
 <meta name="twitter:title" content="LeetCode 815 - 公交路线">
 <meta name="twitter:description" content="BFS与图压缩.">
     </head>
@@ -126,7 +126,7 @@ Output: -1
 </ul>
 </blockquote>
 <hr>
-<h3 id="题解--图压缩---最短路径算法">题解  图压缩 +  最短路径算法</h3>
+<h2 id="题解--图压缩---最短路径算法">题解  图压缩 +  最短路径算法</h2>
 <blockquote>
 <p>类似题：<a class="link" href="https://github.com/grandyang/leetcode/issues/126"  target="_blank" rel="noopener"
     >LeetCode 127 Word Ladder II</a></p>
@@ -216,7 +216,7 @@ Output: -1
     <span class="k">return</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span> <span class="o">?</span> <span class="o">-</span><span class="n">1</span> <span class="o">:</span> <span class="n">ret</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre></div><hr>
-<h3 id="题解---bfs">题解   BFS</h3>
+<h2 id="题解---bfs">题解   BFS</h2>
 <p>这里再写一个双向 BFS 。压缩部分和前面是一样的，问题是搜索部分。</p>
 <p>首先，将起点和终点（其实是经过起点和终点的所有公交线路）分别装入两个方向的 BFS 队列中，如果这里就发现有一样的，那说明有车能从起点直达终点，不用搜了，直接输出 <code>1</code> 。</p>
 <div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">boolean</span><span class="o">[]</span> <span class="n">vis</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">boolean</span><span class="o">[</span><span class="n">n</span><span class="o">];</span>
@@ -348,7 +348,7 @@ Output: -1
     <span class="k">return</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre></div><hr>
-<h3 id="总结">总结</h3>
+<h2 id="总结">总结</h2>
 <p>这道题反正无论如何都绕不开图压缩了。搜索上，两种方法最终时间相差无几（指用 Leetcode 案例前提下），最小路径算法其实有些超过题目需求了，不过 SPFA 很契合这道题的场景，因此效率还是很高，加上写起来方便（重点），略优于双向 BFS。</p>
 
 </section>
@@ -362,7 +362,7 @@ Output: -1
         
             <a href="/tags/graph/">Graph</a>
         
-            <a href="/tags/leetcode/">Leetcode</a>
+            <a href="/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/">力扣茶话会</a>
         
     </section>
 
@@ -405,36 +405,36 @@ Output: -1
                 
                     
 <article class="">
+    <a href="/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 347 - 前 K 个高频元素</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 451 - 根据字符出现频率排序</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
     <a href="/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/">
         
         
 
         <div class="article-details">
             <h2 class="article-title">LeetCode LCP 07 - 传递信息</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">剑指 Offer 56 - I. 数组中数字出现的次数</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">剑指 Offer 59 - I. 滑动窗口的最大值</h2>
         </div>
     </a>
 </article>
@@ -617,13 +617,9 @@ Output: -1
                 <div class="widget--toc">
                     <nav id="TableOfContents">
   <ol>
-    <li>
-      <ol>
-        <li><a href="#题解--图压缩---最短路径算法">题解  图压缩 +  最短路径算法</a></li>
-        <li><a href="#题解---bfs">题解   BFS</a></li>
-        <li><a href="#总结">总结</a></li>
-      </ol>
-    </li>
+    <li><a href="#题解--图压缩---最短路径算法">题解  图压缩 +  最短路径算法</a></li>
+    <li><a href="#题解---bfs">题解   BFS</a></li>
+    <li><a href="#总结">总结</a></li>
   </ol>
 </nav>
                 </div>

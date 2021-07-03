@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='前K高频元素问题.'><title>LeetCode 347 - 前 K 个高频元素</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode 347 - 前 K 个高频元素'>
+<meta property='og:description' content='前K高频元素问题.'>
+<meta property='og:url' content='https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='HashMap' /><meta property='article:tag' content='计数排序' /><meta property='article:tag' content='力扣茶话会' /><meta property='article:published_time' content='2021-07-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-03T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="LeetCode 347 - 前 K 个高频元素">
+<meta name="twitter:description" content="前K高频元素问题.">
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/leetcode/" style="background-color: #7B7B7B; color: #fff;">
+                Leetcode
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/">LeetCode 347 - 前 K 个高频元素</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        前K高频元素问题.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 03, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h1 id="leetcode-347-top-k-frequent-elementshttpsleetcode-cncomproblemstop-k-frequent-elements"><a class="link" href="https://leetcode-cn.com/problems/top-k-frequent-elements/"  target="_blank" rel="noopener"
+    >LeetCode 347. Top K Frequent Elements</a></h1>
+<p>Given a non-empty array of integers, return the <em>k</em> most frequent elements.</p>
+<p>Example 1:</p>
+<pre><code>Input: nums = [1,1,1,2,2,3], k = 2
+Output: [1,2]
+</code></pre><p>Example 2:</p>
+<pre><code>Input: nums = [1], k = 1
+Output: [1]
+</code></pre><p>Note:</p>
+<ul>
+<li>You may assume <em>k</em> is always valid, 1 ≤ <em>k</em> ≤ number of unique elements.</li>
+<li>Your algorithm&rsquo;s time complexity must be better than O( <em>n</em> log <em>n</em> ), where <em>n</em> is the array&rsquo;s size.</li>
+</ul>
+<hr>
+<p><strong>分析</strong></p>
+<p>要统计数组中出现频率前<code>k</code>高的数字。从数字到频率，考虑用<code>HashMap</code>来建立映射。然后再处理前<code>k</code>高的问题。</p>
+<p><strong>题解</strong></p>
+<p>首先遍历一遍数组，统计各数字出现次数，确定使用<code>HashMap</code>几乎没什么争议。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">		<span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">num</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                    <span class="o">++</span><span class="n">v</span><span class="o">;</span>
+                    <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+                <span class="o">});</span>
+            <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+                <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+</code></pre></div><p>要取其中出现次数（value）前<code>k</code>高的元素，一定需要进行排序，有两种方法可供选择</p>
+<hr>
+<h2 id="题解堆排序">题解、堆排序</h2>
+<p>看到第<code>k</code>大\小马上想到的方法，Java实现起来也非常方便。因为前面已经用了<code>Map</code>，这里不需要再引入新的数据结构，直接用<code>Map.Entry</code>建堆就可以了。前<code>k</code>大，所以建一个大顶堆，全部加进去之后<code>poll</code>出<code>k</code>个来就行了。</p>
+<p>时间复杂度$O(n\log n)$</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">k</span><span class="o">];</span>
+
+<span class="c1">//统计出现次数
+</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">num</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="o">++</span><span class="n">v</span><span class="o">;</span>
+            <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+        <span class="o">});</span>
+    <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">//建堆
+</span><span class="c1"></span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">maxHeap</span> <span class="o">=</span>
+        <span class="k">new</span> <span class="n">PriorityQueue</span><span class="o">&lt;&gt;(</span><span class="n">Comparator</span><span class="o">.</span><span class="na">comparingInt</span><span class="o">(</span><span class="n">o</span> <span class="o">-&gt;</span> <span class="o">-</span><span class="n">o</span><span class="o">.</span><span class="na">getValue</span><span class="o">()));</span>
+<span class="n">maxHeap</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">());</span>
+
+<span class="c1">//输出
+</span><span class="c1"></span><span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">k</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span>
+    <span class="n">res</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">maxHeap</span><span class="o">.</span><span class="na">poll</span><span class="o">().</span><span class="na">getKey</span><span class="o">();</span>
+<span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+</code></pre></div><hr>
+<h2 id="题解计数桶排序">题解、计数（桶）排序</h2>
+<p>我们知道桶排序时间复杂度是$O(n)$，要能派上用场肯定比堆排序好，那用什么建桶呢？用输入数组中的数字不适合直接建桶，因为我们并不关心其大小，需要关心的是<strong>出现次数</strong>。</p>
+<p>长度为<code>nums.length</code>的数组，那出现次数最多也就是<code>nums.length</code>，我们可以跟据出现次数来建桶，每个桶中的数出现次数都相同，这其实就像考生排名次，分数（出现次数）越大的名词数越低（在输出数组中下标越小），那这其实就是一种特殊的桶排序——计数排序，按出现次数进行计数。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">k</span><span class="o">];</span>
+<span class="kt">int</span> <span class="n">resIdx</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+
+<span class="c1">//统计出现次数
+</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">num</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="o">++</span><span class="n">v</span><span class="o">;</span>
+            <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+        <span class="o">});</span>
+    <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">//统计每个桶中数据量，即出现次数相同的数字个数，按出现次数存入reference[]中
+</span><span class="c1">//顺便统计一下最大的出现次数
+</span><span class="c1"></span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entrySet</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">();</span>
+<span class="kt">int</span> <span class="n">maxOccurrence</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+<span class="kt">int</span><span class="o">[]</span> <span class="n">reference</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">1</span><span class="o">];</span>
+<span class="k">for</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">entrySet</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()]++;</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">maxOccurrence</span> <span class="o">&lt;</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">())</span>
+        <span class="n">maxOccurrence</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="c1">//将数组每一元素更新为包括自身在内之前所有元素之和，形成索引数组
+</span><span class="c1"></span><span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">maxOccurrence</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">reference</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+=</span> <span class="n">reference</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">];</span>
+<span class="o">}</span>
+
+<span class="c1">//计数排序不可避免的是从小开始，我们要找的是前k大，
+</span><span class="c1">//也就是在最终排序输出数组中位置大于(entrySet.size()-k-1)的部分
+</span><span class="c1"></span><span class="n">k</span> <span class="o">=</span> <span class="n">entrySet</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+<span class="k">for</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">entrySet</span><span class="o">)</span> <span class="o">{</span>
+  	<span class="c1">//同一次数，出现多次的，递减以防止重叠
+</span><span class="c1"></span>    <span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()]--;</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()]</span> <span class="o">&gt;</span> <span class="n">k</span><span class="o">)</span>
+        <span class="n">res</span><span class="o">[</span><span class="n">resIdx</span><span class="o">++]</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+</code></pre></div><p><code>Entry&lt;Integer, Integer&gt;</code>中的键(Key)是我们最终要输出的原数字，而值(Value)是我们关心的出现次数，如果我们有建立一个从出现次数到原数字的“反向映射”，那也可以对出现次数数组（valueSet）进行进行遍历排序，然后输出对应的键。</p>
+<p>但是实际上，Java提供的<code>Entry</code>已经足够好用，建立反向映射需要大量额外空间，但却不能保证带来时间效率的提升，所以直接对<code>Map.EntrySet</code>进行遍历，输出排序结果就行了，这一部分的时间复杂度实际已经低于$O(n)$，是$O(j)$（$j$为<code>nums[]</code>中不同元素个数）。</p>
+<p>总而言之，桶排序的时间复杂度为$O(n)$</p>
+<p>最后，我们知道由于伪泛型设计，Java中的<code>HashMap</code>既没有STL中的Map效率高，用起来也不方便，因此，大部分情况下可以考虑一下用数组代替。然而这道题数字没有给范围，从负数到最大<code>10^5</code>都有可能，用数组不方便，因此作罢。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/hashmap/">HashMap</a>
+        
+            <a href="/tags/%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F/">计数排序</a>
+        
+            <a href="/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/">力扣茶话会</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 451 - 根据字符出现频率排序</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 815 - 公交路线</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 752 - 打开转盘锁</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 354 - 俄罗斯套娃信封问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode LCP 07 - 传递信息</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#题解堆排序">题解、堆排序</a></li>
+    <li><a href="#题解计数桶排序">题解、计数（桶）排序</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
