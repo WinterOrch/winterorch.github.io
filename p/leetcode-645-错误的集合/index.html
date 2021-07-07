@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='表，位运算.'><title>LeetCode 645 - 错误的集合</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode 645 - 错误的集合'>
+<meta property='og:description' content='表，位运算.'>
+<meta property='og:url' content='https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='HashMap' /><meta property='article:tag' content='位运算' /><meta property='article:tag' content='力扣下午茶' /><meta property='article:published_time' content='2021-07-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-03T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/category/leetcode/AfternoonTea.jpg' />
+<meta name="twitter:title" content="LeetCode 645 - 错误的集合">
+<meta name="twitter:description" content="表，位运算."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/category/leetcode/AfternoonTea.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/">
+                
+                    <img src="/images/category/leetcode/AfternoonTea.jpg" loading="lazy" alt="Featured image of post LeetCode 645 - 错误的集合" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/leetcode/" style="background-color: #7B7B7B; color: #fff;">
+                Leetcode
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/">LeetCode 645 - 错误的集合</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        表，位运算.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 03, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h1 id="645-set-mismatchhttpsleetcode-cncomproblemsset-mismatch"><a class="link" href="https://leetcode-cn.com/problems/set-mismatch/"  target="_blank" rel="noopener"
+    >645. Set Mismatch</a></h1>
+<h2 id="题目">题目</h2>
+<blockquote>
+<p>集合 <code>s</code> 包含从 <code>1</code> 到 <code>n</code> 的整数。不幸的是，因为数据错误，导致集合里面某一个数字复制了成了集合里面的另外一个数字的值，导致集合 <strong>丢失了一个数</strong>字 并且 有一个数字重复 。</p>
+<p>给定一个数组 <code>nums</code> 代表了集合 <code>S</code> 发生错误后的结果。</p>
+<p>请你找出重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。</p>
+</blockquote>
+<p><strong>示例 1：</strong></p>
+<pre><code>输入：nums = [1,2,2,4]
+输出：[2,3]
+</code></pre><p><strong>示例 2：</strong></p>
+<pre><code>输入：nums = [1,1]
+输出：[1,2]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>2 &lt;= nums.length &lt;= 104</code></li>
+<li><code>1 &lt;= nums[i] &lt;= 104</code></li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="题解">题解</h2>
+<h3 id="思路1哈希表">思路1：哈希表</h3>
+<p>以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。</p>
+<p>在[<a class="link" href="https://winterorch.github.io/p/leetcode-451-%e6%a0%b9%e6%8d%ae%e5%ad%97%e7%ac%a6%e5%87%ba%e7%8e%b0%e9%a2%91%e7%8e%87%e6%8e%92%e5%ba%8f/"  target="_blank" rel="noopener"
+    >LeetCode 451 - 根据字符出现频率排序</a>]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">findErrorNums</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">//创建map用于指示数字是否出现过
+</span><span class="c1"></span>        <span class="kt">boolean</span><span class="o">[]</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">boolean</span><span class="o">[</span><span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">2</span><span class="o">];</span>
+        
+        <span class="c1">//存储的同时查询数字是否为第二次出现
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">){</span>
+            <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">[</span><span class="n">num</span> <span class="o">-</span> <span class="n">1</span><span class="o">]){</span>
+                <span class="n">res</span><span class="o">[</span><span class="n">0</span><span class="o">]</span> <span class="o">=</span> <span class="n">num</span><span class="o">;</span>
+            <span class="o">}</span><span class="k">else</span><span class="o">{</span>
+                <span class="n">map</span><span class="o">[</span><span class="n">num</span> <span class="o">-</span> <span class="n">1</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//遍历hash表，查找丢失的数字
+</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">map</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++){</span>
+            <span class="k">if</span><span class="o">(!</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]){</span>
+                <span class="n">res</span><span class="o">[</span><span class="n">1</span><span class="o">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="思路2位运算">思路2：位运算</h3>
+<p>如果将 <code>nums</code> 和<code>1</code> ~ <code>n</code> 这2n个数字异或，最后的结果 <code>xor</code> 将会是丢失的数字 <code>n1</code> 与重复的数字 <code>n2</code> 的异或。<code>xor</code> 中的每一个值都是 <code>n1</code> 与 <code>n2</code> 的二进制表示中不相同的位。</p>
+<p>取其中的一位 <code>bit</code> 与 <code>nums</code> 逐个异或，可以将 <code>nums</code> 分成两组，一组应该存在 <code>n1</code>但它缺失了，另一组 <code>n2</code> 出现了两次。</p>
+<p>取  <code>bit</code> 和 <code>1</code> ~ <code>n</code> 逐个异或同样可以将其分成两组。将对应的组别异或即可得到 <code>n1</code> 与 <code>n2</code> 。</p>
+<p>最后查找 <code>nums</code> 中出现过的数字为 <code>n2</code> ，否则其为 <code>n1</code> 。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">findErrorNums</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+        
+        <span class="c1">//计算 n1 ^ n2
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">xor</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">xor</span> <span class="o">^=</span> <span class="n">num</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">xor</span> <span class="o">^=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//取 n1 与 n2 二进制表示中一个不相同的位
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">lowbit</span> <span class="o">=</span> <span class="n">xor</span> <span class="o">&amp;</span> <span class="o">(-</span><span class="n">xor</span><span class="o">);</span>
+        
+        <span class="c1">//将 nums 分成两组
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">num1</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">num2</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">((</span><span class="n">num</span> <span class="o">&amp;</span> <span class="n">lowbit</span><span class="o">)</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">num1</span> <span class="o">^=</span> <span class="n">num</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">num2</span> <span class="o">^=</span> <span class="n">num</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//将 1 ~ n 分成两组并异或得到 n1 和 n2
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">((</span><span class="n">i</span> <span class="o">&amp;</span> <span class="n">lowbit</span><span class="o">)</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">num1</span> <span class="o">^=</span> <span class="n">i</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">num2</span> <span class="o">^=</span> <span class="n">i</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        
+        <span class="c1">//辨别 n1 和 n2
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">==</span> <span class="n">num1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="n">num1</span><span class="o">,</span> <span class="n">num2</span><span class="o">};</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="n">num2</span><span class="o">,</span> <span class="n">num1</span><span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/hashmap/">HashMap</a>
+        
+            <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/">位运算</a>
+        
+            <a href="/tags/%E5%8A%9B%E6%89%A3%E4%B8%8B%E5%8D%88%E8%8C%B6/">力扣下午茶</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/AfternoonTea.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/AfternoonTea.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">剑指 Offer 56 - I. 数组中数字出现的次数</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 347 - 前 K 个高频元素</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 451 - 根据字符出现频率排序</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/AfternoonTea.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/AfternoonTea.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode LCP 07 - 传递信息</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/AfternoonTea.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/AfternoonTea.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">剑指 Offer 59 - I. 滑动窗口的最大值</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#题目">题目</a></li>
+    <li><a href="#题解">题解</a>
+      <ol>
+        <li><a href="#思路1哈希表">思路1：哈希表</a></li>
+        <li><a href="#思路2位运算">思路2：位运算</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

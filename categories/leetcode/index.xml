@@ -15,8 +15,8 @@
       <guid>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</guid>
       <description>LeetCode 347. Top K Frequent Elements Given a non-empty array of integers, return the k most frequent elements.
 Example 1:
-Input: nums = [1,1,1,2,2,3], k = 2 Output: [1,2] Example 2:
-Input: nums = [1], k = 1 Output: [1] Note:
+Input: nums = [1,1,1,2,2,3], k = 2Output: [1,2]Example 2:
+Input: nums = [1], k = 1Output: [1]Note:
  You may assume k is always valid, 1 ≤ k ≤ number of unique elements. Your algorithm&amp;rsquo;s time complexity must be better than O( n log n ), where n is the array&amp;rsquo;s size.</description>
     </item>
     
@@ -42,6 +42,22 @@ Input: nums = [1], k = 1 Output: [1] Note:
   题解 思路1：HashMap计数+排序 字符串里的字符和出现频率形成一对K-V组合，解决按频率排序题目的第一思路是建一个HashMap统计出现频率，跟据一个从频率(Map的value)到原字符(Map的key)的反向映射，通过排序输出，主要步骤抽象如下：
  使用HashMap记录字符出现的频率 将HashMap转化成List按value进行降序排序 遍历List，将字符按出现次数降序放入答案中  代码如下：
 class Solution { public String frequencySort(String s) { StringBuilder sb = new StringBuilder(); // 1. 使用HashMap记录字符出现的频率  Map&amp;lt;Character, Integer&amp;gt; map = new HashMap&amp;lt;&amp;gt;(); for(int i = 0; i &amp;lt; s.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 645 - 错误的集合</title>
+      <link>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</guid>
+      <description>645. Set Mismatch 题目  集合 s 包含从 1 到 n 的整数。不幸的是，因为数据错误，导致集合里面某一个数字复制了成了集合里面的另外一个数字的值，导致集合 丢失了一个数字 并且 有一个数字重复 。
+给定一个数组 nums 代表了集合 S 发生错误后的结果。
+请你找出重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。
+ 示例 1：
+输入：nums = [1,2,2,4]输出：[2,3]示例 2：
+输入：nums = [1,1]输出：[1,2]提示：
+ 2 &amp;lt;= nums.length &amp;lt;= 104 1 &amp;lt;= nums[i] &amp;lt;= 104  题解 思路1：哈希表 以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。
+在[LeetCode 451 - 根据字符出现频率排序]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。</description>
     </item>
     
     <item>

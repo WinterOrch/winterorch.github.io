@@ -6,7 +6,23 @@
     <description>Recent content in 力扣下午茶 on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E5%8A%9B%E6%89%A3%E4%B8%8B%E5%8D%88%E8%8C%B6/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E5%8A%9B%E6%89%A3%E4%B8%8B%E5%8D%88%E8%8C%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 645 - 错误的集合</title>
+      <link>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</guid>
+      <description>645. Set Mismatch 题目  集合 s 包含从 1 到 n 的整数。不幸的是，因为数据错误，导致集合里面某一个数字复制了成了集合里面的另外一个数字的值，导致集合 丢失了一个数字 并且 有一个数字重复 。
+给定一个数组 nums 代表了集合 S 发生错误后的结果。
+请你找出重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。
+ 示例 1：
+输入：nums = [1,2,2,4]输出：[2,3]示例 2：
+输入：nums = [1,1]输出：[1,2]提示：
+ 2 &amp;lt;= nums.length &amp;lt;= 104 1 &amp;lt;= nums[i] &amp;lt;= 104  题解 思路1：哈希表 以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。
+在[LeetCode 451 - 根据字符出现频率排序]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。</description>
+    </item>
+    
     <item>
       <title>LeetCode LCP 07 - 传递信息</title>
       <link>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</link>

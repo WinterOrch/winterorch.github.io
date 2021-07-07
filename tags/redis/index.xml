@@ -6,7 +6,19 @@
     <description>Recent content in Redis on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 30 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis - Spring Data Redis 中的 Transaction 与 Pipeline</title>
+      <link>https://winterorch.github.io/p/redis-spring_trans-pipeline/</link>
+      <pubDate>Tue, 06 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/redis-spring_trans-pipeline/</guid>
+      <description>Redis 提供事务(Transaction)和管道(Pipeline)，两个概念都不复杂，可以对比来看，管道可以广泛用于提升 Redis 读写效率。
+Redis Transactions Redis 原本通过 multi exec 和 discard 指令执行事务。RedisTemplate&amp;lt;&amp;gt; 本身提供三个同名方法来支持事务，但是 RedisTemplate 本身封装程度高，不能保证这种事务定义下的所有操作在同一次 Redis 连接中被执行。
+因此，作为一种封装度更低的替代，Spring Data Redis 提供 SessionCallback 来确保多个操作在同一次 Redis 链接中进行。
+//execute a transaction List&amp;lt;Object&amp;gt; txResults = redisTemplate.execute(new SessionCallback&amp;lt;List&amp;lt;Object&amp;gt;&amp;gt;() { public List&amp;lt;Object&amp;gt; execute(RedisOperations operations) throws DataAccessException { operations.multi(); operations.opsForSet().add(&amp;#34;key&amp;#34;, &amp;#34;value1&amp;#34;); // This will contain the results of all operations in the transaction  return operations.exec(); } }); System.out.println(&amp;#34;Number of items added to set: &amp;#34; + txResults.</description>
+    </item>
+    
     <item>
       <title>Redis - 常用数据类型</title>
       <link>https://winterorch.github.io/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</link>

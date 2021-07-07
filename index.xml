@@ -6,13 +6,282 @@
         <description>Recent content on 图拉国营噄茶馆</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 06 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Redis - Spring Data Redis 中的 Transaction 与 Pipeline</title>
+        <link>https://winterorch.github.io/p/redis-spring_trans-pipeline/</link>
+        <pubDate>Tue, 06 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/redis-spring_trans-pipeline/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Village.jpg" alt="Featured image of post Redis - Spring Data Redis 中的 Transaction 与 Pipeline" /&gt;&lt;p&gt;Redis 提供事务(Transaction)和管道(Pipeline)，两个概念都不复杂，可以对比来看，管道可以广泛用于提升 Redis 读写效率。&lt;/p&gt;
+&lt;h2 id=&#34;redis-transactions&#34;&gt;Redis Transactions&lt;/h2&gt;
+&lt;p&gt;Redis 原本通过 &lt;code&gt;multi&lt;/code&gt; &lt;code&gt;exec&lt;/code&gt; 和 &lt;code&gt;discard&lt;/code&gt; 指令执行事务。&lt;code&gt;RedisTemplate&amp;lt;&amp;gt;&lt;/code&gt; 本身提供三个同名方法来支持事务，但是 &lt;code&gt;RedisTemplate&lt;/code&gt; 本身封装程度高，&lt;!-- raw HTML omitted --&gt;不能保证这种事务定义下的所有操作在同一次 Redis 连接中被执行&lt;!-- raw HTML omitted --&gt;。&lt;/p&gt;
+&lt;p&gt;因此，作为一种封装度更低的替代，Spring Data Redis 提供 &lt;code&gt;SessionCallback&lt;/code&gt; 来确保多个操作在同一次 Redis 链接中进行。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//execute a transaction
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;txResults&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;redisTemplate&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SessionCallback&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RedisOperations&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;operations&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;throws&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DataAccessException&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;operations&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;multi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;operations&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;opsForSet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;key&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+
+    &lt;span class=&#34;c1&#34;&gt;// This will contain the results of all operations in the transaction
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;operations&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;exec&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;});&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Number of items added to set: &amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;txResults&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;));&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;SessionCallback&lt;/code&gt; 的 &lt;code&gt;execute&lt;/code&gt; 返回值仍会经过 &lt;code&gt;RedisTemplate&lt;/code&gt; 的反序列化操作 ，然后作为 &lt;code&gt;RedisTemplate&lt;/code&gt; 的 &lt;code&gt;execute&lt;/code&gt; 结果返回。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;1.1 后对于连接返回值的转换与否发生了变化&lt;/p&gt;
+&lt;p&gt;As of version 1.1, an important change has been made to the &lt;code&gt;exec&lt;/code&gt; methods of &lt;code&gt;RedisConnection&lt;/code&gt; and &lt;code&gt;RedisTemplate&lt;/code&gt;. Previously, these methods returned the results of transactions directly from the connectors. This means that the data types often differed from those returned from the methods of &lt;code&gt;RedisConnection&lt;/code&gt;. For example, &lt;code&gt;zAdd&lt;/code&gt; returns a boolean indicating whether the element has been added to the sorted set. Most connectors return this value as a long, and Spring Data Redis performs the conversion. Another common difference is that most connectors return a status reply (usually the string, &lt;code&gt;OK&lt;/code&gt;) for operations such as &lt;code&gt;set&lt;/code&gt;. These replies are typically discarded by Spring Data Redis. Prior to 1.1, these conversions were not performed on the results of &lt;code&gt;exec&lt;/code&gt;. Also, results were not deserialized in &lt;code&gt;RedisTemplate&lt;/code&gt;, so they often included raw byte arrays. If this change breaks your application, set &lt;code&gt;convertPipelineAndTxResults&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt; on your &lt;code&gt;RedisConnectionFactory&lt;/code&gt; to disable this behavior.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;transactional&#34;&gt;@Transactional&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;RedisTemplate&lt;/code&gt; 默认不能加 &lt;code&gt;@Transactional&lt;/code&gt; 标签，但可以通过 &lt;code&gt;template.setEnableTransactionSupport(true)&lt;/code&gt; 来开启。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Enabling transaction support binds &lt;code&gt;RedisConnection&lt;/code&gt; to the current transaction backed by a &lt;code&gt;ThreadLocal&lt;/code&gt;. If the transaction finishes without errors, the Redis transaction gets commited with &lt;code&gt;EXEC&lt;/code&gt;, otherwise rolled back with &lt;code&gt;DISCARD&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;但这样做存在一些限制&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// must be performed on thread-bound connection
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;opsForValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;thing1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;thing2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// read operation must be run on a free (not transaction-aware) connection
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;keys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;*&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// returns null as values set within a transaction are not visible
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;opsForValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;thing1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;redis-pipelining&#34;&gt;Redis Pipelining&lt;/h2&gt;
+&lt;p&gt;Redis 管道允许一次性发送多条指令而不单独等待每条的回复（即不用等待 RTT），所有恢复将在最后一次性读取。这样做会提升指令发送速度，尤其在向一个 List 中添加大量元素时。&lt;/p&gt;
+&lt;p&gt;如果完全不关注返回结果，可以使用 &lt;code&gt;RedisTemplate&lt;/code&gt; 的 &lt;code&gt;execute&lt;/code&gt; 方法，传递 &lt;code&gt;true&lt;/code&gt; 的 pipeline 参数。&lt;code&gt;executePipelined&lt;/code&gt; 方法以 &lt;code&gt;RedisCallback&lt;/code&gt; 或 &lt;code&gt;SessionCallback&lt;/code&gt; 为输入，在一个 pipeline 中完成运行并返回所有结果。&lt;/p&gt;
+&lt;p&gt;以下是一个通过 pipeline 从队列右端 &lt;code&gt;pop&lt;/code&gt; 出一堆元素的方法：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;results&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stringRedisTemplate&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;executePipelined&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RedisCallback&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;doInRedis&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RedisConnection&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;throws&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DataAccessException&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;StringRedisConnection&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stringRedisConn&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;StringRedisConnection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;batchSize&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;stringRedisConn&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;rPop&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;myqueue&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+      &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;两者区别&#34;&gt;两者区别&lt;/h2&gt;
+&lt;p&gt;首先，Pipline 和 Transaction 是完全不同的两种机制，互相不能够替代——&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Pipeline 本质是客户端对指令进行打包发送的行为&lt;/strong&gt;，服务端是透明的；&lt;strong&gt;Transaction 本质是服务端执行指令时进行的打包&lt;/strong&gt;，由客户端指令指挥&lt;/p&gt;
+&lt;p&gt;因此，Pipeline 最终要的作用是减少客户端等待时间，从而提升客户端程序性能，&lt;!-- raw HTML omitted --&gt;不能保证原子性&lt;!-- raw HTML omitted --&gt;（服务端只会看作一系列普通指令，当然不会保证原子性的）。而 Transaction 因为使用 MULTI/EXEC 事务机制，虽然从 SQL 事务 ACID 角度来看不满足原子性，但如果全部指令都能被正确执行，程序上是&lt;!-- raw HTML omitted --&gt;满足原子性&lt;!-- raw HTML omitted --&gt;的，执行过程中不会被打断。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Pipeline 不会阻塞服务端&lt;/strong&gt;，但 &lt;strong&gt;Transaction 会阻塞服务端&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;实际应用中使用 LUA 脚本来满足原子性要比 Transaction 高效得多。考虑网络吞吐问题，需要高频执行的脚本甚至可以预加载到服务端，需要调用时直接传脚本 SHA1（在预加载时会由服务端发回） + 参数 来进行调用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;lua&#34;&gt;LUA&lt;/h2&gt;
+&lt;p&gt;值得注意的一点是启动程序时可以将 LUA 脚本预加载到 Redis 服务器&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@PostConstruct&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;loadScript&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;execute&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;strRedisTemplate&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RedisCallback&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;)&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;scriptLoad&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;flashSaleIfExistScript&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getScriptAsString&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getBytes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()));&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;scriptLoad&lt;/code&gt; 的返回结果是脚本对应的 SHA1，但是我们其实并不需要保存，因为&lt;code&gt;RedisScript&lt;/code&gt; 本身在加载脚本时会计算一次 SHA1 ，可以直接通过 &lt;code&gt;getSha1()&lt;/code&gt; 获得。&lt;/p&gt;
+&lt;p&gt;需要调用时直接传脚本 SHA1（在预加载时会由服务端发回） +  参数 来进行调用。Redis 支持的脚本执行指令包括 &lt;code&gt;eval&lt;/code&gt; 和 &lt;code&gt;evalsha&lt;/code&gt; 两个，Redis Template 将这两条指令都封装在了 &lt;code&gt;org.springframework.data.redis.connection&lt;/code&gt; 包中 &lt;code&gt;RedisScriptingCommands&lt;/code&gt; 接口下。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;ScriptExecutor&lt;/code&gt; 在执行时会首先通过 &lt;code&gt;evalsha&lt;/code&gt; 来执行脚本，如果 Redis 脚本缓存中没有对应脚本再退回到 &lt;code&gt;eval&lt;/code&gt; 方法。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;根据以上官方文档的描述，我们不需要主动调用 &lt;code&gt;evalsha&lt;/code&gt; ，&lt;code&gt;ScriptExecutor&lt;/code&gt; 会自动替我们完成。那我们来看看 Spring Data Redis 源码怎么写的，先找到 &lt;code&gt;DefaultScriptExecutor&lt;/code&gt; 。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RedisScript&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;K&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getValueSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getValueSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RedisScript&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RedisSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;argsSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RedisSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;resultSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;K&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;execute&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;ReturnType&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;returnType&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ReturnType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;fromJavaType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getResultType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[][]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keysAndArgs&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;keysAndArgs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;argsSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keySize&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keys&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;isPipelined&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;isQueueing&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;eval&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;returnType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keySize&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keysAndArgs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;resultSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;eval&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;scriptBytes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;returnType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keySize&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keysAndArgs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;});&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;可以看到，除非在管道或队列操作中，否则所有的 &lt;code&gt;execute&lt;/code&gt; 最终都会落到 &lt;code&gt;eval&lt;/code&gt; 这个方法上。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;protected&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;eval&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RedisConnection&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RedisScript&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ReturnType&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;returnType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;numKeys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[][]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keysAndArgs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RedisSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;resultSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;evalSha&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getSha1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;returnType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;numKeys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keysAndArgs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exception&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;var9&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ScriptUtils&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;exceptionContainsNoScriptError&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;var9&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;var9&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;instanceof&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RuntimeException&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RuntimeException&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;var9&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RedisSystemException&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;var9&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getMessage&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;var9&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;connection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;eval&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;scriptBytes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;returnType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;numKeys&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;keysAndArgs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getResultType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;deserializeResult&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resultSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;确实，&lt;code&gt;evalSha&lt;/code&gt; 如果不能得到正确结果就会抛异常，转而用 &lt;code&gt;eval&lt;/code&gt; 方法了。这对于不预载脚本的场景是不是低效了点？&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>RabbitMQ - 基础知识</title>
+        <link>https://winterorch.github.io/p/rabbitmq_introduction/</link>
+        <pubDate>Sun, 04 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/rabbitmq_introduction/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg" alt="Featured image of post RabbitMQ - 基础知识" /&gt;&lt;p&gt;示例为 Spring AMQP 中 RabbitMQ 的使用。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Spring AMQP 官方文档： &lt;a href=&#34;https://docs.spring.io/spring-amqp/docs/current/reference/html/&#34;&gt;https://docs.spring.io/spring-amqp/docs/current/reference/html/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;exchange-types-交换器类型&#34;&gt;Exchange Types （交换器类型）&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;fanout&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，&lt;!-- raw HTML omitted --&gt;常用来广播消息&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;cm&#34;&gt;/**
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; * Fanout
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; */&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FANOUT_EXCHANGE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutBinding1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topicQueue1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutBinding2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topicQueue2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;direct&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;将消息路由到 BindingKey 与 RoutingKey 完全匹配的队列中，&lt;!-- raw HTML omitted --&gt;常用来将有优先级的任务发到对应队列，得到更多处理资源&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;topic&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RoutingKey 为一个点号 &lt;code&gt;.&lt;/code&gt; 分隔的字符串（被点号 &lt;code&gt;.&lt;/code&gt; 分隔开的每一段独立的字符串称为一个单词），如 &lt;code&gt;com.rabbitmq.client&lt;/code&gt;、&lt;code&gt;java.util.concurrent&lt;/code&gt;、&lt;code&gt;com.hidden.client&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;BindingKey 和 RoutingKey 一样也是点号 &lt;code&gt;．&lt;/code&gt;分隔的字符串&lt;/li&gt;
+&lt;li&gt;BindingKey 中可以存在两种特殊字符串 &lt;code&gt;*&lt;/code&gt; 和 &lt;code&gt;#&lt;/code&gt;，用于做模糊匹配，其中 &lt;code&gt;*&lt;/code&gt; 用于匹配一个单词，&lt;code&gt;#&lt;/code&gt; 用于匹配多个单词(可以是零个)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以，如果当一个队列的绑定键为 &lt;code&gt;#&lt;/code&gt; 的时候，这个队列将会无视消息的路由键，接收所有的消息。
+当 &lt;code&gt;*&lt;/code&gt; (星号) 和 &lt;code&gt;#&lt;/code&gt; (井号) 这两个特殊字符都未在绑定键中出现的时候，此时主题交换机也就相当于直连交换机。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;headers&lt;/strong&gt; （不推荐）&lt;/p&gt;
+&lt;p&gt;不依赖路由键而是 headers 属性进行完全匹配，性能很差因而不实用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HeadersExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headersExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HeadersExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HEADERS_EXCHANGE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headerQueue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HEADER_QUEUE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headerBinding&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;header1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;header2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;headerQueue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;headersExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;whereAll&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;match&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;模式&#34;&gt;模式&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（简单模式）单生产者对应单消费者&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;相当于工作缓存，如邮件服务从队列中取件进行发送&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（工作队列模式）单生产者对应多消费者&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;资源密集型任务中，多个消费者并行处理&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（订阅模式）单生产者发到多消费者&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如库存更新后需要通知多个缓存和多个数据库，则通过 &lt;strong&gt;fanout&lt;/strong&gt; 交换器分出两个消息队列，分别对应缓存和数据库&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（路由模式）有选择地发送和接收&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;指定路由 key&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（主题模式）将队列需求绑定在特定模式上&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（远程过程调用）在远程计算机上运行功能并等待结果&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;通过RPC在远程计算机上运行功能并等待结果&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（发布者确认）异步确认发送者发布消息&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;用于实现可靠地分布，如扣款&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;如何解决消息丢失&#34;&gt;如何解决消息丢失&lt;/h3&gt;
+&lt;p&gt;消息丢失可能出现在生产者至MQ、消息队列本身、消费者三处。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;生产者导致的消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RabbitMQ &lt;strong&gt;事务机制&lt;/strong&gt;为了避免消息丢失，可以在发送消息前，先开启执行 txSelect 方法开启一个事务，接着发送消息，如果消息投递失败，执行 txRollback 回滚事务，再执行重试操作重新发送，如果消息投递成功，执行 txCommit 方法提交事务。&lt;/p&gt;
+&lt;p&gt;但是，RabbitMQ事务同步阻塞，因此一般不会这样做。更常用的方法是 Confirm 模式。RabbitMQ &lt;strong&gt;Confirm 模式&lt;/strong&gt; 通过异步回调的方式，接收成功回调生产者&lt;code&gt;ack&lt;/code&gt;接口，不成功回调&lt;code&gt;nack&lt;/code&gt;接口。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;RabbitMQ 导致消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RabbitMQ 没有对消息进行持久化，消息就可能随 RabbitMQ 宕机而丢失。解决方法就是调整 Confirm 模式，让 RabbitMQ 在完成消息持久化，消息到了硬盘上，再返回&lt;code&gt;ack&lt;/code&gt;接口。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;消费者导致消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RabbitMQ 在默认自动提交&lt;code&gt;ack&lt;/code&gt;下，如果消息处理完之前消费者挂了，消息会丢失。将自动提交&lt;code&gt;ack&lt;/code&gt;关闭后，如果消费者处理完消息前挂了，RabbitMQ 会认为没有处理成功，再次推送给消费者处理。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;我们可以顺便来看一下 Kafka 和 RocketMQ 的处理&lt;/p&gt;
+&lt;h3 id=&#34;2kafka&#34;&gt;2、Kafka&lt;/h3&gt;
+&lt;h4 id=&#34;21-生产者导致消息丢失&#34;&gt;2.1 生产者导致消息丢失&lt;/h4&gt;
+&lt;p&gt;对于 Kafka 来说，生产者基本不会弄丢消息，因为生产者发送消息会等待 Kafka 响应成功，如果响应失败，生产者会自动不断地重试。&lt;/p&gt;
+&lt;h4 id=&#34;22-kafka-弄丢了数据&#34;&gt;2.2 Kafka 弄丢了数据&lt;/h4&gt;
+&lt;p&gt;Kafka 通常会一台 leader + 两台 follower，当生产者消息刚写入 leader 成功，但是还没同步到 follower 时，leader 宕机了，此时会重新选举 leader，新的 leader 由于还未同步到这条数据，导致该条消息丢失。&lt;/p&gt;
+&lt;p&gt;解决办法是做一些配置，当有其他 follower 同步到了消息后才通知生产者消息接收成功了。配置如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给 topic 设置 &lt;code&gt;replication.factor&lt;/code&gt; 参数：这个值必须大于 1，要求每个 partition 必须有至少 2 个副本。&lt;/li&gt;
+&lt;li&gt;在 Kafka 服务端设置 &lt;code&gt;min.insync.replicas&lt;/code&gt; 参数：这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower。&lt;/li&gt;
+&lt;li&gt;在 producer 端设置 &lt;code&gt;acks=all&lt;/code&gt; ：这个是要求每条数据，必须是&lt;strong&gt;写入所有 replica 之后，才能认为是写成功了&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;按上面的配置配置后，就可以保证在 Kafka Broker 端就算 leader 故障了，进行新 leader 选举切换时，也不会丢失数据。&lt;/p&gt;
+&lt;h4 id=&#34;23-消费者导致消息丢失&#34;&gt;2.3 消费者导致消息丢失&lt;/h4&gt;
+&lt;p&gt;Kafka 消费端弄丢数据原因跟 RabbitMQ 类似，Kafka 消费者会在接收到消息的时候，会自动提交一个 offset 给 Kafka，告诉 Kafka 消息已经处理了。处理方法也跟 RabbitMQ 类似，关闭 offset 的自动提交即可。&lt;/p&gt;
+&lt;h3 id=&#34;3rocketmq&#34;&gt;3、RocketMQ&lt;/h3&gt;
+&lt;p&gt;RocketMQ 导致数据丢失的原因与前面的 RabbitMQ 和 Kafka 都很类似。生产者就是因为网络抖动等原因消息投递失败，或者 RocketMQ 自身的 Master 节点故障，主备切换故障之类的，消费者则有可能是异步处理导致还未处理成功就给 RocketMQ 提交了 offset 标识消息已处理了。&lt;/p&gt;
+&lt;p&gt;在 RocketMQ 中，事务消息可以保证消息零丢失。RocketMQ 的事务消息流程大致如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://static.javajike.com/img/2021/4/2/chulixiaoxidiushidewenti_4.png&#34; alt=&#34;chulixiaoxidiushidewenti_4.png&#34;  /&gt;&lt;/p&gt;
+&lt;p&gt;在上面的事务消息流程中，基于这三个业务流程：发送 half 消息 -&amp;gt; 处理其他业务 -&amp;gt; commit/rollback。我们来讨论下面的几种情况：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;万一生产者发送 half 消息失败，怎么办？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;可以做重试或记录消息到如文件、数据库等地方，直接给用户返回失败，本次请求失败。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;万一生产者发送 half 消息成功，但是处理其他业务失败，又该怎么办呢？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;生产者发送 rollback 请求回滚 RocketMQ 中该条消息，本次请求失败。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;万一生产者发送 half 消息成功，但是 RocketMQ 由于某些原因如网络超时等导致没有响应，怎么处理？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;由于 half 消息已发送成功，此时 RocketMQ 中已经有该条消息了，RocketMQ 会有一个补偿机制，补偿机制会回调你开发好的一个接口，询问你这条消息是要 commit 还是 rollback。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;万一生产者发送 half 消息成功，但是请求 commit 或 rollback 的时候失败了呢？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个问题与上面的问题一样，都是通过 RocketMQ 的补偿机制来处理。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        </item>
+        <item>
         <title>LeetCode 347 - 前 K 个高频元素</title>
         <link>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</link>
         <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</guid>
-        <description>&lt;h1 id=&#34;leetcode-347-top-k-frequent-elementshttpsleetcode-cncomproblemstop-k-frequent-elements&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/top-k-frequent-elements/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/TeaParty.jpg" alt="Featured image of post LeetCode 347 - 前 K 个高频元素" /&gt;&lt;h1 id=&#34;leetcode-347-top-k-frequent-elementshttpsleetcode-cncomproblemstop-k-frequent-elements&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/top-k-frequent-elements/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;LeetCode 347. Top K Frequent Elements&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;Given a non-empty array of integers, return the &lt;em&gt;k&lt;/em&gt; most frequent elements.&lt;/p&gt;
 &lt;p&gt;Example 1:&lt;/p&gt;
@@ -129,7 +398,7 @@ Output: [1]
         <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</guid>
-        <description>&lt;h1 id=&#34;leetcode-451-sort-characters-by-frequencyhttpsleetcode-cncomproblemssort-characters-by-frequency&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/sort-characters-by-frequency/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/TeaParty.jpg" alt="Featured image of post LeetCode 451 - 根据字符出现频率排序" /&gt;&lt;h1 id=&#34;leetcode-451-sort-characters-by-frequencyhttpsleetcode-cncomproblemssort-characters-by-frequency&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/sort-characters-by-frequency/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;[LeetCode] 451. Sort Characters By Frequency&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;题目&#34;&gt;题目：&lt;/h2&gt;
 &lt;p&gt;给定一个字符串，请将字符串里的字符按照出现的频率降序排列。&lt;/p&gt;
@@ -342,6 +611,113 @@ Output: [1]
 &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;时间可以优化到 4 ms。&lt;/p&gt;
 </description>
+        </item>
+        <item>
+        <title>LeetCode 645 - 错误的集合</title>
+        <link>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</link>
+        <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/AfternoonTea.jpg" alt="Featured image of post LeetCode 645 - 错误的集合" /&gt;&lt;h1 id=&#34;645-set-mismatchhttpsleetcode-cncomproblemsset-mismatch&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/set-mismatch/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;645. Set Mismatch&lt;/a&gt;&lt;/h1&gt;
+&lt;h2 id=&#34;题目&#34;&gt;题目&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;集合 &lt;code&gt;s&lt;/code&gt; 包含从 &lt;code&gt;1&lt;/code&gt; 到 &lt;code&gt;n&lt;/code&gt; 的整数。不幸的是，因为数据错误，导致集合里面某一个数字复制了成了集合里面的另外一个数字的值，导致集合 &lt;strong&gt;丢失了一个数&lt;/strong&gt;字 并且 有一个数字重复 。&lt;/p&gt;
+&lt;p&gt;给定一个数组 &lt;code&gt;nums&lt;/code&gt; 代表了集合 &lt;code&gt;S&lt;/code&gt; 发生错误后的结果。&lt;/p&gt;
+&lt;p&gt;请你找出重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;示例 1：&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;输入：nums = [1,2,2,4]
+输出：[2,3]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;示例 2：&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;输入：nums = [1,1]
+输出：[1,2]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;提示：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;2 &amp;lt;= nums.length &amp;lt;= 104&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;1 &amp;lt;= nums[i] &amp;lt;= 104&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;题解&#34;&gt;题解&lt;/h2&gt;
+&lt;h3 id=&#34;思路1哈希表&#34;&gt;思路1：哈希表&lt;/h3&gt;
+&lt;p&gt;以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。&lt;/p&gt;
+&lt;p&gt;在[&lt;a class=&#34;link&#34; href=&#34;https://winterorch.github.io/p/leetcode-451-%e6%a0%b9%e6%8d%ae%e5%ad%97%e7%ac%a6%e5%87%ba%e7%8e%b0%e9%a2%91%e7%8e%87%e6%8e%92%e5%ba%8f/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;LeetCode 451 - 根据字符出现频率排序&lt;/a&gt;]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Solution&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;findErrorNums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;//创建map用于指示数字是否出现过
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;kt&#34;&gt;boolean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;boolean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;];&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;];&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//存储的同时查询数字是否为第二次出现
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;){&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]){&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//遍历hash表，查找丢失的数字
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++){&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]){&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;思路2位运算&#34;&gt;思路2：位运算&lt;/h3&gt;
+&lt;p&gt;如果将 &lt;code&gt;nums&lt;/code&gt; 和&lt;code&gt;1&lt;/code&gt; ~ &lt;code&gt;n&lt;/code&gt; 这2n个数字异或，最后的结果 &lt;code&gt;xor&lt;/code&gt; 将会是丢失的数字 &lt;code&gt;n1&lt;/code&gt; 与重复的数字 &lt;code&gt;n2&lt;/code&gt; 的异或。&lt;code&gt;xor&lt;/code&gt; 中的每一个值都是 &lt;code&gt;n1&lt;/code&gt; 与 &lt;code&gt;n2&lt;/code&gt; 的二进制表示中不相同的位。&lt;/p&gt;
+&lt;p&gt;取其中的一位 &lt;code&gt;bit&lt;/code&gt; 与 &lt;code&gt;nums&lt;/code&gt; 逐个异或，可以将 &lt;code&gt;nums&lt;/code&gt; 分成两组，一组应该存在 &lt;code&gt;n1&lt;/code&gt;但它缺失了，另一组 &lt;code&gt;n2&lt;/code&gt; 出现了两次。&lt;/p&gt;
+&lt;p&gt;取  &lt;code&gt;bit&lt;/code&gt; 和 &lt;code&gt;1&lt;/code&gt; ~ &lt;code&gt;n&lt;/code&gt; 逐个异或同样可以将其分成两组。将对应的组别异或即可得到 &lt;code&gt;n1&lt;/code&gt; 与 &lt;code&gt;n2&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;最后查找 &lt;code&gt;nums&lt;/code&gt; 中出现过的数字为 &lt;code&gt;n2&lt;/code&gt; ，否则其为 &lt;code&gt;n1&lt;/code&gt; 。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Solution&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;findErrorNums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//计算 n1 ^ n2
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//取 n1 与 n2 二进制表示中一个不相同的位
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;lowbit&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;xor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//将 nums 分成两组
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;lowbit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;num1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;num2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//将 1 ~ n 分成两组并异或得到 n1 和 n2
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;lowbit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;num1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;num2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        
+        &lt;span class=&#34;c1&#34;&gt;//辨别 n1 和 n2
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nums&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;};&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;};&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
         </item>
         <item>
         <title>Netty - 基础知识</title>
@@ -629,7 +1005,7 @@ Output: [1]
         <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</guid>
-        <description>&lt;h1 id=&#34;lcp-07-传递信息httpsleetcode-cncomproblemschuan-di-xin-xi&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/chuan-di-xin-xi/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/AfternoonTea.jpg" alt="Featured image of post LeetCode LCP 07 - 传递信息" /&gt;&lt;h1 id=&#34;lcp-07-传递信息httpsleetcode-cncomproblemschuan-di-xin-xi&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/chuan-di-xin-xi/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;LCP 07. 传递信息&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;题目&#34;&gt;&lt;strong&gt;题目：&lt;/strong&gt;&lt;/h2&gt;
 &lt;blockquote&gt;
@@ -1316,7 +1692,7 @@ appendfsync no        #让操作系统决定何时进行同步
         <pubDate>Sun, 27 Jun 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</guid>
-        <description>&lt;h1 id=&#34;leetcode-815-bus-routes&#34;&gt;[LeetCode] 815. Bus Routes&lt;/h1&gt;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/TeaParty.jpg" alt="Featured image of post LeetCode 815 - 公交路线" /&gt;&lt;h1 id=&#34;leetcode-815-bus-routes&#34;&gt;[LeetCode] 815. Bus Routes&lt;/h1&gt;
 &lt;p&gt;We have a list of bus routes. Each &lt;code&gt;routes[i]&lt;/code&gt; is a bus route that the i-th bus repeats forever. For example if &lt;code&gt;routes[0] = [1, 5, 7]&lt;/code&gt;, this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.&lt;/p&gt;
 &lt;p&gt;We start at bus stop &lt;code&gt;S&lt;/code&gt; (initially not on a bus), and we want to go to bus stop &lt;code&gt;T&lt;/code&gt;. Travelling by buses only, what is the least number of buses we must take to reach our destination? Return -1 if it is not possible.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Example 1:&lt;/strong&gt;&lt;/p&gt;
@@ -1634,7 +2010,7 @@ Output: -1
         <pubDate>Thu, 24 Jun 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</guid>
-        <description>&lt;h1 id=&#34;leetcode-752-open-the-lock&#34;&gt;[LeetCode] 752. Open the Lock&lt;/h1&gt;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/TeaParty.jpg" alt="Featured image of post LeetCode 752 - 打开转盘锁" /&gt;&lt;h1 id=&#34;leetcode-752-open-the-lock&#34;&gt;[LeetCode] 752. Open the Lock&lt;/h1&gt;
 &lt;p&gt;You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &lt;code&gt;&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;&lt;/code&gt;. The wheels can rotate freely and wrap around: for example we can turn &lt;code&gt;&#39;9&#39;&lt;/code&gt; to be &lt;code&gt;&#39;0&#39;&lt;/code&gt;, or &lt;code&gt;&#39;0&#39;&lt;/code&gt; to be &lt;code&gt;&#39;9&#39;&lt;/code&gt;. Each move consists of turning one wheel one slot.&lt;/p&gt;
 &lt;p&gt;The lock initially starts at &lt;code&gt;&#39;0000&#39;&lt;/code&gt;, a string representing the state of the 4 wheels.&lt;/p&gt;
 &lt;p&gt;You are given a list of &lt;code&gt;deadends&lt;/code&gt; dead ends, meaning if the lock displays any of these codes, the wheels of the lock will stop turning and you will be unable to open it.&lt;/p&gt;
@@ -1918,7 +2294,7 @@ Output: -1
         <pubDate>Sun, 20 Jun 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</guid>
-        <description>&lt;h1 id=&#34;剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/AfternoonTea.jpg" alt="Featured image of post 剑指 Offer 56 - I. 数组中数字出现的次数" /&gt;&lt;h1 id=&#34;剑指-offer-56---i-数组中数字出现的次数httpsleetcode-cncomproblemsshu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;剑指 Offer 56 - I. 数组中数字出现的次数&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。&lt;/p&gt;
 &lt;p&gt;示例 1：&lt;/p&gt;
@@ -2868,7 +3244,7 @@ Output: -1
         <pubDate>Tue, 01 Jun 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</guid>
-        <description>&lt;h1 id=&#34;剑指-offer-59---i-滑动窗口的最大值httpsleetcode-cncomproblemshua-dong-chuang-kou-de-zui-da-zhi-lcof&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/AfternoonTea.jpg" alt="Featured image of post 剑指 Offer 59 - I. 滑动窗口的最大值" /&gt;&lt;h1 id=&#34;剑指-offer-59---i-滑动窗口的最大值httpsleetcode-cncomproblemshua-dong-chuang-kou-de-zui-da-zhi-lcof&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;剑指 Offer 59 - I. 滑动窗口的最大值&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;给定一个数组 &lt;code&gt;nums&lt;/code&gt; 和滑动窗口的大小 &lt;code&gt;k&lt;/code&gt;，请找出所有滑动窗口里的最大值。&lt;/p&gt;
 &lt;p&gt;示例 1：&lt;/p&gt;
@@ -3413,7 +3789,7 @@ Output: -1
         <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
         
         <guid>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</guid>
-        <description>&lt;h1 id=&#34;leetcode-354-russian-doll-envelopeshttpsleetcode-cncomproblemsrussian-doll-envelopes&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/russian-doll-envelopes/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="https://winterorch.github.io/images/category/leetcode/TeaParty.jpg" alt="Featured image of post LeetCode 354 - 俄罗斯套娃信封问题" /&gt;&lt;h1 id=&#34;leetcode-354-russian-doll-envelopeshttpsleetcode-cncomproblemsrussian-doll-envelopes&#34;&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/russian-doll-envelopes/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;LeetCode 354. Russian Doll Envelopes&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;You have a number of envelopes with widths and heights given as a pair of integers &lt;code&gt;(w, h)&lt;/code&gt;. One envelope can fit into another if and only if both the width and height of one envelope is greater than the width and height of the other envelope.&lt;/p&gt;
 &lt;p&gt;What is the maximum number of envelopes can you Russian doll? (put one inside other)&lt;/p&gt;

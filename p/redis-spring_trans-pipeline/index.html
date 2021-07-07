@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='附加 Spring Redis 中 .lua 的使用. Pipeline 在 Spring Redis 程序优化中大有用武之地.'><title>Redis - Spring Data Redis 中的 Transaction 与 Pipeline</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/redis-spring_trans-pipeline/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Redis - Spring Data Redis 中的 Transaction 与 Pipeline'>
+<meta property='og:description' content='附加 Spring Redis 中 .lua 的使用. Pipeline 在 Spring Redis 程序优化中大有用武之地.'>
+<meta property='og:url' content='https://winterorch.github.io/p/redis-spring_trans-pipeline/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Redis' /><meta property='article:published_time' content='2021-07-06T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-06T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/ArseniXC/Village.jpg' />
+<meta name="twitter:title" content="Redis - Spring Data Redis 中的 Transaction 与 Pipeline">
+<meta name="twitter:description" content="附加 Spring Redis 中 .lua 的使用. Pipeline 在 Spring Redis 程序优化中大有用武之地."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/ArseniXC/Village.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis-spring_trans-pipeline/">
+                
+                    <img src="/images/feature/ArseniXC/Village.jpg" loading="lazy" alt="Featured image of post Redis - Spring Data Redis 中的 Transaction 与 Pipeline" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" style="background-color: #984B4B; color: #fff;">
+                Redis
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/redis-spring_trans-pipeline/">Redis - Spring Data Redis 中的 Transaction 与 Pipeline</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        附加 Spring Redis 中 .lua 的使用. Pipeline 在 Spring Redis 程序优化中大有用武之地.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 06, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>Redis 提供事务(Transaction)和管道(Pipeline)，两个概念都不复杂，可以对比来看，管道可以广泛用于提升 Redis 读写效率。</p>
+<h2 id="redis-transactions">Redis Transactions</h2>
+<p>Redis 原本通过 <code>multi</code> <code>exec</code> 和 <code>discard</code> 指令执行事务。<code>RedisTemplate&lt;&gt;</code> 本身提供三个同名方法来支持事务，但是 <code>RedisTemplate</code> 本身封装程度高，<!-- raw HTML omitted -->不能保证这种事务定义下的所有操作在同一次 Redis 连接中被执行<!-- raw HTML omitted -->。</p>
+<p>因此，作为一种封装度更低的替代，Spring Data Redis 提供 <code>SessionCallback</code> 来确保多个操作在同一次 Redis 链接中进行。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//execute a transaction
+</span><span class="c1"></span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">txResults</span> <span class="o">=</span> <span class="n">redisTemplate</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="k">new</span> <span class="n">SessionCallback</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;()</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="nf">execute</span><span class="o">(</span><span class="n">RedisOperations</span> <span class="n">operations</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataAccessException</span> <span class="o">{</span>
+    <span class="n">operations</span><span class="o">.</span><span class="na">multi</span><span class="o">();</span>
+    <span class="n">operations</span><span class="o">.</span><span class="na">opsForSet</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;key&#34;</span><span class="o">,</span> <span class="s">&#34;value1&#34;</span><span class="o">);</span>
+
+    <span class="c1">// This will contain the results of all operations in the transaction
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">operations</span><span class="o">.</span><span class="na">exec</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">});</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Number of items added to set: &#34;</span> <span class="o">+</span> <span class="n">txResults</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">0</span><span class="o">));</span>
+</code></pre></div><p><code>SessionCallback</code> 的 <code>execute</code> 返回值仍会经过 <code>RedisTemplate</code> 的反序列化操作 ，然后作为 <code>RedisTemplate</code> 的 <code>execute</code> 结果返回。</p>
+<blockquote>
+<p>1.1 后对于连接返回值的转换与否发生了变化</p>
+<p>As of version 1.1, an important change has been made to the <code>exec</code> methods of <code>RedisConnection</code> and <code>RedisTemplate</code>. Previously, these methods returned the results of transactions directly from the connectors. This means that the data types often differed from those returned from the methods of <code>RedisConnection</code>. For example, <code>zAdd</code> returns a boolean indicating whether the element has been added to the sorted set. Most connectors return this value as a long, and Spring Data Redis performs the conversion. Another common difference is that most connectors return a status reply (usually the string, <code>OK</code>) for operations such as <code>set</code>. These replies are typically discarded by Spring Data Redis. Prior to 1.1, these conversions were not performed on the results of <code>exec</code>. Also, results were not deserialized in <code>RedisTemplate</code>, so they often included raw byte arrays. If this change breaks your application, set <code>convertPipelineAndTxResults</code> to <code>false</code> on your <code>RedisConnectionFactory</code> to disable this behavior.</p>
+</blockquote>
+<h3 id="transactional">@Transactional</h3>
+<p><code>RedisTemplate</code> 默认不能加 <code>@Transactional</code> 标签，但可以通过 <code>template.setEnableTransactionSupport(true)</code> 来开启。</p>
+<blockquote>
+<p>Enabling transaction support binds <code>RedisConnection</code> to the current transaction backed by a <code>ThreadLocal</code>. If the transaction finishes without errors, the Redis transaction gets commited with <code>EXEC</code>, otherwise rolled back with <code>DISCARD</code>.</p>
+</blockquote>
+<p>但这样做存在一些限制</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// must be performed on thread-bound connection
+</span><span class="c1"></span><span class="n">template</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;thing1&#34;</span><span class="o">,</span> <span class="s">&#34;thing2&#34;</span><span class="o">);</span>
+
+<span class="c1">// read operation must be run on a free (not transaction-aware) connection
+</span><span class="c1"></span><span class="n">template</span><span class="o">.</span><span class="na">keys</span><span class="o">(</span><span class="s">&#34;*&#34;</span><span class="o">);</span>
+
+<span class="c1">// returns null as values set within a transaction are not visible
+</span><span class="c1"></span><span class="n">template</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;thing1&#34;</span><span class="o">);</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h2 id="redis-pipelining">Redis Pipelining</h2>
+<p>Redis 管道允许一次性发送多条指令而不单独等待每条的回复（即不用等待 RTT），所有恢复将在最后一次性读取。这样做会提升指令发送速度，尤其在向一个 List 中添加大量元素时。</p>
+<p>如果完全不关注返回结果，可以使用 <code>RedisTemplate</code> 的 <code>execute</code> 方法，传递 <code>true</code> 的 pipeline 参数。<code>executePipelined</code> 方法以 <code>RedisCallback</code> 或 <code>SessionCallback</code> 为输入，在一个 pipeline 中完成运行并返回所有结果。</p>
+<p>以下是一个通过 pipeline 从队列右端 <code>pop</code> 出一堆元素的方法：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">stringRedisTemplate</span><span class="o">.</span><span class="na">executePipelined</span><span class="o">(</span>
+  <span class="k">new</span> <span class="n">RedisCallback</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">doInRedis</span><span class="o">(</span><span class="n">RedisConnection</span> <span class="n">connection</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataAccessException</span> <span class="o">{</span>
+      <span class="n">StringRedisConnection</span> <span class="n">stringRedisConn</span> <span class="o">=</span> <span class="o">(</span><span class="n">StringRedisConnection</span><span class="o">)</span><span class="n">connection</span><span class="o">;</span>
+      <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span> <span class="n">batchSize</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="n">stringRedisConn</span><span class="o">.</span><span class="na">rPop</span><span class="o">(</span><span class="s">&#34;myqueue&#34;</span><span class="o">);</span>
+      <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">});</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h2 id="两者区别">两者区别</h2>
+<p>首先，Pipline 和 Transaction 是完全不同的两种机制，互相不能够替代——</p>
+<ol>
+<li>
+<p><strong>Pipeline 本质是客户端对指令进行打包发送的行为</strong>，服务端是透明的；<strong>Transaction 本质是服务端执行指令时进行的打包</strong>，由客户端指令指挥</p>
+<p>因此，Pipeline 最终要的作用是减少客户端等待时间，从而提升客户端程序性能，<!-- raw HTML omitted -->不能保证原子性<!-- raw HTML omitted -->（服务端只会看作一系列普通指令，当然不会保证原子性的）。而 Transaction 因为使用 MULTI/EXEC 事务机制，虽然从 SQL 事务 ACID 角度来看不满足原子性，但如果全部指令都能被正确执行，程序上是<!-- raw HTML omitted -->满足原子性<!-- raw HTML omitted -->的，执行过程中不会被打断。</p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><strong>Pipeline 不会阻塞服务端</strong>，但 <strong>Transaction 会阻塞服务端</strong></p>
+<p>实际应用中使用 LUA 脚本来满足原子性要比 Transaction 高效得多。考虑网络吞吐问题，需要高频执行的脚本甚至可以预加载到服务端，需要调用时直接传脚本 SHA1（在预加载时会由服务端发回） + 参数 来进行调用。</p>
+</li>
+</ol>
+<!-- raw HTML omitted -->
+<h2 id="lua">LUA</h2>
+<p>值得注意的一点是启动程序时可以将 LUA 脚本预加载到 Redis 服务器</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@PostConstruct</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">loadScript</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">execute</span> <span class="o">=</span> <span class="n">strRedisTemplate</span><span class="o">.</span><span class="na">execute</span><span class="o">((</span><span class="n">RedisCallback</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;)</span> <span class="n">connection</span> <span class="o">-&gt;</span>
+            <span class="n">connection</span><span class="o">.</span><span class="na">scriptLoad</span><span class="o">(</span><span class="n">flashSaleIfExistScript</span><span class="o">.</span><span class="na">getScriptAsString</span><span class="o">().</span><span class="na">getBytes</span><span class="o">()));</span>
+<span class="o">}</span>
+</code></pre></div><p><code>scriptLoad</code> 的返回结果是脚本对应的 SHA1，但是我们其实并不需要保存，因为<code>RedisScript</code> 本身在加载脚本时会计算一次 SHA1 ，可以直接通过 <code>getSha1()</code> 获得。</p>
+<p>需要调用时直接传脚本 SHA1（在预加载时会由服务端发回） +  参数 来进行调用。Redis 支持的脚本执行指令包括 <code>eval</code> 和 <code>evalsha</code> 两个，Redis Template 将这两条指令都封装在了 <code>org.springframework.data.redis.connection</code> 包中 <code>RedisScriptingCommands</code> 接口下。</p>
+<blockquote>
+<p><code>ScriptExecutor</code> 在执行时会首先通过 <code>evalsha</code> 来执行脚本，如果 Redis 脚本缓存中没有对应脚本再退回到 <code>eval</code> 方法。</p>
+</blockquote>
+<p>根据以上官方文档的描述，我们不需要主动调用 <code>evalsha</code> ，<code>ScriptExecutor</code> 会自动替我们完成。那我们来看看 Spring Data Redis 源码怎么写的，先找到 <code>DefaultScriptExecutor</code> 。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">execute</span><span class="o">(</span><span class="n">RedisScript</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">script</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span> <span class="n">keys</span><span class="o">,</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">script</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">template</span><span class="o">.</span><span class="na">getValueSerializer</span><span class="o">(),</span> <span class="k">this</span><span class="o">.</span><span class="na">template</span><span class="o">.</span><span class="na">getValueSerializer</span><span class="o">(),</span> <span class="n">keys</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">execute</span><span class="o">(</span><span class="n">RedisScript</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">script</span><span class="o">,</span> <span class="n">RedisSerializer</span><span class="o">&lt;?&gt;</span> <span class="n">argsSerializer</span><span class="o">,</span> <span class="n">RedisSerializer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">resultSerializer</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span> <span class="n">keys</span><span class="o">,</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">template</span><span class="o">.</span><span class="na">execute</span><span class="o">((</span><span class="n">connection</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">ReturnType</span> <span class="n">returnType</span> <span class="o">=</span> <span class="n">ReturnType</span><span class="o">.</span><span class="na">fromJavaType</span><span class="o">(</span><span class="n">script</span><span class="o">.</span><span class="na">getResultType</span><span class="o">());</span>
+        <span class="kt">byte</span><span class="o">[][]</span> <span class="n">keysAndArgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">keysAndArgs</span><span class="o">(</span><span class="n">argsSerializer</span><span class="o">,</span> <span class="n">keys</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+        <span class="kt">int</span> <span class="n">keySize</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">keys</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">:</span> <span class="n">0</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">connection</span><span class="o">.</span><span class="na">isPipelined</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">connection</span><span class="o">.</span><span class="na">isQueueing</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">eval</span><span class="o">(</span><span class="n">connection</span><span class="o">,</span> <span class="n">script</span><span class="o">,</span> <span class="n">returnType</span><span class="o">,</span> <span class="n">keySize</span><span class="o">,</span> <span class="n">keysAndArgs</span><span class="o">,</span> <span class="n">resultSerializer</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">connection</span><span class="o">.</span><span class="na">eval</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">scriptBytes</span><span class="o">(</span><span class="n">script</span><span class="o">),</span> <span class="n">returnType</span><span class="o">,</span> <span class="n">keySize</span><span class="o">,</span> <span class="n">keysAndArgs</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+<span class="o">}</span>
+</code></pre></div><p>可以看到，除非在管道或队列操作中，否则所有的 <code>execute</code> 最终都会落到 <code>eval</code> 这个方法上。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">protected</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">eval</span><span class="o">(</span><span class="n">RedisConnection</span> <span class="n">connection</span><span class="o">,</span> <span class="n">RedisScript</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">script</span><span class="o">,</span> <span class="n">ReturnType</span> <span class="n">returnType</span><span class="o">,</span> <span class="kt">int</span> <span class="n">numKeys</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[][]</span> <span class="n">keysAndArgs</span><span class="o">,</span> <span class="n">RedisSerializer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">resultSerializer</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Object</span> <span class="n">result</span><span class="o">;</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">evalSha</span><span class="o">(</span><span class="n">script</span><span class="o">.</span><span class="na">getSha1</span><span class="o">(),</span> <span class="n">returnType</span><span class="o">,</span> <span class="n">numKeys</span><span class="o">,</span> <span class="n">keysAndArgs</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">var9</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">ScriptUtils</span><span class="o">.</span><span class="na">exceptionContainsNoScriptError</span><span class="o">(</span><span class="n">var9</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="n">var9</span> <span class="k">instanceof</span> <span class="n">RuntimeException</span> <span class="o">?</span> <span class="o">(</span><span class="n">RuntimeException</span><span class="o">)</span><span class="n">var9</span> <span class="o">:</span> <span class="k">new</span> <span class="n">RedisSystemException</span><span class="o">(</span><span class="n">var9</span><span class="o">.</span><span class="na">getMessage</span><span class="o">(),</span> <span class="n">var9</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">eval</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">scriptBytes</span><span class="o">(</span><span class="n">script</span><span class="o">),</span> <span class="n">returnType</span><span class="o">,</span> <span class="n">numKeys</span><span class="o">,</span> <span class="n">keysAndArgs</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">script</span><span class="o">.</span><span class="na">getResultType</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">deserializeResult</span><span class="o">(</span><span class="n">resultSerializer</span><span class="o">,</span> <span class="n">result</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><p>确实，<code>evalSha</code> 如果不能得到正确结果就会抛异常，转而用 <code>eval</code> 方法了。这对于不预载脚本的场景是不是低效了点？</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/redis/">Redis</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Street2.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Street2.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 常用数据类型</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-common_questions/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" data-key="redis-common_questions" data-hash="/images/feature/scenes/Windmill.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis - 面试常见问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/rabbitmq_introduction/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Harbor.jpg" loading="lazy" data-key="rabbitmq_introduction" data-hash="/images/feature/ArseniXC/Harbor.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">RabbitMQ - 基础知识</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/netty_basic/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Ikarus-256.jpg" loading="lazy" data-key="netty_basic" data-hash="/images/feature/ArseniXC/Ikarus-256.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Netty - 基础知识</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Arctic.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring - 依赖注入注解的区分</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#redis-transactions">Redis Transactions</a>
+      <ol>
+        <li><a href="#transactional">@Transactional</a></li>
+      </ol>
+    </li>
+    <li><a href="#redis-pipelining">Redis Pipelining</a></li>
+    <li><a href="#两者区别">两者区别</a></li>
+    <li><a href="#lua">LUA</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
