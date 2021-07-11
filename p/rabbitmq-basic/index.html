@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='整理了一下RabbitMQ学习和在SpringBoot使用过程中作的笔记.'><title>RabbitMQ - 基本概念和 SpringBoot 下的使用</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/rabbitmq-basic/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='RabbitMQ - 基本概念和 SpringBoot 下的使用'>
+<meta property='og:description' content='整理了一下RabbitMQ学习和在SpringBoot使用过程中作的笔记.'>
+<meta property='og:url' content='https://winterorch.github.io/p/rabbitmq-basic/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='RabbitMQ' /><meta property='article:tag' content='消息队列' /><meta property='article:published_time' content='2021-07-07T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-07T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg' />
+<meta name="twitter:title" content="RabbitMQ - 基本概念和 SpringBoot 下的使用">
+<meta name="twitter:description" content="整理了一下RabbitMQ学习和在SpringBoot使用过程中作的笔记."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/rabbitmq-basic/">
+                
+                    <img src="/images/feature/ArseniXC/Harbor.jpg" loading="lazy" alt="Featured image of post RabbitMQ - 基本概念和 SpringBoot 下的使用" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" >
+                消息队列
+            </a>
+        
+            <a href="/categories/rabbitmq/" >
+                RabbitMQ
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/rabbitmq-basic/">RabbitMQ - 基本概念和 SpringBoot 下的使用</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        整理了一下RabbitMQ学习和在SpringBoot使用过程中作的笔记.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 07, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>生产者通过指定 <strong>RoutingKey (路由键)</strong> 指定消息路由规则。示例为 Spring AMQP 中 RabbitMQ 的使用。</p>
+<blockquote>
+<p>Spring AMQP 文档：https://docs.spring.io/spring-amqp/docs/current/reference/html/</p>
+</blockquote>
+<h3 id="exchange-types-交换器类型">Exchange Types （交换器类型）</h3>
+<ul>
+<li>
+<p><strong>fanout</strong></p>
+<p>最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，<!-- raw HTML omitted -->常用来广播消息<!-- raw HTML omitted --></p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
+</span><span class="cm"> * Fanout
+</span><span class="cm"> */</span>
+<span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="n">FanoutExchange</span> <span class="nf">fanoutExc</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">FanoutExchange</span><span class="o">(</span><span class="n">FANOUT_EXCHANGE</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="n">Binding</span> <span class="nf">fanoutBinding1</span><span class="o">(</span><span class="n">Queue</span> <span class="n">topicQueue1</span><span class="o">,</span> <span class="n">FanoutExchange</span> <span class="n">fanoutExc</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">topicQueue1</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">fanoutExc</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="n">Binding</span> <span class="nf">fanoutBinding2</span><span class="o">(</span><span class="n">Queue</span> <span class="n">topicQueue2</span><span class="o">,</span> <span class="n">FanoutExchange</span> <span class="n">fanoutExc</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">topicQueue2</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">fanoutExc</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+</li>
+<li>
+<p><strong>direct</strong></p>
+<p>将消息路由到 BindingKey 与 RoutingKey 完全匹配的队列中，<!-- raw HTML omitted -->常用来将有优先级的任务发到对应队列，得到更多处理资源<!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><strong>topic</strong></p>
+<p>将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：</p>
+<ul>
+<li>RoutingKey 为一个点号 <code>.</code> 分隔的字符串（被点号 <code>.</code> 分隔开的每一段独立的字符串称为一个单词），如 <code>com.rabbitmq.client</code>、<code>java.util.concurrent</code>、<code>com.hidden.client</code></li>
+<li>BindingKey 和 RoutingKey 一样也是点号 <code>．</code>分隔的字符串</li>
+<li>BindingKey 中可以存在两种特殊字符串 <code>*</code> 和 <code>#</code>，用于做模糊匹配，其中 <code>*</code> 用于匹配一个单词，<code>#</code> 用于匹配多个单词(可以是零个)</li>
+</ul>
+<p>所以，如果当一个队列的绑定键为 <code>#</code> 的时候，这个队列将会无视消息的路由键，接收所有的消息。
+当 <code>*</code> (星号) 和 <code>#</code> (井号) 这两个特殊字符都未在绑定键中出现的时候，此时主题交换机也就相当于直连交换机。</p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><strong>headers</strong> （不推荐）</p>
+<p>不依赖路由键而是 headers 属性进行完全匹配，性能很差因而不实用</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="n">HeadersExchange</span> <span class="nf">headersExc</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">HeadersExchange</span><span class="o">(</span><span class="n">HEADERS_EXCHANGE</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="n">Queue</span> <span class="nf">headerQueue</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">Queue</span><span class="o">(</span><span class="n">HEADER_QUEUE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="n">Binding</span> <span class="nf">headerBinding</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;header1&#34;</span><span class="o">,</span> <span class="s">&#34;value1&#34;</span><span class="o">);</span>
+    <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;header2&#34;</span><span class="o">,</span> <span class="s">&#34;value2&#34;</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">headerQueue</span><span class="o">()).</span><span class="na">to</span><span class="o">(</span><span class="n">headersExc</span><span class="o">()).</span><span class="na">whereAll</span><span class="o">(</span><span class="n">map</span><span class="o">).</span><span class="na">match</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h3 id="可以如何使用">可以如何使用</h3>
+<p>简单来讲，消息队列可以用来解耦模块、充当工作缓存、流量削峰</p>
+<ul>
+<li>
+<p><strong>（简单模式）单生产者对应单消费者</strong></p>
+<p>相当于工作缓存，如邮件服务从队列中取件进行发送</p>
+</li>
+<li>
+<p><strong>（工作队列模式）单生产者对应多消费者</strong></p>
+<p>资源密集型任务中，多个消费者并行处理</p>
+</li>
+<li>
+<p><strong>（订阅模式）单生产者发到多消费者</strong></p>
+<p>如库存更新后需要通知多个缓存和多个数据库，则通过 <strong>fanout</strong> 交换器分出两个消息队列，分别对应缓存和数据库</p>
+</li>
+<li>
+<p><strong>（路由模式）有选择地发送和接收</strong></p>
+<p>指定路由 key</p>
+</li>
+<li>
+<p><strong>（主题模式）将队列需求绑定在特定模式上</strong></p>
+</li>
+<li>
+<p><strong>（远程过程调用）在远程计算机上运行功能并等待结果</strong></p>
+<p>通过RPC在远程计算机上运行功能并等待结果</p>
+</li>
+<li>
+<p><strong>（发布者确认）异步确认发送者发布消息</strong></p>
+<p>用于实现可靠地分布，如扣款</p>
+</li>
+</ul>
+<hr>
+<h3 id="如何解决消息丢失">如何解决消息丢失</h3>
+<p>消息丢失可能出现在生产者至MQ、消息队列本身、消费者三处。</p>
+<!-- raw HTML omitted -->
+<p><strong>生产者导致的消息丢失</strong></p>
+<p>RabbitMQ <strong>事务机制</strong>为了避免消息丢失，可以在发送消息前，先开启执行 txSelect 方法开启一个事务，接着发送消息，如果消息投递失败，执行 txRollback 回滚事务，再执行重试操作重新发送，如果消息投递成功，执行 txCommit 方法提交事务。</p>
+<p>但是，RabbitMQ事务同步阻塞，因此一般不会这样做。更常用的方法是 Confirm 模式。RabbitMQ <strong>Confirm 模式</strong> 通过异步回调的方式，接收成功回调生产者<code>ack</code>接口，不成功回调<code>nack</code>接口。</p>
+<p>**注意：**Spring AMPQ 默认 <code>publisher-confirm</code> 为 <code>false</code>，需要手动设 <code>true</code>，此处可见下文关于 Spring AMQP publisher 参数内容。</p>
+<blockquote>
+<p>因此，生产者与 broker 间消息可靠性保证思路就是</p>
+<ul>
+<li>当消息发送到broker的时候，执行监听的回调函数。</li>
+<li>在生产端要维护一个消息发送的表，消息发送的时候记录消息id，在消息成功落地broker磁盘并且进行回调确认（ack）的时候，根据本地消息表和回调确认的消息id进行对比，这样可以确保生产端的消息表中的没有进行回调确认（或者回调确认时网络问题）的消息进行补救式的重发，当然不可避免的就会在消息端可能会造成消息的重复消息。针对消费端重复消息，在消费端进行幂等处理。</li>
+</ul>
+</blockquote>
+<!-- raw HTML omitted -->
+<p><strong>RabbitMQ 导致消息丢失</strong></p>
+<p>RabbitMQ 没有对消息进行持久化，消息就可能随 RabbitMQ 宕机而丢失。解决方法就是调整 Confirm 模式，让 RabbitMQ 在完成消息持久化，消息到了硬盘上，再返回<code>ack</code>接口。</p>
+<!-- raw HTML omitted -->
+<p><strong>消费者导致消息丢失</strong></p>
+<p>RabbitMQ 在默认的自动提交<code>ack</code>配置下，如果消息处理完之前消费者挂了，消息会丢失。将自动提交<code>ack</code>关闭后，如果消费者处理完消息前挂了，RabbitMQ 会认为没有处理成功，再次推送给消费者处理。</p>
+<blockquote>
+<p>我们可以顺便来看一下 Kafka 和 RocketMQ 的处理</p>
+<p><strong>Kafka</strong></p>
+<p><strong>生产者导致消息丢失</strong></p>
+<p>对于 Kafka 来说，生产者基本不会弄丢消息，因为生产者发送消息会等待 Kafka 响应成功，如果响应失败，生产者会自动不断地重试。</p>
+<p><strong>Broker端弄丢了数据</strong></p>
+<p>Kafka 通常会一台 leader + 两台 follower，当生产者消息刚写入 leader 成功，但是还没同步到 follower 时，leader 宕机了，此时会重新选举 leader，新的 leader 由于还未同步到这条数据，导致该条消息丢失。</p>
+<p>解决办法是做一些配置，当有其他 follower 同步到了消息后才通知生产者消息接收成功了。配置如下：</p>
+<ul>
+<li>给 topic 设置 <code>replication.factor</code> 参数：这个值必须大于 1，要求每个 partition 必须有至少 2 个副本。</li>
+<li>在 Kafka 服务端设置 <code>min.insync.replicas</code> 参数：这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower。</li>
+<li>在 producer 端设置 <code>acks=all</code> ：这个是要求每条数据，必须是<strong>写入所有 replica 之后，才能认为是写成功了</strong>。</li>
+</ul>
+<p>按上面的配置配置后，就可以保证在 Kafka Broker 端就算 leader 故障了，进行新 leader 选举切换时，也不会丢失数据。</p>
+<p><strong>消费者导致消息丢失</strong></p>
+<p>Kafka 消费端弄丢数据原因跟 RabbitMQ 类似，Kafka 消费者会在接收到消息的时候，会自动提交一个 offset 给 Kafka，告诉 Kafka 消息已经处理了。处理方法也跟 RabbitMQ 类似，关闭 offset 的自动提交即可。</p>
+<hr>
+<p><strong>RocketMQ</strong></p>
+<p>RocketMQ 导致数据丢失的原因与前面的 RabbitMQ 和 Kafka 都很类似。生产者就是因为网络抖动等原因消息投递失败，或者 RocketMQ 自身的 Master 节点故障，主备切换故障之类的，消费者则有可能是异步处理导致还未处理成功就给 RocketMQ 提交了 offset 标识消息已处理了。</p>
+<p>在 RocketMQ 中，事务消息可以保证消息零丢失。RocketMQ 的事务消息基于这三个业务流程：生产者向RocketMQ发送 half 消息 -&gt; RocketMQ 对 half 消息响应 -&gt; commit/rollback。</p>
+<ul>
+<li>如果生产者发送 half 失败，则作重试或对消息作持久化，给用户返回失败</li>
+<li>如果RocketMQ处理失败，则生产者回滚该条消息，请求失败</li>
+<li>如果 half 发送成功，但 RocketMQ 响应没能够传回，则会通过补偿机制回调接口，决定 commit 还是 rollback</li>
+<li>包括 commit 或 rollback 时发生的失败都是用补偿机制处理</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="spring-amqp">Spring AMQP</h2>
+<h3 id="一般-producer-consumer-设置">一般 Producer Consumer 设置</h3>
+<p><strong>Producer</strong></p>
+<p>写一个 <code>Config</code> 类来进行 Binding</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BindingConfig</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">first</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">Exchange_NAME</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">RoutingKey1</span><span class="o">=</span><span class="s">&#34;directKey1&#34;</span><span class="o">;</span>
+    
+   <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">Queue</span> <span class="nf">queueFirst</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Queue</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">DirectExchange</span> <span class="nf">directExchange</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">DirectExchange</span><span class="o">(</span><span class="n">Exchange_NAME</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="c1">//利用BindingBuilder绑定Direct与queueFirst
+</span><span class="c1"></span>    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">Binding</span> <span class="nf">bindingExchangeFirst</span><span class="o">(</span><span class="n">Queue</span> <span class="n">queueFirst</span><span class="o">,</span> <span class="n">DirectExchange</span> <span class="n">directExchange</span><span class="o">){</span>
+        <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">queueFirst</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">directExchange</span><span class="o">).</span><span class="na">with</span><span class="o">(</span><span class="n">RoutingKey1</span><span class="o">);</span>
+    <span class="o">}</span>  
+<span class="o">}</span>
+</code></pre></div><p>为消息套一个 UUID，方便在ack或nack时回调处理。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="n">CorrelationData</span> <span class="nf">getCorrelationData</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="n">CorrelationData</span><span class="o">(</span><span class="n">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div><p><code>ConfirmCallBack</code> 只返回标识值，因此作为 Publisher，可以维护一个 CorrelationID 到 发送信息 的 K-V 关系，从而在发送失败时再做处理，或者删除绑定关系。</p>
+<!-- raw HTML omitted -->
+<p><strong>Consumer</strong></p>
+<p>Consumer 侧的 <code>ConnectionFactory</code> 配置和 Producer 侧是完全一样的。<code>BindingConfig</code> 也完全一致：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BindingConfig</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">first</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">Exchange_NAME</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">RoutingKey1</span><span class="o">=</span><span class="s">&#34;directKey1&#34;</span><span class="o">;</span>
+    
+   <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">Queue</span> <span class="nf">queueFirst</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Queue</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">DirectExchange</span> <span class="nf">directExchange</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">DirectExchange</span><span class="o">(</span><span class="n">Exchange_NAME</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="c1">//利用BindingBuilder绑定Direct与queueFirst
+</span><span class="c1"></span>    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">Binding</span> <span class="nf">bindingExchangeFirst</span><span class="o">(</span><span class="n">Queue</span> <span class="n">queueFirst</span><span class="o">,</span> <span class="n">DirectExchange</span> <span class="n">directExchange</span><span class="o">){</span>
+        <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">queueFirst</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">directExchange</span><span class="o">).</span><span class="na">with</span><span class="o">(</span><span class="n">RoutingKey1</span><span class="o">);</span>
+    <span class="o">}</span>  
+<span class="o">}</span>
+</code></pre></div><p>然后通过 <code>@RabbitListener</code> 定义响应函数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMqListener</span> <span class="o">{</span>
+  
+  <span class="nd">@RabbitHandler</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handler</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Binding 过程也可以在 <code>RabbitMqListener</code> 中完成：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">bindings</span><span class="o">=</span><span class="nd">@QueueBinding</span><span class="o">(</span>
+<span class="n">exchange</span><span class="o">=</span><span class="nd">@Exchange</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="o">),</span>
+<span class="n">value</span><span class="o">=</span><span class="nd">@Queue</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;direct.second&#34;</span><span class="o">),</span>
+<span class="n">key</span><span class="o">=</span><span class="s">&#34;directKey2&#34;</span><span class="o">))</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitListener</span> <span class="o">{</span>
+  
+  <span class="nd">@RabbitHandler</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handler</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="回调配置">回调配置</h3>
+<p>AMQP 有三个相关参数：<code>publisher-confirms</code> <code>publisher-returns</code> 和 <code>mandatory</code> 。</p>
+<p>其中 <code>mandatory</code> 主要管的是消息投到 Exchange 之后，Exchange 无法将其路由到任何队列之后的操作，<code>true</code> 则把消息还给生产者，<code>false</code> 则丢弃。不过，按照 Spring 源码的逻辑，不开启 <code>publisher-returns</code> 就不会进行消息回调，因此要 <code>mandatory</code> <code>publisher-returns</code> 必须都开才能起作用。另外，<code>returnCallback</code> 回调时返回的直接是经过封装的 <code>byte[]</code>，需要进行反序列化来还原原消息。</p>
+<p>值得注意的一个小点是，Spring 中的 <code>mandatory</code> 是 template 的参数而不是 rabbitmq 的。</p>
+<p><code>publisher-confirms</code> 是针对消息没有被成功放入Exchange的情况，无论成功失败都会调用回调函数，通过 <code>ConfirmCallback</code> 进行回调。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/rabbitmq/">RabbitMQ</a>
+        
+            <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#exchange-types-交换器类型">Exchange Types （交换器类型）</a></li>
+        <li><a href="#可以如何使用">可以如何使用</a></li>
+        <li><a href="#如何解决消息丢失">如何解决消息丢失</a></li>
+      </ol>
+    </li>
+    <li><a href="#spring-amqp">Spring AMQP</a>
+      <ol>
+        <li><a href="#一般-producer-consumer-设置">一般 Producer Consumer 设置</a></li>
+        <li><a href="#回调配置">回调配置</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

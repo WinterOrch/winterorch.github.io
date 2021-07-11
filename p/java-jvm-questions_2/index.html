@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.'><title>Java - JVM 问题集合 (下)</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/java-jvm-questions_2/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM 问题集合 (下)'>
+<meta property='og:description' content='翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.'>
+<meta property='og:url' content='https://winterorch.github.io/p/java-jvm-questions_2/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='JVM' /><meta property='article:published_time' content='2021-07-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-10T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/ArseniXC/Library.jpg' />
+<meta name="twitter:title" content="Java - JVM 问题集合 (下)">
+<meta name="twitter:description" content="翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/ArseniXC/Library.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java-jvm-questions_2/">
+                
+                    <img src="/images/feature/ArseniXC/Library.jpg" loading="lazy" alt="Featured image of post Java - JVM 问题集合 (下)" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/java%E5%9F%BA%E7%A1%80/" style="background-color: #D26900; color: #fff;">
+                Java基础
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/java-jvm-questions_2/">Java - JVM 问题集合 (下)</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 10, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h3 id="指令重排序与-happens-before-原则">指令重排序与 happens-before 原则</h3>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/b9186dbebe8e">https://www.jianshu.com/p/b9186dbebe8e</a></p>
+</blockquote>
+<p>问题的起因还是指令重排序，重排序之所以存在是因为有多级缓存，线程所作变更先在寄存器或本地缓存完成，然后拷贝到主存以<strong>跨越内存栅栏</strong>（即完成工作内存到主存间的拷贝动作），跨越序列或顺序称为<code>happens-before</code>。仅当写操作线程先跨越内存栅栏，读线程后跨越内存栅栏，写操作线程所作变更才对其它线程可见。</p>
+<ul>
+<li>程序次序规则： 在一个单独的线程中，按照程序代码的执行流顺序，（时间上）先执行的操作happen—before（时间上）后执行的操作
+（<strong>同一个线程中前面的所有写操作对后面的操作可见</strong>）</li>
+<li>管理锁定规则：一个unlock操作happen—before后面（时间上的先后顺序）对同一个锁的lock操作。
+（<strong>如果线程1解锁了monitor a，接着线程2锁定了a，那么，线程1解锁a之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）</strong>）</li>
+<li>volatile变量规则：对一个volatile变量的写操作happen—before后面（时间上）对该变量的读操作。
+（<strong>如果线程1写入了volatile变量v（临界资源），接着线程2读取了v，那么，线程1写入v及之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）</strong>）</li>
+<li>线程启动规则：Thread.start()方法happen—before调用用start的线程前的每一个操作。
+（<strong>假定线程A在执行过程中，通过执行ThreadB.start()来启动线程B，那么线程A对共享变量的修改在接下来线程B开始执行前对线程B可见。注意：线程B启动之后，线程A在对变量修改线程B未必可见。</strong>）</li>
+<li>线程终止规则：线程的所有操作都happen—before对此线程的终止检测，可以通过Thread.join（）方法结束、Thread.isAlive（）的返回值等手段检测到线程已经终止执行。
+(<strong>线程t1写入的所有变量，在任意其它线程t2调用t1.join()，或者t1.isAlive() 成功返回后，都对t2可见。</strong>)</li>
+<li>线程中断规则：对线程interrupt()的调用 happen—before 发生于被中断线程的代码检测到中断时事件的发生。
+(<strong>线程t1写入的所有变量，调用Thread.interrupt()，被打断的线程t2，可以看到t1的全部操作</strong>)</li>
+<li>对象终结规则：一个对象的初始化完成（构造函数执行结束）happen—before它的finalize（）方法的开始。
+(<strong>对象调用finalize()方法时，对象初始化完成的任意操作，同步到全部主存同步到全部cache。</strong>)</li>
+<li>传递性：如果操作A happen—before操作B，操作B happen—before操作C，那么可以得出A happen—before操作C。</li>
+</ul>
+<hr>
+<h3 id="内存泄漏">内存泄漏</h3>
+<p>JVM通过引用计数法和可达性分析算法来判断对象是否可以被GC，对象长时间没有被GC一般是JVM误以为对象还在引用中，无法回收，即<strong>长期存活对象引用短期存活对象</strong>，常见的情况包括：</p>
+<ul>
+<li>静态集合类（短生命周期对象）被长生命周期持有引用</li>
+<li>各种连接（数据库、网络连接、IO）没有线性关闭，造成对象无法被回收</li>
+<li>变量定义作用范围过大</li>
+<li>内部类持有外部类，内部类长期被持有，导致外部类对象无法被回收</li>
+<li>哈希表中，如果对象哈希值与最初存入时不同，则会导致找不到对象结果，造成泄漏</li>
+<li>一些数据结构，如手写栈，在栈不断增长、收缩后，如果不手工清空（引用置null），弹出对象有可能不被GC，造成隐蔽的内存泄漏</li>
+<li>缓存结构中，有些对象写入后很可能就再也没有被删除或使用，造成缓存泄漏。<code>WeakHashMap</code> 就是为此诞生的，没有除自身外其它引用的值会被丢弃</li>
+<li>监听器和回调，如果注册后没有显示取消就会积聚起来，比较简单的解决方法也是使用弱引用</li>
+</ul>
+<p>因此总结下来，防止内存泄漏的办法包括：避免长期存活对象持有不必要的短期对象引用；不使用资源即时回收，尤其是连接、手工数据结构中；难以判断是否可以回收的缓存资源，可以通过弱引用防止内存泄漏。</p>
+<hr>
+<h3 id="native-关键字">Native 关键字</h3>
+<p>用于告诉 JVM 调用的是本地 C/C++ 方法，因此不能 <code>abstract</code>。使用 JNI 加载动态或静态库时会需要用到这个方法。常见的如 <code>hashCode()</code> 、NIO 中 <code>epoll</code> 相关的内核操作都需要调用本地方法。</p>
+<hr>
+<h3 id="unsafe-类">Unsafe 类</h3>
+<p>可以被用来分配直接内存、获取内存偏移地址、根据偏移地址修改属性（无视对象的可访问等级）、操作数组元素、线程挂起恢复、CAS ……</p>
+<p>访问直接内存、调用直接内存都通过这个类来实现，记住这个名字 <code>sun.misc.Unsafe</code> 。</p>
+<hr>
+<h3 id="object-o--new-object-占几个字节">Object o = new Object() 占几个字节</h3>
+<p>对象头里的 Mark Word, Class Pointer, 数组 Length 都是必须长度</p>
+<ul>
+<li>Mark Word包括所的信息、GC标记信息、哈希码，总共8字节</li>
+<li>Class Pointer，对于64位系统就是8字节</li>
+<li>Length，数组特有结构，4字节</li>
+</ul>
+<p>所以，普通对象就是 8+8 ，一共16字节；数组对象就是 8+8+4，对其8的整数倍，所以24字节</p>
+<hr>
+<h3 id="对象大小为什么是8字节的整数倍">对象大小为什么是8字节的整数倍</h3>
+<p>数据结构对齐，为了允许以一些空间为代价加快内存访问，这和C中结构体是一样的。同时，这也是最方便垃圾回收的大小。</p>
+<hr>
+<h3 id="对象是如何定位的">对象是如何定位的</h3>
+<p>查了一下《深入理解Java虚拟机》，首先JVM规范没有规定引用应该怎样定位对象、访问堆上的具体位置，因此取决于具体实现，主流方法是句柄、直接指针：</p>
+<ul>
+<li>如果使用句柄访问的话，那么Java堆中将会划分出一块内存来作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自的具体地址信息</li>
+<li>如果使用直接指针访问，那么Java堆对象的布局中就必须考虑如何放置访问类型数据的相关信息，而reference中存储的直接就是对象地址</li>
+</ul>
+<p>句柄访问，则引用中地址很稳定，即使GC过程中，对象被移动，只有句柄被改变，引用不用变；直接指针好处当然就是快，HotSpot 用的也是直接指针。</p>
+<hr>
+<h3 id="对象不再使用时是否需要写null">对象不再使用时是否需要写null</h3>
+<p>《Effective Java》中讨论过这个问题，结论是，<strong>清空对象引用是一种例外，不是规范行为</strong>，Java 本身具有 GC，不需要所有对象手动写null。</p>
+<p>例外是自己管理内存的情况，前文也提到过，手工栈，从栈中弹出对象即使不被引用也会受栈维护，不被作为GC对象，必须手动删除。需要写null的情况有：</p>
+<ul>
+<li>
+<p><strong>自己管理内存</strong></p>
+<p>就是以上的情况。</p>
+</li>
+<li>
+<p><strong>缓存对象的引用</strong></p>
+<p>对这种情况，当缓存项由对应键的外部引用决定生命周期，可以使用 <code>WeakHashMap</code> 进行缓存；<code>LinkedHashMap</code> 利用 <code>removeEldestEntry</code> 可以在定时清除缓存时使用。</p>
+</li>
+<li>
+<p><strong>监听器和其它回调</strong></p>
+<p>客户端在 API 中注册回调，却没有显式取消，则最好通过只保存回调的弱引用（weak reference）来防止泄露。</p>
+</li>
+</ul>
+<p>其实这也和之前内存泄漏问题耦合度很高。</p>
+<hr>
+<h3 id="jvm-调优命令和问题定位工具">JVM 调优命令和问题定位工具</h3>
+<p>调优命令太多了，参考这篇</p>
+<blockquote>
+<p><a href="https://www.cnblogs.com/xifengxiaoma/p/9415357.html">https://www.cnblogs.com/xifengxiaoma/p/9415357.html</a></p>
+<p>强调几个常用的：<code>jstack</code>用于定位线程异常，包括死锁、死循环；<code>jmap</code>用于分析内存问题，如溢出、频繁Full GC；<code>jstat</code>用于监控GC相关信息；<code>jps</code>查看系统Java进程</p>
+</blockquote>
+<p>问题定位工具，除了调优命令，还有JDB、VisualVM、JConsole、JProfiler、BTrace等等</p>
+<hr>
+<h3 id="如何实现对象克隆">如何实现对象克隆</h3>
+<p><code>Object.clone()</code> 方法返回的就是 Object 的拷贝，不过必须实现<code>Cloneable</code>接口，这是个没有方法的标志性接口。</p>
+<p>值得注意的是，<code>clone()</code>得到的是浅拷贝。浅拷贝是指拷贝对象时仅仅拷贝对象本身（包括对象中的基本变量），而不拷贝对象包含的引用指向的对象。深拷贝不仅拷贝对象本身，而且拷贝对象包含的引用指向的所有对象。</p>
+<p>简单的深拷贝方法是将对象序列化，会将引用对象也一并保存下来，代价是耗时长。</p>
+<hr>
+<h3 id="宏变量与宏替换">宏变量与宏替换</h3>
+<p>用<code>final</code>定义的变量，编译器会尝试对其进行宏替换，如以下程序片段：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;hello&#34;</span><span class="o">;</span>
+<span class="kd">final</span> <span class="n">String</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
+<span class="kd">final</span> <span class="n">String</span> <span class="n">c</span> <span class="o">=</span> <span class="n">getHello</span><span class="o">();</span>
+</code></pre></div><p>a 会在编译期间被全部替换成<code>&quot;hello&quot;</code>，而b、c不行，因此 a 是宏变量，bc 不是。</p>
+<p>有这样一段程序：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">hw</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="o">;</span>
+
+    <span class="n">String</span> <span class="n">hello</span> <span class="o">=</span> <span class="s">&#34;hello&#34;</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="n">String</span> <span class="n">finalWorld2</span> <span class="o">=</span> <span class="s">&#34;hello&#34;</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="n">String</span> <span class="n">finalWorld3</span> <span class="o">=</span> <span class="n">hello</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="n">String</span> <span class="n">finalWorld4</span> <span class="o">=</span> <span class="s">&#34;he&#34;</span> <span class="o">+</span> <span class="s">&#34;llo&#34;</span><span class="o">;</span>
+
+    <span class="n">String</span> <span class="n">hw1</span> <span class="o">=</span> <span class="n">hello</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">hw2</span> <span class="o">=</span> <span class="n">finalWorld2</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">hw3</span> <span class="o">=</span> <span class="n">finalWorld3</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">hw4</span> <span class="o">=</span> <span class="n">finalWorld4</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
+
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw1</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw2</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw3</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw4</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="n">原文链接</span><span class="err">：</span><span class="n">https</span><span class="o">:</span><span class="c1">//blog.csdn.net/youanyyou/article/details/78990305
+</span></code></pre></div><p><code>finalWorld2</code> <code>finalWorld4</code> 就是宏变量，最终结果它们会和 hw 相等，因为就是指向同一块字符串常量池。而 <code>finalWorld1</code> <code>finalWorld3</code> 就不会了，这在字符串篇会提到，<code>StringBuilder</code> 的合并是个比较例外的操作，会新建一个对象，两者都和 hw 不等。</p>
+<p>所以结果是：<code>false true false true</code></p>
+<hr>
+<h3 id="怎样查看字节码">怎样查看字节码</h3>
+<p>JDK 提供了 <code>javap</code> ；IDEA 提供了 <code>View -&gt; Show bytecode</code>；Eclipse 也有类似工具；还有一些第三方工具，都可以。</p>
+<hr>
+<h3 id="jvm-对频繁调用方法进行哪些优化">JVM 对频繁调用方法进行哪些优化</h3>
+<p>如果代码需要经常被调用，那么即时编译就比解释运行要高效，因此编译器找出被调用最频繁的代码作为“热点代码”进行编译，并进行最大程度优化，即时编译器负责进行这个任务。</p>
+<p>JVM的即使编译器（JIT）采用的优化手段包括：方法内联、逃逸分析、投机性优化等等；运行时优化常用手段包括：内存分配、动态绑定、偏斜锁等等。</p>
+<p>HotSpot 基于计数器进行热点探测，对于热点代码进行即时编译、栈上替换。</p>
+<hr>
+<h3 id="java-中什么是伪共享怎么解决">Java 中什么是伪共享，怎么解决</h3>
+<blockquote>
+<p><a href="https://www.cnblogs.com/javastack/p/9117134.html">https://www.cnblogs.com/javastack/p/9117134.html</a></p>
+</blockquote>
+<p>CPU 缓存系统中是以缓存行（cache line）为单位存储的。目前主流的 CPU Cache 的 Cache Line 大小都是 64 Bytes。在多线程情况下，如果需要修改“共享同一个缓存行的变量”，就会无意中影响彼此的性能，这就是伪共享（False Sharing）。</p>
+<p>由于共享变量在 CPU 缓存中的存储是以缓存行为单位，一个缓存行可以存储多个变量（存满当前缓存行的字节数）；而CPU对缓存的修改又是以缓存行为最小单位的，那么就会出现上诉的伪共享问题。直接带来的问题就是性能下降。</p>
+<p>解决方法就是——独占缓存行，以空间换效率。</p>
+<p>Java 8 中已经提供了官方的解决方案，Java 8 中新增了一个注解：<code>@sun.misc.Contended</code>。加上这个注解的类会自动补齐缓存行，需要注意的是此注解默认是无效的，需要在 jvm 启动时设置 <code>-XX:-RestrictContended</code> 才会生效。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@sun.misc.Contended</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">VolatileLong</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">volatile</span> <span class="kt">long</span> <span class="n">value</span> <span class="o">=</span> <span class="n">0L</span><span class="o">;</span>
+    <span class="c1">//public long p1, p2, p3, p4, p5, p6;
+</span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/java/">Java</a>
+        
+            <a href="/tags/jvm/">JVM</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-string_pool/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Sea.jpg" loading="lazy" data-key="java-jvm-string_pool" data-hash="/images/feature/scenes/Sea.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 字符串</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-questions_1/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Bunker.jpg" loading="lazy" data-key="java-jvm-questions_1" data-hash="/images/feature/ArseniXC/Bunker.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 问题集合 (上)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-ram_and_gc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg" loading="lazy" data-key="java-jvm-ram_and_gc" data-hash="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM GC</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/05.jpg" loading="lazy" data-key="" data-hash="/images/feature/abyss/05.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 接口与抽象类的区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/arknights/Penguin.jpg" loading="lazy" data-key="" data-hash="/images/feature/arknights/Penguin.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 抽象类</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#指令重排序与-happens-before-原则">指令重排序与 happens-before 原则</a></li>
+        <li><a href="#内存泄漏">内存泄漏</a></li>
+        <li><a href="#native-关键字">Native 关键字</a></li>
+        <li><a href="#unsafe-类">Unsafe 类</a></li>
+        <li><a href="#object-o--new-object-占几个字节">Object o = new Object() 占几个字节</a></li>
+        <li><a href="#对象大小为什么是8字节的整数倍">对象大小为什么是8字节的整数倍</a></li>
+        <li><a href="#对象是如何定位的">对象是如何定位的</a></li>
+        <li><a href="#对象不再使用时是否需要写null">对象不再使用时是否需要写null</a></li>
+        <li><a href="#jvm-调优命令和问题定位工具">JVM 调优命令和问题定位工具</a></li>
+        <li><a href="#如何实现对象克隆">如何实现对象克隆</a></li>
+        <li><a href="#宏变量与宏替换">宏变量与宏替换</a></li>
+        <li><a href="#怎样查看字节码">怎样查看字节码</a></li>
+        <li><a href="#jvm-对频繁调用方法进行哪些优化">JVM 对频繁调用方法进行哪些优化</a></li>
+        <li><a href="#java-中什么是伪共享怎么解决">Java 中什么是伪共享，怎么解决</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

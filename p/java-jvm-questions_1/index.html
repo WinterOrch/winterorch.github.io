@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.'><title>Java - JVM 问题集合 (上)</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/java-jvm-questions_1/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM 问题集合 (上)'>
+<meta property='og:description' content='翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.'>
+<meta property='og:url' content='https://winterorch.github.io/p/java-jvm-questions_1/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='JVM' /><meta property='article:published_time' content='2021-07-09T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-09T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/ArseniXC/Bunker.jpg' />
+<meta name="twitter:title" content="Java - JVM 问题集合 (上)">
+<meta name="twitter:description" content="翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/ArseniXC/Bunker.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java-jvm-questions_1/">
+                
+                    <img src="/images/feature/ArseniXC/Bunker.jpg" loading="lazy" alt="Featured image of post Java - JVM 问题集合 (上)" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/java%E5%9F%BA%E7%A1%80/" style="background-color: #D26900; color: #fff;">
+                Java基础
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/java-jvm-questions_1/">Java - JVM 问题集合 (上)</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 09, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h3 id="hotspot-是什么">HotSpot 是什么</h3>
+<p>使用最广泛的 JVM，OpenJDK SunJDK 的 JVM。最早不是 Java 的虚拟机，在 JIT 方面具有一些先进的理念，被 SUN 收购。</p>
+<hr>
+<h3 id="堆和栈区别是什么">堆和栈区别是什么</h3>
+<p><strong>个人理解，不一定全面</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>堆</th>
+<th>栈</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公有</td>
+<td>线程私有</td>
+</tr>
+<tr>
+<td>存放绝大多数对象实例、数组</td>
+<td>存放局部变量表、操作数栈、动态链接、方法出口等</td>
+</tr>
+<tr>
+<td>GC的主要场所</td>
+<td>不需要GC，栈帧随方法调用结束而被弹出</td>
+</tr>
+<tr>
+<td>生老病死与JVM紧密相关</td>
+<td>生老病死与线程、函数调用紧密相关</td>
+</tr>
+<tr>
+<td>不能动态扩容</td>
+<td>可以通过配置动态扩容</td>
+</tr>
+</tbody>
+</table>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="哪块内存区不会oom">哪块内存区不会OOM</h3>
+<p><strong>公有部分</strong>：
+<strong>堆</strong>，会OOM；<strong>方法区</strong>，虽然搬到了原生内存上，但还是有可能OOM的；<strong>JVM外的直接内存</strong>，肯定是可能OOM的。因此公有区全部有可能OOM。</p>
+<p><strong>线程私有部分</strong>：
+<strong>本地方法栈</strong>，为 Native 方法服务，也有OOM可能；<strong>虚拟机栈</strong>，OOM常客，允许动态扩容时会OOM，不允许则会 OverFlow，因此是会OOM的；<!-- raw HTML omitted --><strong>程序寄存器</strong>，唯一不会出现OOM的区域，就是它<!-- raw HTML omitted -->。</p>
+<hr>
+<h3 id="一个线程oom后其它线程能否运行">一个线程OOM后，其它线程能否运行</h3>
+<p>无论哪种OOM，一个线程OOM后，所占据内存资源会被GC全部释放。无论是线程共享的堆内存，还是不共享的栈内存。</p>
+<p>因此，一个线程的OOM不会影响到其它线程运行，即使主线程抛异常退出，子线程仍能继续，除非子线程是主线程的守护线程。</p>
+<hr>
+<h3 id="对象一定是在堆上分配的吗">对象一定是在堆上分配的吗</h3>
+<p>不一定。JVM通过逃逸分析，能够分析新对象的适用范围，以此确定是否要将对象分配到堆上，对于没有逃逸出方法的对象，很可能会被优先在栈上进行分配。</p>
+<blockquote>
+<p>其实就像我们平常用Spring，有必要将所有对象都注册成Bean吗？肯定没必要，JVM也不傻，并非所有对象都会分配到堆上，毕竟GC也是有开销的。</p>
+</blockquote>
+<hr>
+<h3 id="为什么说一次编译处处执行">为什么说一次编译，处处执行</h3>
+<p>两次编译机制，第一次由编译器编译成字节码，第二次由JVM转换到机器码，实际上是解释执行机制，解释工作由本地JVM完成，JVM担任了本地向导的责任，因此不是“处处执行”，是有本地向导，装了JVM的地方执行。</p>
+<hr>
+<h3 id="如何动态生成一个类">如何动态生成一个类</h3>
+<ol>
+<li>
+<p><strong>操作字节码</strong></p>
+<p>这个在 Spring AOP ，尤其是 AspectJ 中有应用，主要通过 CGLIB 和 Javassist 两种库实现。理论可行，实际操作……非常麻烦，首先要研究清楚JVM的字节码规范，详细了解class结构，难度S++。</p>
+</li>
+<li>
+<p><strong>使用第三方Jar包</strong></p>
+<p><code>com.itranswarp.compiler</code> 可以用来编写自己的工具类，从而实现动态生成类。</p>
+</li>
+<li>
+<p><strong>一些脚本语言</strong></p>
+<p>最典型的是 Groovy，它原生支持动态生成对象；还有在大数据领域用的很多的 Scala；谷歌的 Aviator 。这些支持动态生成类。</p>
+</li>
+</ol>
+<hr>
+<h3 id="classforname-和-classloaderloadclass-的区别"><code>Class.forName()</code> 和 <code>ClassLoader.loadClass</code> 的区别</h3>
+<p><code>Class.forName()</code> 除了将<code>.class</code>文件加载到JVM中，会对类进行解释，通过参数决定是否对加载的类进行初始化，从而是否执行类中的静态块，是否对静态变量进行赋值。</p>
+<p><code>ClassLoader</code>使用双亲委派模型只干一件事——将<code>.class</code>文件加载到JVM中，不执行静态块，在<code>newInstance</code>时才会执行静态块。<code>Class.forName()</code> 类加载也是通过 <code>ClassLoader</code> 实现。</p>
+<hr>
+<h3 id="字符串相关">字符串相关</h3>
+<blockquote>
+<p>包括<code>new String(&quot;xx&quot;)</code>创建多少个对象，两个字符串是否相等，<code>intern()</code>之后相不相等，这些会有一篇专门讲字符串常量池的笔记，放在这里太多了。</p>
+</blockquote>
+<hr>
+<h3 id="java-8-内存结构的变化">Java 8 内存结构的变化</h3>
+<p>最重要的就是<strong>元空间取代了永久代</strong>成为方法区的新实现，这一改变是为了减少永久代OOM的概率，因为永久代位于堆上，而它的GC机制又十分复杂，很容易造成性能劣化或OOM。</p>
+<hr>
+<h3 id="gc相关jvm-内存结构">GC相关、JVM 内存结构</h3>
+<blockquote>
+<p>GC之前有过了，内存结构也会单独整理。</p>
+</blockquote>
+<hr>
+<h3 id="双亲委派机制">双亲委派机制</h3>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/1e4011617650">https://www.jianshu.com/p/1e4011617650</a></p>
+</blockquote>
+<p>当某个类加载器需要加载<code>.class</code>文件，首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此如果一个类确实没有被加载过，所有的加载请求最终都应该传送到最顶层的启动类加载器中，只有当父加载器反馈自己无法完成这个加载请求(它的搜索范围中没有找到所需的类)时，子加载器才会尝试自己去完成加载。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">protected</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">loadClass</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">resolve</span><span class="o">)</span>
+            <span class="kd">throws</span> <span class="n">ClassNotFoundException</span>
+    <span class="o">{</span>
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">getClassLoadingLock</span><span class="o">(</span><span class="n">name</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c1">// 首先检查这个classsh是否已经加载过了
+</span><span class="c1"></span>            <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">findLoadedClass</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="kt">long</span> <span class="n">t0</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="c1">// c==null表示没有加载，如果有父类的加载器则让父类加载器加载
+</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">parent</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">loadClass</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="c1">//如果父类的加载器为空 则说明递归到bootStrapClassloader了
+</span><span class="c1"></span>                        <span class="c1">//bootStrapClassloader比较特殊无法通过get获取
+</span><span class="c1"></span>                        <span class="n">c</span> <span class="o">=</span> <span class="n">findBootstrapClassOrNull</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ClassNotFoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c1">//如果bootstrapClassLoader 仍然没有加载过，则递归回来，尝试自己去加载class
+</span><span class="c1"></span>                    <span class="kt">long</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">findClass</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+                    <span class="n">sun</span><span class="o">.</span><span class="na">misc</span><span class="o">.</span><span class="na">PerfCounter</span><span class="o">.</span><span class="na">getParentDelegationTime</span><span class="o">().</span><span class="na">addTime</span><span class="o">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="o">);</span>
+                    <span class="n">sun</span><span class="o">.</span><span class="na">misc</span><span class="o">.</span><span class="na">PerfCounter</span><span class="o">.</span><span class="na">getFindClassTime</span><span class="o">().</span><span class="na">addElapsedTimeFrom</span><span class="o">(</span><span class="n">t1</span><span class="o">);</span>
+                    <span class="n">sun</span><span class="o">.</span><span class="na">misc</span><span class="o">.</span><span class="na">PerfCounter</span><span class="o">.</span><span class="na">getFindClasses</span><span class="o">().</span><span class="na">increment</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">resolve</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">resolveClass</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="n">c</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div><p>源码显示，直到递归到<code>bootStrapClassloader</code>，如果仍没有加载过，就尝试自己去加载<code>class</code>。</p>
+<p>这一机制的作用是防止重复加载同一<code>.class</code>，同时保证核心<code>.class</code>不能被篡改。通过委托方式，即使篡改也不会去加载，即使加载也不会是同一个<code>.class</code>对象了。不同的加载器加载同一个<code>.class</code>也不是同一个<code>Class</code>对象。这样保证了<code>Class</code>执行安全。</p>
+<p><strong>类加载器的类别</strong></p>
+<p><strong>BootstrapClassLoader</strong> 是顶层类加载器，唯一使用C++编写的类加载器，是JVM的一部分，加载核心库<code>java.*</code>（准确的说是负责加载存放在&lt;JAVA_HOME&gt;\lib目录，或者被-Xbootclasspath参数指定的路径中存放的，且是JVM能够识别的类库），同时构造<code>ExtClassLoader</code>和<code>AppClassLoader</code>。涉及虚拟机本地实现细节，开发者无法直接获取启动类加载器引用。</p>
+<p>除<strong>BootstrapClassLoader</strong>外的其它类加载器都由Java语言实现，独立存在于JVM外部，且都继承于java.lang.Classloader抽象类。</p>
+<p><strong>ExtClassLoader</strong> 标准扩展类加载器，加载扩展库（&lt;JAVA_HOME&gt;\home\ext目录中，或者被java.ext.dirs系统变量所指定的路径中所有的类库），如<code>classpath</code>中的<code>jre</code>, <code>javax.*</code>或<code>java.ext.dir</code>指定位置中的类，可以直接使用。</p>
+<p><strong>AppClassLoader</strong> 系统类加载器，加载程序所在目录，如<code>user.dir</code>所在位置<code>class</code>。开发者同样可以直接使用此类加载器，如果没有指定，则默认使用此类加载器。</p>
+<hr>
+<h3 id="为什么打破双亲委派机制">为什么打破双亲委派机制</h3>
+<p>双亲委派机制解决了基础类统一问题（越基础的类由越上级的加载器加载），但是如果需要启动类加载器加载用户代码，需要调用独立厂商实现的ClassPath下SPI代码，则无法解决，因为启动类不认识这些代码。为此，大部分SPI都通过增加一个线程上下文加载器加载所需的SPI代码，造成了父类加载器请求子类加载器完成类加载，从而打破了双亲委派机制。</p>
+<p>Tomcat 也违背了双亲委托机制，因为默认类加载器无法加载两个相同类库不同版本，做不到<strong>隔离</strong>，无法对JDP做到热修改，因为JSP也是class文件，类名不会变。双亲委派机制绑死了类名。</p>
+<p>为此，Tomcat的做法是每一个Web应用程序对应一个WebApp类加载器，每一个JSP文件对应一个Jsp类加载器。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/java/">Java</a>
+        
+            <a href="/tags/jvm/">JVM</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-string_pool/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Sea.jpg" loading="lazy" data-key="java-jvm-string_pool" data-hash="/images/feature/scenes/Sea.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 字符串</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-questions_2/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Library.jpg" loading="lazy" data-key="java-jvm-questions_2" data-hash="/images/feature/ArseniXC/Library.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 问题集合 (下)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-ram_and_gc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg" loading="lazy" data-key="java-jvm-ram_and_gc" data-hash="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM GC</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/05.jpg" loading="lazy" data-key="" data-hash="/images/feature/abyss/05.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 接口与抽象类的区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/arknights/Penguin.jpg" loading="lazy" data-key="" data-hash="/images/feature/arknights/Penguin.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 抽象类</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#hotspot-是什么">HotSpot 是什么</a></li>
+        <li><a href="#堆和栈区别是什么">堆和栈区别是什么</a></li>
+        <li><a href="#哪块内存区不会oom">哪块内存区不会OOM</a></li>
+        <li><a href="#一个线程oom后其它线程能否运行">一个线程OOM后，其它线程能否运行</a></li>
+        <li><a href="#对象一定是在堆上分配的吗">对象一定是在堆上分配的吗</a></li>
+        <li><a href="#为什么说一次编译处处执行">为什么说一次编译，处处执行</a></li>
+        <li><a href="#如何动态生成一个类">如何动态生成一个类</a></li>
+        <li><a href="#classforname-和-classloaderloadclass-的区别"><code>Class.forName()</code> 和 <code>ClassLoader.loadClass</code> 的区别</a></li>
+        <li><a href="#字符串相关">字符串相关</a></li>
+        <li><a href="#java-8-内存结构的变化">Java 8 内存结构的变化</a></li>
+        <li><a href="#gc相关jvm-内存结构">GC相关、JVM 内存结构</a></li>
+        <li><a href="#双亲委派机制">双亲委派机制</a></li>
+        <li><a href="#为什么打破双亲委派机制">为什么打破双亲委派机制</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

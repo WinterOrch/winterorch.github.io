@@ -6,7 +6,614 @@
         <description>Recent content on 图拉国营噄茶馆</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Tue, 06 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 11 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Java - JVM 字符串</title>
+        <link>https://winterorch.github.io/p/java-jvm-string_pool/</link>
+        <pubDate>Sun, 11 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/java-jvm-string_pool/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/scenes/Sea.jpg" alt="Featured image of post Java - JVM 字符串" /&gt;&lt;blockquote&gt;
+&lt;p&gt;大部分内容来源这篇美团的文章：https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html，原文非常有深度，这里只捡了一些比较浅的东西出来&lt;/p&gt;
+&lt;p&gt;JDK6到7的字符串常量池出现了很大变化，为了防止绕晕，这里只拿了7以后的情况出来&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;直接用双引号声明的 &lt;code&gt;String&lt;/code&gt; 对象直接存到常量池&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;用 &lt;code&gt;intern&lt;/code&gt; 方法会从字符串常量池查询当前字符串是否存在，若不存在则将当前字符串放入常量池&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;new&lt;/code&gt; 一个字符串出来最多会生成两个对象&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;字符串常量池中的引用对象&lt;/li&gt;
+&lt;li&gt;Java Heap 中的&lt;code&gt;String&lt;/code&gt;对象&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;当然，如果常量池中原本已经存在了被引用对象，则只会多生成一个对象&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;字符串常量池&#34;&gt;字符串常量池&lt;/h2&gt;
+&lt;p&gt;字符串常量池的主体是一个 &lt;code&gt;StringTable&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;HotSpot VM中使用全局表&lt;code&gt;StringTable&lt;/code&gt;记录&lt;code&gt;interned string&lt;/code&gt;，&lt;code&gt;StringTable&lt;/code&gt; 的 &lt;code&gt;intern&lt;/code&gt; 方法类似 &lt;code&gt;HashMap&lt;/code&gt; ，本质是&lt;code&gt;HashSet&amp;lt;String&amp;gt;&lt;/code&gt;，但不能自动扩容，（JDK6）默认大小 1009，（JDK7）通过&lt;code&gt;-XX:StringTableSize=99991&lt;/code&gt;参数指定，默认大小 60013。&lt;code&gt;StringTable&lt;/code&gt;&lt;strong&gt;只存储对&lt;code&gt;String&lt;/code&gt;实例的引用&lt;/strong&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;加载字节码文件时，常量（&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;圈起来的就是字符串常量）会被加载到运行时常量池 (Runtime Constant Pool) 中，字符串此时只有 &lt;code&gt;CONSTANT_Utf8&lt;/code&gt; ，采用 &lt;code&gt;Lazy-Init&lt;/code&gt; ，因此未成为 Java 对象，运行到对应位置再进行对象加载。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;类加载阶段&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;HotSpot VM 在类加载阶段，JVM会创建常量池中的字符串对象实例，但这一过程是惰性的，加载时仅将字面量放入类的&lt;strong&gt;运行时常量池&lt;/strong&gt;，即 &lt;code&gt;CONSTANT_Utf8&lt;/code&gt;，而 &lt;code&gt;CONSTANT_String&lt;/code&gt; 还没有，也不会进入字符串常量池。（当然静态变量会直接被指定初始值，也就会创建字符串对象，同时保存引用到字符串常量池）&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;intern&#34;&gt;intern()&lt;/h2&gt;
+&lt;p&gt;JDK7中，&lt;code&gt;intern()&lt;/code&gt; 方法将在字符串池中保存堆中的引用并返回（如果已经有则直接返回该引用）。对执行方法的对象本身不会造成任何影响，该指哪指哪。以下为例：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;s3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;intern&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s4&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;11&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//true
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;s3&lt;/code&gt; 实际上在 Heap 上 new 出了一个&lt;code&gt;&amp;quot;11&amp;quot;&lt;/code&gt;，且不会保存到常量池中。&lt;code&gt;s3.intern()&lt;/code&gt;将这一对象直接保存到了字符串常量池中，&lt;code&gt;s3&lt;/code&gt;仍指向这一对象，只是对象本身被保存到了常量池，因此&lt;code&gt;s4&lt;/code&gt;显式创建&lt;code&gt;&amp;quot;11&amp;quot;&lt;/code&gt;会直接拿常量池中的对象（引用）来用，也就是&lt;code&gt;s3&lt;/code&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;intern&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//false
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这一段则有很大不同，&lt;code&gt;new String(&amp;quot;1&amp;quot;)&lt;/code&gt; 进行了两步操作——在字符串常量池建了&lt;code&gt;&amp;quot;1&amp;quot;&lt;/code&gt;，并且还在 Heap 上建了一个额外的 &lt;code&gt;String&lt;/code&gt; 对象并赋给 &lt;code&gt;s&lt;/code&gt; ，所以&lt;code&gt;s.intern()&lt;/code&gt;不会造成任何改变——常量池已经有&lt;code&gt;&amp;quot;1&amp;quot;&lt;/code&gt;，而&lt;code&gt;s&lt;/code&gt;也还是指向 Heap 上的 &lt;code&gt;String&lt;/code&gt; 。因此&lt;code&gt;s2&lt;/code&gt; 直接指向常量池中的&lt;code&gt;&amp;quot;1&amp;quot;&lt;/code&gt;，&lt;code&gt;s&lt;/code&gt;间接指向&lt;code&gt;1&lt;/code&gt;,两者自然不是一个引用。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;综合案例&#34;&gt;综合案例&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;NewTest1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;static&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 第一句
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;he&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)+&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;llo&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//第二句
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;s1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;intern&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;// 第三句
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;hello&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;//第四句
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;==&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第五句，输出是true。
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如图，类初始阶段会初始化 &lt;code&gt;s1&lt;/code&gt; ，所以在 &lt;code&gt;main()&lt;/code&gt; 运行之前字符串常量池里已经有 &lt;code&gt;&amp;quot;static&amp;quot;&lt;/code&gt; 。局部变量 &lt;code&gt;s1&lt;/code&gt; 由两个字符串拼接而成，拼接过程实际是 &lt;code&gt;StringBuilder&lt;/code&gt; 的 &lt;code&gt;append&lt;/code&gt;，最后会通过 &lt;code&gt;toString()&lt;/code&gt; 方法&lt;!-- raw HTML omitted --&gt;&lt;strong&gt;new一个 &lt;code&gt;String&lt;/code&gt; 对象，且不会放入字符串常量池&lt;/strong&gt;&lt;!-- raw HTML omitted --&gt;。在&lt;code&gt;intern()&lt;/code&gt;时才会被放入字符串常量池。&lt;code&gt;s2&lt;/code&gt;显式创建，发现字符串常量池中已有，因此直接使用，两者就是同一对象，&lt;code&gt;s1==s2&lt;/code&gt;。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;oracle-jdk-8u20-后的新特性&#34;&gt;Oracle JDK 8u20 后的新特性&lt;/h2&gt;
+&lt;p&gt;Oracle JDK 8u20 后出现了 &lt;code&gt;StringDuplication&lt;/code&gt; 特性，默认关闭。允许 G1 GC 下的字符串排重，在 JVM 底层允许相同数据的字符串指向同一数据。这一功能下，G1 会在垃圾收集过程中会把新创建的字符串对象放入队列中，在 Young GC 后，并发地将内部数据（JDK 9 以后就是 &lt;code&gt;byte[]&lt;/code&gt;）一致地字符串进行排重。虽然可以节省内存空间，但也会占用额外 CPU，拖慢 Young GC 的作用。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Java - JVM 问题集合 (下)</title>
+        <link>https://winterorch.github.io/p/java-jvm-questions_2/</link>
+        <pubDate>Sat, 10 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/java-jvm-questions_2/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Library.jpg" alt="Featured image of post Java - JVM 问题集合 (下)" /&gt;&lt;h3 id=&#34;指令重排序与-happens-before-原则&#34;&gt;指令重排序与 happens-before 原则&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.jianshu.com/p/b9186dbebe8e&#34;&gt;https://www.jianshu.com/p/b9186dbebe8e&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;问题的起因还是指令重排序，重排序之所以存在是因为有多级缓存，线程所作变更先在寄存器或本地缓存完成，然后拷贝到主存以&lt;strong&gt;跨越内存栅栏&lt;/strong&gt;（即完成工作内存到主存间的拷贝动作），跨越序列或顺序称为&lt;code&gt;happens-before&lt;/code&gt;。仅当写操作线程先跨越内存栅栏，读线程后跨越内存栅栏，写操作线程所作变更才对其它线程可见。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;程序次序规则： 在一个单独的线程中，按照程序代码的执行流顺序，（时间上）先执行的操作happen—before（时间上）后执行的操作
+（&lt;strong&gt;同一个线程中前面的所有写操作对后面的操作可见&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;管理锁定规则：一个unlock操作happen—before后面（时间上的先后顺序）对同一个锁的lock操作。
+（&lt;strong&gt;如果线程1解锁了monitor a，接着线程2锁定了a，那么，线程1解锁a之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;volatile变量规则：对一个volatile变量的写操作happen—before后面（时间上）对该变量的读操作。
+（&lt;strong&gt;如果线程1写入了volatile变量v（临界资源），接着线程2读取了v，那么，线程1写入v及之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;线程启动规则：Thread.start()方法happen—before调用用start的线程前的每一个操作。
+（&lt;strong&gt;假定线程A在执行过程中，通过执行ThreadB.start()来启动线程B，那么线程A对共享变量的修改在接下来线程B开始执行前对线程B可见。注意：线程B启动之后，线程A在对变量修改线程B未必可见。&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;线程终止规则：线程的所有操作都happen—before对此线程的终止检测，可以通过Thread.join（）方法结束、Thread.isAlive（）的返回值等手段检测到线程已经终止执行。
+(&lt;strong&gt;线程t1写入的所有变量，在任意其它线程t2调用t1.join()，或者t1.isAlive() 成功返回后，都对t2可见。&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;线程中断规则：对线程interrupt()的调用 happen—before 发生于被中断线程的代码检测到中断时事件的发生。
+(&lt;strong&gt;线程t1写入的所有变量，调用Thread.interrupt()，被打断的线程t2，可以看到t1的全部操作&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;对象终结规则：一个对象的初始化完成（构造函数执行结束）happen—before它的finalize（）方法的开始。
+(&lt;strong&gt;对象调用finalize()方法时，对象初始化完成的任意操作，同步到全部主存同步到全部cache。&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;传递性：如果操作A happen—before操作B，操作B happen—before操作C，那么可以得出A happen—before操作C。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;内存泄漏&#34;&gt;内存泄漏&lt;/h3&gt;
+&lt;p&gt;JVM通过引用计数法和可达性分析算法来判断对象是否可以被GC，对象长时间没有被GC一般是JVM误以为对象还在引用中，无法回收，即&lt;strong&gt;长期存活对象引用短期存活对象&lt;/strong&gt;，常见的情况包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;静态集合类（短生命周期对象）被长生命周期持有引用&lt;/li&gt;
+&lt;li&gt;各种连接（数据库、网络连接、IO）没有线性关闭，造成对象无法被回收&lt;/li&gt;
+&lt;li&gt;变量定义作用范围过大&lt;/li&gt;
+&lt;li&gt;内部类持有外部类，内部类长期被持有，导致外部类对象无法被回收&lt;/li&gt;
+&lt;li&gt;哈希表中，如果对象哈希值与最初存入时不同，则会导致找不到对象结果，造成泄漏&lt;/li&gt;
+&lt;li&gt;一些数据结构，如手写栈，在栈不断增长、收缩后，如果不手工清空（引用置null），弹出对象有可能不被GC，造成隐蔽的内存泄漏&lt;/li&gt;
+&lt;li&gt;缓存结构中，有些对象写入后很可能就再也没有被删除或使用，造成缓存泄漏。&lt;code&gt;WeakHashMap&lt;/code&gt; 就是为此诞生的，没有除自身外其它引用的值会被丢弃&lt;/li&gt;
+&lt;li&gt;监听器和回调，如果注册后没有显示取消就会积聚起来，比较简单的解决方法也是使用弱引用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此总结下来，防止内存泄漏的办法包括：避免长期存活对象持有不必要的短期对象引用；不使用资源即时回收，尤其是连接、手工数据结构中；难以判断是否可以回收的缓存资源，可以通过弱引用防止内存泄漏。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;native-关键字&#34;&gt;Native 关键字&lt;/h3&gt;
+&lt;p&gt;用于告诉 JVM 调用的是本地 C/C++ 方法，因此不能 &lt;code&gt;abstract&lt;/code&gt;。使用 JNI 加载动态或静态库时会需要用到这个方法。常见的如 &lt;code&gt;hashCode()&lt;/code&gt; 、NIO 中 &lt;code&gt;epoll&lt;/code&gt; 相关的内核操作都需要调用本地方法。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;unsafe-类&#34;&gt;Unsafe 类&lt;/h3&gt;
+&lt;p&gt;可以被用来分配直接内存、获取内存偏移地址、根据偏移地址修改属性（无视对象的可访问等级）、操作数组元素、线程挂起恢复、CAS ……&lt;/p&gt;
+&lt;p&gt;访问直接内存、调用直接内存都通过这个类来实现，记住这个名字 &lt;code&gt;sun.misc.Unsafe&lt;/code&gt; 。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;object-o--new-object-占几个字节&#34;&gt;Object o = new Object() 占几个字节&lt;/h3&gt;
+&lt;p&gt;对象头里的 Mark Word, Class Pointer, 数组 Length 都是必须长度&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Mark Word包括所的信息、GC标记信息、哈希码，总共8字节&lt;/li&gt;
+&lt;li&gt;Class Pointer，对于64位系统就是8字节&lt;/li&gt;
+&lt;li&gt;Length，数组特有结构，4字节&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以，普通对象就是 8+8 ，一共16字节；数组对象就是 8+8+4，对其8的整数倍，所以24字节&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;对象大小为什么是8字节的整数倍&#34;&gt;对象大小为什么是8字节的整数倍&lt;/h3&gt;
+&lt;p&gt;数据结构对齐，为了允许以一些空间为代价加快内存访问，这和C中结构体是一样的。同时，这也是最方便垃圾回收的大小。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;对象是如何定位的&#34;&gt;对象是如何定位的&lt;/h3&gt;
+&lt;p&gt;查了一下《深入理解Java虚拟机》，首先JVM规范没有规定引用应该怎样定位对象、访问堆上的具体位置，因此取决于具体实现，主流方法是句柄、直接指针：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果使用句柄访问的话，那么Java堆中将会划分出一块内存来作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自的具体地址信息&lt;/li&gt;
+&lt;li&gt;如果使用直接指针访问，那么Java堆对象的布局中就必须考虑如何放置访问类型数据的相关信息，而reference中存储的直接就是对象地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;句柄访问，则引用中地址很稳定，即使GC过程中，对象被移动，只有句柄被改变，引用不用变；直接指针好处当然就是快，HotSpot 用的也是直接指针。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;对象不再使用时是否需要写null&#34;&gt;对象不再使用时是否需要写null&lt;/h3&gt;
+&lt;p&gt;《Effective Java》中讨论过这个问题，结论是，&lt;strong&gt;清空对象引用是一种例外，不是规范行为&lt;/strong&gt;，Java 本身具有 GC，不需要所有对象手动写null。&lt;/p&gt;
+&lt;p&gt;例外是自己管理内存的情况，前文也提到过，手工栈，从栈中弹出对象即使不被引用也会受栈维护，不被作为GC对象，必须手动删除。需要写null的情况有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;自己管理内存&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;就是以上的情况。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;缓存对象的引用&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;对这种情况，当缓存项由对应键的外部引用决定生命周期，可以使用 &lt;code&gt;WeakHashMap&lt;/code&gt; 进行缓存；&lt;code&gt;LinkedHashMap&lt;/code&gt; 利用 &lt;code&gt;removeEldestEntry&lt;/code&gt; 可以在定时清除缓存时使用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;监听器和其它回调&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;客户端在 API 中注册回调，却没有显式取消，则最好通过只保存回调的弱引用（weak reference）来防止泄露。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其实这也和之前内存泄漏问题耦合度很高。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;jvm-调优命令和问题定位工具&#34;&gt;JVM 调优命令和问题定位工具&lt;/h3&gt;
+&lt;p&gt;调优命令太多了，参考这篇&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.cnblogs.com/xifengxiaoma/p/9415357.html&#34;&gt;https://www.cnblogs.com/xifengxiaoma/p/9415357.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;强调几个常用的：&lt;code&gt;jstack&lt;/code&gt;用于定位线程异常，包括死锁、死循环；&lt;code&gt;jmap&lt;/code&gt;用于分析内存问题，如溢出、频繁Full GC；&lt;code&gt;jstat&lt;/code&gt;用于监控GC相关信息；&lt;code&gt;jps&lt;/code&gt;查看系统Java进程&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;问题定位工具，除了调优命令，还有JDB、VisualVM、JConsole、JProfiler、BTrace等等&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;如何实现对象克隆&#34;&gt;如何实现对象克隆&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Object.clone()&lt;/code&gt; 方法返回的就是 Object 的拷贝，不过必须实现&lt;code&gt;Cloneable&lt;/code&gt;接口，这是个没有方法的标志性接口。&lt;/p&gt;
+&lt;p&gt;值得注意的是，&lt;code&gt;clone()&lt;/code&gt;得到的是浅拷贝。浅拷贝是指拷贝对象时仅仅拷贝对象本身（包括对象中的基本变量），而不拷贝对象包含的引用指向的对象。深拷贝不仅拷贝对象本身，而且拷贝对象包含的引用指向的所有对象。&lt;/p&gt;
+&lt;p&gt;简单的深拷贝方法是将对象序列化，会将引用对象也一并保存下来，代价是耗时长。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;宏变量与宏替换&#34;&gt;宏变量与宏替换&lt;/h3&gt;
+&lt;p&gt;用&lt;code&gt;final&lt;/code&gt;定义的变量，编译器会尝试对其进行宏替换，如以下程序片段：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getHello&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;a 会在编译期间被全部替换成&lt;code&gt;&amp;quot;hello&amp;quot;&lt;/code&gt;，而b、c不行，因此 a 是宏变量，bc 不是。&lt;/p&gt;
+&lt;p&gt;有这样一段程序：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello world&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hello&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;finalWorld2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;finalWorld3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hello&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;finalWorld4&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;he&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;llo&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hello&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34; world&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;finalWorld2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34; world&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;finalWorld3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34; world&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw4&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;finalWorld4&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34; world&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+
+    &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hw&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hw&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hw&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hw&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hw4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;原文链接&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;：&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;https&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//blog.csdn.net/youanyyou/article/details/78990305
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;finalWorld2&lt;/code&gt; &lt;code&gt;finalWorld4&lt;/code&gt; 就是宏变量，最终结果它们会和 hw 相等，因为就是指向同一块字符串常量池。而 &lt;code&gt;finalWorld1&lt;/code&gt; &lt;code&gt;finalWorld3&lt;/code&gt; 就不会了，这在字符串篇会提到，&lt;code&gt;StringBuilder&lt;/code&gt; 的合并是个比较例外的操作，会新建一个对象，两者都和 hw 不等。&lt;/p&gt;
+&lt;p&gt;所以结果是：&lt;code&gt;false true false true&lt;/code&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;怎样查看字节码&#34;&gt;怎样查看字节码&lt;/h3&gt;
+&lt;p&gt;JDK 提供了 &lt;code&gt;javap&lt;/code&gt; ；IDEA 提供了 &lt;code&gt;View -&amp;gt; Show bytecode&lt;/code&gt;；Eclipse 也有类似工具；还有一些第三方工具，都可以。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;jvm-对频繁调用方法进行哪些优化&#34;&gt;JVM 对频繁调用方法进行哪些优化&lt;/h3&gt;
+&lt;p&gt;如果代码需要经常被调用，那么即时编译就比解释运行要高效，因此编译器找出被调用最频繁的代码作为“热点代码”进行编译，并进行最大程度优化，即时编译器负责进行这个任务。&lt;/p&gt;
+&lt;p&gt;JVM的即使编译器（JIT）采用的优化手段包括：方法内联、逃逸分析、投机性优化等等；运行时优化常用手段包括：内存分配、动态绑定、偏斜锁等等。&lt;/p&gt;
+&lt;p&gt;HotSpot 基于计数器进行热点探测，对于热点代码进行即时编译、栈上替换。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;java-中什么是伪共享怎么解决&#34;&gt;Java 中什么是伪共享，怎么解决&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.cnblogs.com/javastack/p/9117134.html&#34;&gt;https://www.cnblogs.com/javastack/p/9117134.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;CPU 缓存系统中是以缓存行（cache line）为单位存储的。目前主流的 CPU Cache 的 Cache Line 大小都是 64 Bytes。在多线程情况下，如果需要修改“共享同一个缓存行的变量”，就会无意中影响彼此的性能，这就是伪共享（False Sharing）。&lt;/p&gt;
+&lt;p&gt;由于共享变量在 CPU 缓存中的存储是以缓存行为单位，一个缓存行可以存储多个变量（存满当前缓存行的字节数）；而CPU对缓存的修改又是以缓存行为最小单位的，那么就会出现上诉的伪共享问题。直接带来的问题就是性能下降。&lt;/p&gt;
+&lt;p&gt;解决方法就是——独占缓存行，以空间换效率。&lt;/p&gt;
+&lt;p&gt;Java 8 中已经提供了官方的解决方案，Java 8 中新增了一个注解：&lt;code&gt;@sun.misc.Contended&lt;/code&gt;。加上这个注解的类会自动补齐缓存行，需要注意的是此注解默认是无效的，需要在 jvm 启动时设置 &lt;code&gt;-XX:-RestrictContended&lt;/code&gt; 才会生效。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@sun.misc.Contended&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;VolatileLong&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;volatile&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;value&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0L&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;c1&#34;&gt;//public long p1, p2, p3, p4, p5, p6;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Java - JVM 问题集合 (上)</title>
+        <link>https://winterorch.github.io/p/java-jvm-questions_1/</link>
+        <pubDate>Fri, 09 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/java-jvm-questions_1/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Bunker.jpg" alt="Featured image of post Java - JVM 问题集合 (上)" /&gt;&lt;h3 id=&#34;hotspot-是什么&#34;&gt;HotSpot 是什么&lt;/h3&gt;
+&lt;p&gt;使用最广泛的 JVM，OpenJDK SunJDK 的 JVM。最早不是 Java 的虚拟机，在 JIT 方面具有一些先进的理念，被 SUN 收购。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;堆和栈区别是什么&#34;&gt;堆和栈区别是什么&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;个人理解，不一定全面&lt;/strong&gt;：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;堆&lt;/th&gt;
+&lt;th&gt;栈&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;公有&lt;/td&gt;
+&lt;td&gt;线程私有&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;存放绝大多数对象实例、数组&lt;/td&gt;
+&lt;td&gt;存放局部变量表、操作数栈、动态链接、方法出口等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;GC的主要场所&lt;/td&gt;
+&lt;td&gt;不需要GC，栈帧随方法调用结束而被弹出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;生老病死与JVM紧密相关&lt;/td&gt;
+&lt;td&gt;生老病死与线程、函数调用紧密相关&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;不能动态扩容&lt;/td&gt;
+&lt;td&gt;可以通过配置动态扩容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;哪块内存区不会oom&#34;&gt;哪块内存区不会OOM&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;公有部分&lt;/strong&gt;：
+&lt;strong&gt;堆&lt;/strong&gt;，会OOM；&lt;strong&gt;方法区&lt;/strong&gt;，虽然搬到了原生内存上，但还是有可能OOM的；&lt;strong&gt;JVM外的直接内存&lt;/strong&gt;，肯定是可能OOM的。因此公有区全部有可能OOM。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;线程私有部分&lt;/strong&gt;：
+&lt;strong&gt;本地方法栈&lt;/strong&gt;，为 Native 方法服务，也有OOM可能；&lt;strong&gt;虚拟机栈&lt;/strong&gt;，OOM常客，允许动态扩容时会OOM，不允许则会 OverFlow，因此是会OOM的；&lt;!-- raw HTML omitted --&gt;&lt;strong&gt;程序寄存器&lt;/strong&gt;，唯一不会出现OOM的区域，就是它&lt;!-- raw HTML omitted --&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;一个线程oom后其它线程能否运行&#34;&gt;一个线程OOM后，其它线程能否运行&lt;/h3&gt;
+&lt;p&gt;无论哪种OOM，一个线程OOM后，所占据内存资源会被GC全部释放。无论是线程共享的堆内存，还是不共享的栈内存。&lt;/p&gt;
+&lt;p&gt;因此，一个线程的OOM不会影响到其它线程运行，即使主线程抛异常退出，子线程仍能继续，除非子线程是主线程的守护线程。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;对象一定是在堆上分配的吗&#34;&gt;对象一定是在堆上分配的吗&lt;/h3&gt;
+&lt;p&gt;不一定。JVM通过逃逸分析，能够分析新对象的适用范围，以此确定是否要将对象分配到堆上，对于没有逃逸出方法的对象，很可能会被优先在栈上进行分配。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;其实就像我们平常用Spring，有必要将所有对象都注册成Bean吗？肯定没必要，JVM也不傻，并非所有对象都会分配到堆上，毕竟GC也是有开销的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;为什么说一次编译处处执行&#34;&gt;为什么说一次编译，处处执行&lt;/h3&gt;
+&lt;p&gt;两次编译机制，第一次由编译器编译成字节码，第二次由JVM转换到机器码，实际上是解释执行机制，解释工作由本地JVM完成，JVM担任了本地向导的责任，因此不是“处处执行”，是有本地向导，装了JVM的地方执行。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;如何动态生成一个类&#34;&gt;如何动态生成一个类&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;操作字节码&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这个在 Spring AOP ，尤其是 AspectJ 中有应用，主要通过 CGLIB 和 Javassist 两种库实现。理论可行，实际操作……非常麻烦，首先要研究清楚JVM的字节码规范，详细了解class结构，难度S++。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;使用第三方Jar包&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;com.itranswarp.compiler&lt;/code&gt; 可以用来编写自己的工具类，从而实现动态生成类。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;一些脚本语言&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;最典型的是 Groovy，它原生支持动态生成对象；还有在大数据领域用的很多的 Scala；谷歌的 Aviator 。这些支持动态生成类。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;classforname-和-classloaderloadclass-的区别&#34;&gt;&lt;code&gt;Class.forName()&lt;/code&gt; 和 &lt;code&gt;ClassLoader.loadClass&lt;/code&gt; 的区别&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Class.forName()&lt;/code&gt; 除了将&lt;code&gt;.class&lt;/code&gt;文件加载到JVM中，会对类进行解释，通过参数决定是否对加载的类进行初始化，从而是否执行类中的静态块，是否对静态变量进行赋值。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ClassLoader&lt;/code&gt;使用双亲委派模型只干一件事——将&lt;code&gt;.class&lt;/code&gt;文件加载到JVM中，不执行静态块，在&lt;code&gt;newInstance&lt;/code&gt;时才会执行静态块。&lt;code&gt;Class.forName()&lt;/code&gt; 类加载也是通过 &lt;code&gt;ClassLoader&lt;/code&gt; 实现。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;字符串相关&#34;&gt;字符串相关&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;包括&lt;code&gt;new String(&amp;quot;xx&amp;quot;)&lt;/code&gt;创建多少个对象，两个字符串是否相等，&lt;code&gt;intern()&lt;/code&gt;之后相不相等，这些会有一篇专门讲字符串常量池的笔记，放在这里太多了。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;java-8-内存结构的变化&#34;&gt;Java 8 内存结构的变化&lt;/h3&gt;
+&lt;p&gt;最重要的就是&lt;strong&gt;元空间取代了永久代&lt;/strong&gt;成为方法区的新实现，这一改变是为了减少永久代OOM的概率，因为永久代位于堆上，而它的GC机制又十分复杂，很容易造成性能劣化或OOM。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;gc相关jvm-内存结构&#34;&gt;GC相关、JVM 内存结构&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;GC之前有过了，内存结构也会单独整理。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;双亲委派机制&#34;&gt;双亲委派机制&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.jianshu.com/p/1e4011617650&#34;&gt;https://www.jianshu.com/p/1e4011617650&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;当某个类加载器需要加载&lt;code&gt;.class&lt;/code&gt;文件，首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此如果一个类确实没有被加载过，所有的加载请求最终都应该传送到最顶层的启动类加载器中，只有当父加载器反馈自己无法完成这个加载请求(它的搜索范围中没有找到所需的类)时，子加载器才会尝试自己去完成加载。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;protected&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;loadClass&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;resolve&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+            &lt;span class=&#34;kd&#34;&gt;throws&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ClassNotFoundException&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;kd&#34;&gt;synchronized&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getClassLoadingLock&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;c1&#34;&gt;// 首先检查这个classsh是否已经加载过了
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;            &lt;span class=&#34;n&#34;&gt;Class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;findLoadedClass&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;nanoTime&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                    &lt;span class=&#34;c1&#34;&gt;// c==null表示没有加载，如果有父类的加载器则让父类加载器加载
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;                    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;parent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                        &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;parent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;loadClass&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;false&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+                    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                        &lt;span class=&#34;c1&#34;&gt;//如果父类的加载器为空 则说明递归到bootStrapClassloader了
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;                        &lt;span class=&#34;c1&#34;&gt;//bootStrapClassloader比较特殊无法通过get获取
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;                        &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;findBootstrapClassOrNull&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+                    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+                &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ClassNotFoundException&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{}&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                    &lt;span class=&#34;c1&#34;&gt;//如果bootstrapClassLoader 仍然没有加载过，则递归回来，尝试自己去加载class
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;                    &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;nanoTime&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;findClass&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;sun&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;misc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;PerfCounter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getParentDelegationTime&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;addTime&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;sun&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;misc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;PerfCounter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getFindClassTime&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;addElapsedTimeFrom&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+                    &lt;span class=&#34;n&#34;&gt;sun&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;misc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;PerfCounter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getFindClasses&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;increment&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+                &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resolve&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+                &lt;span class=&#34;n&#34;&gt;resolveClass&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+            &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;源码显示，直到递归到&lt;code&gt;bootStrapClassloader&lt;/code&gt;，如果仍没有加载过，就尝试自己去加载&lt;code&gt;class&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这一机制的作用是防止重复加载同一&lt;code&gt;.class&lt;/code&gt;，同时保证核心&lt;code&gt;.class&lt;/code&gt;不能被篡改。通过委托方式，即使篡改也不会去加载，即使加载也不会是同一个&lt;code&gt;.class&lt;/code&gt;对象了。不同的加载器加载同一个&lt;code&gt;.class&lt;/code&gt;也不是同一个&lt;code&gt;Class&lt;/code&gt;对象。这样保证了&lt;code&gt;Class&lt;/code&gt;执行安全。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;类加载器的类别&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;BootstrapClassLoader&lt;/strong&gt; 是顶层类加载器，唯一使用C++编写的类加载器，是JVM的一部分，加载核心库&lt;code&gt;java.*&lt;/code&gt;（准确的说是负责加载存放在&amp;lt;JAVA_HOME&amp;gt;\lib目录，或者被-Xbootclasspath参数指定的路径中存放的，且是JVM能够识别的类库），同时构造&lt;code&gt;ExtClassLoader&lt;/code&gt;和&lt;code&gt;AppClassLoader&lt;/code&gt;。涉及虚拟机本地实现细节，开发者无法直接获取启动类加载器引用。&lt;/p&gt;
+&lt;p&gt;除&lt;strong&gt;BootstrapClassLoader&lt;/strong&gt;外的其它类加载器都由Java语言实现，独立存在于JVM外部，且都继承于java.lang.Classloader抽象类。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ExtClassLoader&lt;/strong&gt; 标准扩展类加载器，加载扩展库（&amp;lt;JAVA_HOME&amp;gt;\home\ext目录中，或者被java.ext.dirs系统变量所指定的路径中所有的类库），如&lt;code&gt;classpath&lt;/code&gt;中的&lt;code&gt;jre&lt;/code&gt;, &lt;code&gt;javax.*&lt;/code&gt;或&lt;code&gt;java.ext.dir&lt;/code&gt;指定位置中的类，可以直接使用。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AppClassLoader&lt;/strong&gt; 系统类加载器，加载程序所在目录，如&lt;code&gt;user.dir&lt;/code&gt;所在位置&lt;code&gt;class&lt;/code&gt;。开发者同样可以直接使用此类加载器，如果没有指定，则默认使用此类加载器。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;为什么打破双亲委派机制&#34;&gt;为什么打破双亲委派机制&lt;/h3&gt;
+&lt;p&gt;双亲委派机制解决了基础类统一问题（越基础的类由越上级的加载器加载），但是如果需要启动类加载器加载用户代码，需要调用独立厂商实现的ClassPath下SPI代码，则无法解决，因为启动类不认识这些代码。为此，大部分SPI都通过增加一个线程上下文加载器加载所需的SPI代码，造成了父类加载器请求子类加载器完成类加载，从而打破了双亲委派机制。&lt;/p&gt;
+&lt;p&gt;Tomcat 也违背了双亲委托机制，因为默认类加载器无法加载两个相同类库不同版本，做不到&lt;strong&gt;隔离&lt;/strong&gt;，无法对JDP做到热修改，因为JSP也是class文件，类名不会变。双亲委派机制绑死了类名。&lt;/p&gt;
+&lt;p&gt;为此，Tomcat的做法是每一个Web应用程序对应一个WebApp类加载器，每一个JSP文件对应一个Jsp类加载器。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>RabbitMQ - 基本概念和 SpringBoot 下的使用</title>
+        <link>https://winterorch.github.io/p/rabbitmq-basic/</link>
+        <pubDate>Wed, 07 Jul 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://winterorch.github.io/p/rabbitmq-basic/</guid>
+        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg" alt="Featured image of post RabbitMQ - 基本概念和 SpringBoot 下的使用" /&gt;&lt;p&gt;生产者通过指定 &lt;strong&gt;RoutingKey (路由键)&lt;/strong&gt; 指定消息路由规则。示例为 Spring AMQP 中 RabbitMQ 的使用。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Spring AMQP 文档：https://docs.spring.io/spring-amqp/docs/current/reference/html/&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;exchange-types-交换器类型&#34;&gt;Exchange Types （交换器类型）&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;fanout&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，&lt;!-- raw HTML omitted --&gt;常用来广播消息&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;cm&#34;&gt;/**
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; * Fanout
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; */&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FANOUT_EXCHANGE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutBinding1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;topicQueue1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topicQueue1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutBinding2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;topicQueue2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topicQueue2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;direct&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;将消息路由到 BindingKey 与 RoutingKey 完全匹配的队列中，&lt;!-- raw HTML omitted --&gt;常用来将有优先级的任务发到对应队列，得到更多处理资源&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;topic&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RoutingKey 为一个点号 &lt;code&gt;.&lt;/code&gt; 分隔的字符串（被点号 &lt;code&gt;.&lt;/code&gt; 分隔开的每一段独立的字符串称为一个单词），如 &lt;code&gt;com.rabbitmq.client&lt;/code&gt;、&lt;code&gt;java.util.concurrent&lt;/code&gt;、&lt;code&gt;com.hidden.client&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;BindingKey 和 RoutingKey 一样也是点号 &lt;code&gt;．&lt;/code&gt;分隔的字符串&lt;/li&gt;
+&lt;li&gt;BindingKey 中可以存在两种特殊字符串 &lt;code&gt;*&lt;/code&gt; 和 &lt;code&gt;#&lt;/code&gt;，用于做模糊匹配，其中 &lt;code&gt;*&lt;/code&gt; 用于匹配一个单词，&lt;code&gt;#&lt;/code&gt; 用于匹配多个单词(可以是零个)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以，如果当一个队列的绑定键为 &lt;code&gt;#&lt;/code&gt; 的时候，这个队列将会无视消息的路由键，接收所有的消息。
+当 &lt;code&gt;*&lt;/code&gt; (星号) 和 &lt;code&gt;#&lt;/code&gt; (井号) 这两个特殊字符都未在绑定键中出现的时候，此时主题交换机也就相当于直连交换机。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;headers&lt;/strong&gt; （不推荐）&lt;/p&gt;
+&lt;p&gt;不依赖路由键而是 headers 属性进行完全匹配，性能很差因而不实用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HeadersExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headersExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HeadersExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HEADERS_EXCHANGE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headerQueue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HEADER_QUEUE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headerBinding&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;header1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;header2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;headerQueue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;headersExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;whereAll&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;match&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;可以如何使用&#34;&gt;可以如何使用&lt;/h3&gt;
+&lt;p&gt;简单来讲，消息队列可以用来解耦模块、充当工作缓存、流量削峰&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（简单模式）单生产者对应单消费者&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;相当于工作缓存，如邮件服务从队列中取件进行发送&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（工作队列模式）单生产者对应多消费者&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;资源密集型任务中，多个消费者并行处理&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（订阅模式）单生产者发到多消费者&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如库存更新后需要通知多个缓存和多个数据库，则通过 &lt;strong&gt;fanout&lt;/strong&gt; 交换器分出两个消息队列，分别对应缓存和数据库&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（路由模式）有选择地发送和接收&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;指定路由 key&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（主题模式）将队列需求绑定在特定模式上&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（远程过程调用）在远程计算机上运行功能并等待结果&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;通过RPC在远程计算机上运行功能并等待结果&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;（发布者确认）异步确认发送者发布消息&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;用于实现可靠地分布，如扣款&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;如何解决消息丢失&#34;&gt;如何解决消息丢失&lt;/h3&gt;
+&lt;p&gt;消息丢失可能出现在生产者至MQ、消息队列本身、消费者三处。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;生产者导致的消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RabbitMQ &lt;strong&gt;事务机制&lt;/strong&gt;为了避免消息丢失，可以在发送消息前，先开启执行 txSelect 方法开启一个事务，接着发送消息，如果消息投递失败，执行 txRollback 回滚事务，再执行重试操作重新发送，如果消息投递成功，执行 txCommit 方法提交事务。&lt;/p&gt;
+&lt;p&gt;但是，RabbitMQ事务同步阻塞，因此一般不会这样做。更常用的方法是 Confirm 模式。RabbitMQ &lt;strong&gt;Confirm 模式&lt;/strong&gt; 通过异步回调的方式，接收成功回调生产者&lt;code&gt;ack&lt;/code&gt;接口，不成功回调&lt;code&gt;nack&lt;/code&gt;接口。&lt;/p&gt;
+&lt;p&gt;**注意：**Spring AMPQ 默认 &lt;code&gt;publisher-confirm&lt;/code&gt; 为 &lt;code&gt;false&lt;/code&gt;，需要手动设 &lt;code&gt;true&lt;/code&gt;，此处可见下文关于 Spring AMQP publisher 参数内容。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;因此，生产者与 broker 间消息可靠性保证思路就是&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当消息发送到broker的时候，执行监听的回调函数。&lt;/li&gt;
+&lt;li&gt;在生产端要维护一个消息发送的表，消息发送的时候记录消息id，在消息成功落地broker磁盘并且进行回调确认（ack）的时候，根据本地消息表和回调确认的消息id进行对比，这样可以确保生产端的消息表中的没有进行回调确认（或者回调确认时网络问题）的消息进行补救式的重发，当然不可避免的就会在消息端可能会造成消息的重复消息。针对消费端重复消息，在消费端进行幂等处理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;RabbitMQ 导致消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RabbitMQ 没有对消息进行持久化，消息就可能随 RabbitMQ 宕机而丢失。解决方法就是调整 Confirm 模式，让 RabbitMQ 在完成消息持久化，消息到了硬盘上，再返回&lt;code&gt;ack&lt;/code&gt;接口。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;消费者导致消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RabbitMQ 在默认的自动提交&lt;code&gt;ack&lt;/code&gt;配置下，如果消息处理完之前消费者挂了，消息会丢失。将自动提交&lt;code&gt;ack&lt;/code&gt;关闭后，如果消费者处理完消息前挂了，RabbitMQ 会认为没有处理成功，再次推送给消费者处理。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;我们可以顺便来看一下 Kafka 和 RocketMQ 的处理&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Kafka&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;生产者导致消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;对于 Kafka 来说，生产者基本不会弄丢消息，因为生产者发送消息会等待 Kafka 响应成功，如果响应失败，生产者会自动不断地重试。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Broker端弄丢了数据&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Kafka 通常会一台 leader + 两台 follower，当生产者消息刚写入 leader 成功，但是还没同步到 follower 时，leader 宕机了，此时会重新选举 leader，新的 leader 由于还未同步到这条数据，导致该条消息丢失。&lt;/p&gt;
+&lt;p&gt;解决办法是做一些配置，当有其他 follower 同步到了消息后才通知生产者消息接收成功了。配置如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给 topic 设置 &lt;code&gt;replication.factor&lt;/code&gt; 参数：这个值必须大于 1，要求每个 partition 必须有至少 2 个副本。&lt;/li&gt;
+&lt;li&gt;在 Kafka 服务端设置 &lt;code&gt;min.insync.replicas&lt;/code&gt; 参数：这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower。&lt;/li&gt;
+&lt;li&gt;在 producer 端设置 &lt;code&gt;acks=all&lt;/code&gt; ：这个是要求每条数据，必须是&lt;strong&gt;写入所有 replica 之后，才能认为是写成功了&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;按上面的配置配置后，就可以保证在 Kafka Broker 端就算 leader 故障了，进行新 leader 选举切换时，也不会丢失数据。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;消费者导致消息丢失&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Kafka 消费端弄丢数据原因跟 RabbitMQ 类似，Kafka 消费者会在接收到消息的时候，会自动提交一个 offset 给 Kafka，告诉 Kafka 消息已经处理了。处理方法也跟 RabbitMQ 类似，关闭 offset 的自动提交即可。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;RocketMQ&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;RocketMQ 导致数据丢失的原因与前面的 RabbitMQ 和 Kafka 都很类似。生产者就是因为网络抖动等原因消息投递失败，或者 RocketMQ 自身的 Master 节点故障，主备切换故障之类的，消费者则有可能是异步处理导致还未处理成功就给 RocketMQ 提交了 offset 标识消息已处理了。&lt;/p&gt;
+&lt;p&gt;在 RocketMQ 中，事务消息可以保证消息零丢失。RocketMQ 的事务消息基于这三个业务流程：生产者向RocketMQ发送 half 消息 -&amp;gt; RocketMQ 对 half 消息响应 -&amp;gt; commit/rollback。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果生产者发送 half 失败，则作重试或对消息作持久化，给用户返回失败&lt;/li&gt;
+&lt;li&gt;如果RocketMQ处理失败，则生产者回滚该条消息，请求失败&lt;/li&gt;
+&lt;li&gt;如果 half 发送成功，但 RocketMQ 响应没能够传回，则会通过补偿机制回调接口，决定 commit 还是 rollback&lt;/li&gt;
+&lt;li&gt;包括 commit 或 rollback 时发生的失败都是用补偿机制处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;spring-amqp&#34;&gt;Spring AMQP&lt;/h2&gt;
+&lt;h3 id=&#34;一般-producer-consumer-设置&#34;&gt;一般 Producer Consumer 设置&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Producer&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;写一个 &lt;code&gt;Config&lt;/code&gt; 类来进行 Binding&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;BindingConfig&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;first&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;direct.first&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;directExchange&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RoutingKey1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;directKey1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    
+   &lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;queueFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;first&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DirectExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;directExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DirectExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&#34;c1&#34;&gt;//利用BindingBuilder绑定Direct与queueFirst
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;bindingExchangeFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;queueFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DirectExchange&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;directExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;queueFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;directExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;with&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RoutingKey1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;  
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;为消息套一个 UUID，方便在ack或nack时回调处理。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CorrelationData&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getCorrelationData&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CorrelationData&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;UUID&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;randomUUID&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;toString&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;ConfirmCallBack&lt;/code&gt; 只返回标识值，因此作为 Publisher，可以维护一个 CorrelationID 到 发送信息 的 K-V 关系，从而在发送失败时再做处理，或者删除绑定关系。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;Consumer&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Consumer 侧的 &lt;code&gt;ConnectionFactory&lt;/code&gt; 配置和 Producer 侧是完全一样的。&lt;code&gt;BindingConfig&lt;/code&gt; 也完全一致：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;BindingConfig&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;first&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;direct.first&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;directExchange&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RoutingKey1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;directKey1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    
+   &lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;queueFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;first&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DirectExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;directExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DirectExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&#34;c1&#34;&gt;//利用BindingBuilder绑定Direct与queueFirst
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;bindingExchangeFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;queueFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DirectExchange&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;directExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;queueFirst&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;directExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;with&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RoutingKey1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;  
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后通过 &lt;code&gt;@RabbitListener&lt;/code&gt; 定义响应函数：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@RabbitListener&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;queues&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;direct.first&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RabbitMqListener&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  
+  &lt;span class=&#34;nd&#34;&gt;@RabbitHandler&lt;/span&gt;
+  &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;message&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;message&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Binding 过程也可以在 &lt;code&gt;RabbitMqListener&lt;/code&gt; 中完成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Configuration&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@RabbitListener&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bindings&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@QueueBinding&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;exchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Exchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;directExchange&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;),&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Queue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;direct.second&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;),&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;directKey2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RabbitListener&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  
+  &lt;span class=&#34;nd&#34;&gt;@RabbitHandler&lt;/span&gt;
+  &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;message&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;System&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;message&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;回调配置&#34;&gt;回调配置&lt;/h3&gt;
+&lt;p&gt;AMQP 有三个相关参数：&lt;code&gt;publisher-confirms&lt;/code&gt; &lt;code&gt;publisher-returns&lt;/code&gt; 和 &lt;code&gt;mandatory&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;其中 &lt;code&gt;mandatory&lt;/code&gt; 主要管的是消息投到 Exchange 之后，Exchange 无法将其路由到任何队列之后的操作，&lt;code&gt;true&lt;/code&gt; 则把消息还给生产者，&lt;code&gt;false&lt;/code&gt; 则丢弃。不过，按照 Spring 源码的逻辑，不开启 &lt;code&gt;publisher-returns&lt;/code&gt; 就不会进行消息回调，因此要 &lt;code&gt;mandatory&lt;/code&gt; &lt;code&gt;publisher-returns&lt;/code&gt; 必须都开才能起作用。另外，&lt;code&gt;returnCallback&lt;/code&gt; 回调时返回的直接是经过封装的 &lt;code&gt;byte[]&lt;/code&gt;，需要进行反序列化来还原原消息。&lt;/p&gt;
+&lt;p&gt;值得注意的一个小点是，Spring 中的 &lt;code&gt;mandatory&lt;/code&gt; 是 template 的参数而不是 rabbitmq 的。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;publisher-confirms&lt;/code&gt; 是针对消息没有被成功放入Exchange的情况，无论成功失败都会调用回调函数，通过 &lt;code&gt;ConfirmCallback&lt;/code&gt; 进行回调。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Redis - Spring Data Redis 中的 Transaction 与 Pipeline</title>
         <link>https://winterorch.github.io/p/redis-spring_trans-pipeline/</link>
         <pubDate>Tue, 06 Jul 2021 00:00:00 +0000</pubDate>
@@ -119,160 +726,6 @@
     &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getResultType&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;deserializeResult&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resultSerializer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;确实，&lt;code&gt;evalSha&lt;/code&gt; 如果不能得到正确结果就会抛异常，转而用 &lt;code&gt;eval&lt;/code&gt; 方法了。这对于不预载脚本的场景是不是低效了点？&lt;/p&gt;
-</description>
-        </item>
-        <item>
-        <title>RabbitMQ - 基础知识</title>
-        <link>https://winterorch.github.io/p/rabbitmq_introduction/</link>
-        <pubDate>Sun, 04 Jul 2021 00:00:00 +0000</pubDate>
-        
-        <guid>https://winterorch.github.io/p/rabbitmq_introduction/</guid>
-        <description>&lt;img src="https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg" alt="Featured image of post RabbitMQ - 基础知识" /&gt;&lt;p&gt;示例为 Spring AMQP 中 RabbitMQ 的使用。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Spring AMQP 官方文档： &lt;a href=&#34;https://docs.spring.io/spring-amqp/docs/current/reference/html/&#34;&gt;https://docs.spring.io/spring-amqp/docs/current/reference/html/&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h3 id=&#34;exchange-types-交换器类型&#34;&gt;Exchange Types （交换器类型）&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;fanout&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，&lt;!-- raw HTML omitted --&gt;常用来广播消息&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;cm&#34;&gt;/**
-&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; * Fanout
-&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; */&lt;/span&gt;
-&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
-&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FanoutExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FANOUT_EXCHANGE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
-&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutBinding1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topicQueue1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
-&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;fanoutBinding2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topicQueue2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fanoutExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;direct&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;将消息路由到 BindingKey 与 RoutingKey 完全匹配的队列中，&lt;!-- raw HTML omitted --&gt;常用来将有优先级的任务发到对应队列，得到更多处理资源&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;topic&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;RoutingKey 为一个点号 &lt;code&gt;.&lt;/code&gt; 分隔的字符串（被点号 &lt;code&gt;.&lt;/code&gt; 分隔开的每一段独立的字符串称为一个单词），如 &lt;code&gt;com.rabbitmq.client&lt;/code&gt;、&lt;code&gt;java.util.concurrent&lt;/code&gt;、&lt;code&gt;com.hidden.client&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;BindingKey 和 RoutingKey 一样也是点号 &lt;code&gt;．&lt;/code&gt;分隔的字符串&lt;/li&gt;
-&lt;li&gt;BindingKey 中可以存在两种特殊字符串 &lt;code&gt;*&lt;/code&gt; 和 &lt;code&gt;#&lt;/code&gt;，用于做模糊匹配，其中 &lt;code&gt;*&lt;/code&gt; 用于匹配一个单词，&lt;code&gt;#&lt;/code&gt; 用于匹配多个单词(可以是零个)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;所以，如果当一个队列的绑定键为 &lt;code&gt;#&lt;/code&gt; 的时候，这个队列将会无视消息的路由键，接收所有的消息。
-当 &lt;code&gt;*&lt;/code&gt; (星号) 和 &lt;code&gt;#&lt;/code&gt; (井号) 这两个特殊字符都未在绑定键中出现的时候，此时主题交换机也就相当于直连交换机。&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;headers&lt;/strong&gt; （不推荐）&lt;/p&gt;
-&lt;p&gt;不依赖路由键而是 headers 属性进行完全匹配，性能很差因而不实用&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
-&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HeadersExchange&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headersExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HeadersExchange&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HEADERS_EXCHANGE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-
-&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headerQueue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Queue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HEADER_QUEUE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;nd&#34;&gt;@Bean&lt;/span&gt;
-&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Binding&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;headerBinding&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;header1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;put&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;header2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BindingBuilder&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;headerQueue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;headersExc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;whereAll&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;match&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;模式&#34;&gt;模式&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（简单模式）单生产者对应单消费者&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;相当于工作缓存，如邮件服务从队列中取件进行发送&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（工作队列模式）单生产者对应多消费者&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;资源密集型任务中，多个消费者并行处理&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（订阅模式）单生产者发到多消费者&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;如库存更新后需要通知多个缓存和多个数据库，则通过 &lt;strong&gt;fanout&lt;/strong&gt; 交换器分出两个消息队列，分别对应缓存和数据库&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（路由模式）有选择地发送和接收&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;指定路由 key&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（主题模式）将队列需求绑定在特定模式上&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（远程过程调用）在远程计算机上运行功能并等待结果&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;通过RPC在远程计算机上运行功能并等待结果&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;（发布者确认）异步确认发送者发布消息&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;用于实现可靠地分布，如扣款&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;如何解决消息丢失&#34;&gt;如何解决消息丢失&lt;/h3&gt;
-&lt;p&gt;消息丢失可能出现在生产者至MQ、消息队列本身、消费者三处。&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;&lt;strong&gt;生产者导致的消息丢失&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;RabbitMQ &lt;strong&gt;事务机制&lt;/strong&gt;为了避免消息丢失，可以在发送消息前，先开启执行 txSelect 方法开启一个事务，接着发送消息，如果消息投递失败，执行 txRollback 回滚事务，再执行重试操作重新发送，如果消息投递成功，执行 txCommit 方法提交事务。&lt;/p&gt;
-&lt;p&gt;但是，RabbitMQ事务同步阻塞，因此一般不会这样做。更常用的方法是 Confirm 模式。RabbitMQ &lt;strong&gt;Confirm 模式&lt;/strong&gt; 通过异步回调的方式，接收成功回调生产者&lt;code&gt;ack&lt;/code&gt;接口，不成功回调&lt;code&gt;nack&lt;/code&gt;接口。&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;&lt;strong&gt;RabbitMQ 导致消息丢失&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;RabbitMQ 没有对消息进行持久化，消息就可能随 RabbitMQ 宕机而丢失。解决方法就是调整 Confirm 模式，让 RabbitMQ 在完成消息持久化，消息到了硬盘上，再返回&lt;code&gt;ack&lt;/code&gt;接口。&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;&lt;strong&gt;消费者导致消息丢失&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;RabbitMQ 在默认自动提交&lt;code&gt;ack&lt;/code&gt;下，如果消息处理完之前消费者挂了，消息会丢失。将自动提交&lt;code&gt;ack&lt;/code&gt;关闭后，如果消费者处理完消息前挂了，RabbitMQ 会认为没有处理成功，再次推送给消费者处理。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;我们可以顺便来看一下 Kafka 和 RocketMQ 的处理&lt;/p&gt;
-&lt;h3 id=&#34;2kafka&#34;&gt;2、Kafka&lt;/h3&gt;
-&lt;h4 id=&#34;21-生产者导致消息丢失&#34;&gt;2.1 生产者导致消息丢失&lt;/h4&gt;
-&lt;p&gt;对于 Kafka 来说，生产者基本不会弄丢消息，因为生产者发送消息会等待 Kafka 响应成功，如果响应失败，生产者会自动不断地重试。&lt;/p&gt;
-&lt;h4 id=&#34;22-kafka-弄丢了数据&#34;&gt;2.2 Kafka 弄丢了数据&lt;/h4&gt;
-&lt;p&gt;Kafka 通常会一台 leader + 两台 follower，当生产者消息刚写入 leader 成功，但是还没同步到 follower 时，leader 宕机了，此时会重新选举 leader，新的 leader 由于还未同步到这条数据，导致该条消息丢失。&lt;/p&gt;
-&lt;p&gt;解决办法是做一些配置，当有其他 follower 同步到了消息后才通知生产者消息接收成功了。配置如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;给 topic 设置 &lt;code&gt;replication.factor&lt;/code&gt; 参数：这个值必须大于 1，要求每个 partition 必须有至少 2 个副本。&lt;/li&gt;
-&lt;li&gt;在 Kafka 服务端设置 &lt;code&gt;min.insync.replicas&lt;/code&gt; 参数：这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower。&lt;/li&gt;
-&lt;li&gt;在 producer 端设置 &lt;code&gt;acks=all&lt;/code&gt; ：这个是要求每条数据，必须是&lt;strong&gt;写入所有 replica 之后，才能认为是写成功了&lt;/strong&gt;。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;按上面的配置配置后，就可以保证在 Kafka Broker 端就算 leader 故障了，进行新 leader 选举切换时，也不会丢失数据。&lt;/p&gt;
-&lt;h4 id=&#34;23-消费者导致消息丢失&#34;&gt;2.3 消费者导致消息丢失&lt;/h4&gt;
-&lt;p&gt;Kafka 消费端弄丢数据原因跟 RabbitMQ 类似，Kafka 消费者会在接收到消息的时候，会自动提交一个 offset 给 Kafka，告诉 Kafka 消息已经处理了。处理方法也跟 RabbitMQ 类似，关闭 offset 的自动提交即可。&lt;/p&gt;
-&lt;h3 id=&#34;3rocketmq&#34;&gt;3、RocketMQ&lt;/h3&gt;
-&lt;p&gt;RocketMQ 导致数据丢失的原因与前面的 RabbitMQ 和 Kafka 都很类似。生产者就是因为网络抖动等原因消息投递失败，或者 RocketMQ 自身的 Master 节点故障，主备切换故障之类的，消费者则有可能是异步处理导致还未处理成功就给 RocketMQ 提交了 offset 标识消息已处理了。&lt;/p&gt;
-&lt;p&gt;在 RocketMQ 中，事务消息可以保证消息零丢失。RocketMQ 的事务消息流程大致如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://static.javajike.com/img/2021/4/2/chulixiaoxidiushidewenti_4.png&#34; alt=&#34;chulixiaoxidiushidewenti_4.png&#34;  /&gt;&lt;/p&gt;
-&lt;p&gt;在上面的事务消息流程中，基于这三个业务流程：发送 half 消息 -&amp;gt; 处理其他业务 -&amp;gt; commit/rollback。我们来讨论下面的几种情况：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;万一生产者发送 half 消息失败，怎么办？&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;可以做重试或记录消息到如文件、数据库等地方，直接给用户返回失败，本次请求失败。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;万一生产者发送 half 消息成功，但是处理其他业务失败，又该怎么办呢？&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;生产者发送 rollback 请求回滚 RocketMQ 中该条消息，本次请求失败。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;万一生产者发送 half 消息成功，但是 RocketMQ 由于某些原因如网络超时等导致没有响应，怎么处理？&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;由于 half 消息已发送成功，此时 RocketMQ 中已经有该条消息了，RocketMQ 会有一个补偿机制，补偿机制会回调你开发好的一个接口，询问你这条消息是要 commit 还是 rollback。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;万一生产者发送 half 消息成功，但是请求 commit 或 rollback 的时候失败了呢？&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这个问题与上面的问题一样，都是通过 RocketMQ 的补偿机制来处理。&lt;/p&gt;
-&lt;/blockquote&gt;
 </description>
         </item>
         <item>
@@ -995,7 +1448,8 @@ Output: [1]
 &lt;hr&gt;
 &lt;h2 id=&#34;netty-中的零拷贝&#34;&gt;Netty 中的零拷贝&lt;/h2&gt;
 &lt;p&gt;在 &lt;code&gt;Bootstrap&lt;/code&gt; 配置参数的时候，使用 &lt;code&gt;.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)&lt;/code&gt; 来指定一个池化的 Allocator，并且使用 &lt;code&gt;ByteBuf buf = allocator.directBuffer()&lt;/code&gt; 来获取 &lt;code&gt;Bytebuf&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;PooledByteBufAllocator&lt;/code&gt; 会帮你复用（无需 &lt;code&gt;release&lt;/code&gt;，除非你后面还需要用到同一个 &lt;code&gt;bytebuf&lt;/code&gt;）而不是每次都重新分配 &lt;code&gt;ByteBuf&lt;/code&gt;。在IO操作中，分配&lt;strong&gt;直接内存&lt;/strong&gt;而不是JVM的堆空间，避免了在发送数据时，从JVM到直接内存的拷贝过程，这也就是 Zero Copy 的含义。Java NIO 中也有 Zero Copy Buffer 技术。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;PooledByteBufAllocator&lt;/code&gt; 会帮你复用（无需 &lt;code&gt;release&lt;/code&gt;，除非你后面还需要用到同一个 &lt;code&gt;bytebuf&lt;/code&gt;）而不是每次都重新分配 &lt;code&gt;ByteBuf&lt;/code&gt;。在IO操作中，Netty 接收和发送 ByteBuffer 采用&lt;strong&gt;直接内存&lt;/strong&gt;进行Socket读写而不是JVM的堆空间，避免了在发送数据时，从JVM到直接内存的拷贝过程（文件传输采用&lt;code&gt;transferTo&lt;/code&gt;，直接将缓冲区数据发到Channel，不存在循环write方式涉及的内存拷贝），这也就是 Zero Copy 的含义。Java NIO 中也有 Zero Copy Buffer 技术。&lt;/p&gt;
+&lt;p&gt;同时，Netty 的组合Buffer对象可以聚合多个 &lt;code&gt;ByteBuffer&lt;/code&gt; 对象，方便操作，避免通过内存拷贝将小Buffer合并成大的。&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 </description>
         </item>

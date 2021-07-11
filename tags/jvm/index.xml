@@ -6,7 +6,60 @@
     <description>Recent content in JVM on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 17 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/jvm/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/jvm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java - JVM 字符串</title>
+      <link>https://winterorch.github.io/p/java-jvm-string_pool/</link>
+      <pubDate>Sun, 11 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/java-jvm-string_pool/</guid>
+      <description>大部分内容来源这篇美团的文章：https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html，原文非常有深度，这里只捡了一些比较浅的东西出来
+JDK6到7的字符串常量池出现了很大变化，为了防止绕晕，这里只拿了7以后的情况出来
+   直接用双引号声明的 String 对象直接存到常量池
+  用 intern 方法会从字符串常量池查询当前字符串是否存在，若不存在则将当前字符串放入常量池
+  new 一个字符串出来最多会生成两个对象
+ 字符串常量池中的引用对象 Java Heap 中的String对象  当然，如果常量池中原本已经存在了被引用对象，则只会多生成一个对象
+  字符串常量池 字符串常量池的主体是一个 StringTable 。
+HotSpot VM中使用全局表StringTable记录interned string，StringTable 的 intern 方法类似 HashMap ，本质是HashSet&amp;lt;String&amp;gt;，但不能自动扩容，（JDK6）默认大小 1009，（JDK7）通过-XX:StringTableSize=99991参数指定，默认大小 60013。StringTable只存储对String实例的引用。
+ 加载字节码文件时，常量（&amp;quot;&amp;quot;圈起来的就是字符串常量）会被加载到运行时常量池 (Runtime Constant Pool) 中，字符串此时只有 CONSTANT_Utf8 ，采用 Lazy-Init ，因此未成为 Java 对象，运行到对应位置再进行对象加载。  类加载阶段
+HotSpot VM 在类加载阶段，JVM会创建常量池中的字符串对象实例，但这一过程是惰性的，加载时仅将字面量放入类的运行时常量池，即 CONSTANT_Utf8，而 CONSTANT_String 还没有，也不会进入字符串常量池。（当然静态变量会直接被指定初始值，也就会创建字符串对象，同时保存引用到字符串常量池）
+intern() JDK7中，intern() 方法将在字符串池中保存堆中的引用并返回（如果已经有则直接返回该引用）。对执行方法的对象本身不会造成任何影响，该指哪指哪。以下为例：
+String s3 = new String(&amp;#34;1&amp;#34;) + new String(&amp;#34;1&amp;#34;); s3.</description>
+    </item>
+    
+    <item>
+      <title>Java - JVM 问题集合 (下)</title>
+      <link>https://winterorch.github.io/p/java-jvm-questions_2/</link>
+      <pubDate>Sat, 10 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/java-jvm-questions_2/</guid>
+      <description>指令重排序与 happens-before 原则  https://www.jianshu.com/p/b9186dbebe8e
+ 问题的起因还是指令重排序，重排序之所以存在是因为有多级缓存，线程所作变更先在寄存器或本地缓存完成，然后拷贝到主存以跨越内存栅栏（即完成工作内存到主存间的拷贝动作），跨越序列或顺序称为happens-before。仅当写操作线程先跨越内存栅栏，读线程后跨越内存栅栏，写操作线程所作变更才对其它线程可见。
+ 程序次序规则： 在一个单独的线程中，按照程序代码的执行流顺序，（时间上）先执行的操作happen—before（时间上）后执行的操作 （同一个线程中前面的所有写操作对后面的操作可见） 管理锁定规则：一个unlock操作happen—before后面（时间上的先后顺序）对同一个锁的lock操作。 （如果线程1解锁了monitor a，接着线程2锁定了a，那么，线程1解锁a之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）） volatile变量规则：对一个volatile变量的写操作happen—before后面（时间上）对该变量的读操作。 （如果线程1写入了volatile变量v（临界资源），接着线程2读取了v，那么，线程1写入v及之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）） 线程启动规则：Thread.start()方法happen—before调用用start的线程前的每一个操作。 （假定线程A在执行过程中，通过执行ThreadB.start()来启动线程B，那么线程A对共享变量的修改在接下来线程B开始执行前对线程B可见。注意：线程B启动之后，线程A在对变量修改线程B未必可见。） 线程终止规则：线程的所有操作都happen—before对此线程的终止检测，可以通过Thread.join（）方法结束、Thread.isAlive（）的返回值等手段检测到线程已经终止执行。 (线程t1写入的所有变量，在任意其它线程t2调用t1.join()，或者t1.isAlive() 成功返回后，都对t2可见。) 线程中断规则：对线程interrupt()的调用 happen—before 发生于被中断线程的代码检测到中断时事件的发生。 (线程t1写入的所有变量，调用Thread.interrupt()，被打断的线程t2，可以看到t1的全部操作) 对象终结规则：一个对象的初始化完成（构造函数执行结束）happen—before它的finalize（）方法的开始。 (对象调用finalize()方法时，对象初始化完成的任意操作，同步到全部主存同步到全部cache。) 传递性：如果操作A happen—before操作B，操作B happen—before操作C，那么可以得出A happen—before操作C。   内存泄漏 JVM通过引用计数法和可达性分析算法来判断对象是否可以被GC，对象长时间没有被GC一般是JVM误以为对象还在引用中，无法回收，即长期存活对象引用短期存活对象，常见的情况包括：
+ 静态集合类（短生命周期对象）被长生命周期持有引用 各种连接（数据库、网络连接、IO）没有线性关闭，造成对象无法被回收 变量定义作用范围过大 内部类持有外部类，内部类长期被持有，导致外部类对象无法被回收 哈希表中，如果对象哈希值与最初存入时不同，则会导致找不到对象结果，造成泄漏 一些数据结构，如手写栈，在栈不断增长、收缩后，如果不手工清空（引用置null），弹出对象有可能不被GC，造成隐蔽的内存泄漏 缓存结构中，有些对象写入后很可能就再也没有被删除或使用，造成缓存泄漏。WeakHashMap 就是为此诞生的，没有除自身外其它引用的值会被丢弃 监听器和回调，如果注册后没有显示取消就会积聚起来，比较简单的解决方法也是使用弱引用  因此总结下来，防止内存泄漏的办法包括：避免长期存活对象持有不必要的短期对象引用；不使用资源即时回收，尤其是连接、手工数据结构中；难以判断是否可以回收的缓存资源，可以通过弱引用防止内存泄漏。
+ Native 关键字 用于告诉 JVM 调用的是本地 C/C++ 方法，因此不能 abstract。使用 JNI 加载动态或静态库时会需要用到这个方法。常见的如 hashCode() 、NIO 中 epoll 相关的内核操作都需要调用本地方法。
+ Unsafe 类 可以被用来分配直接内存、获取内存偏移地址、根据偏移地址修改属性（无视对象的可访问等级）、操作数组元素、线程挂起恢复、CAS ……
+访问直接内存、调用直接内存都通过这个类来实现，记住这个名字 sun.misc.Unsafe 。</description>
+    </item>
+    
+    <item>
+      <title>Java - JVM 问题集合 (上)</title>
+      <link>https://winterorch.github.io/p/java-jvm-questions_1/</link>
+      <pubDate>Fri, 09 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/java-jvm-questions_1/</guid>
+      <description>HotSpot 是什么 使用最广泛的 JVM，OpenJDK SunJDK 的 JVM。最早不是 Java 的虚拟机，在 JIT 方面具有一些先进的理念，被 SUN 收购。
+ 堆和栈区别是什么 个人理解，不一定全面：
+   堆 栈     公有 线程私有   存放绝大多数对象实例、数组 存放局部变量表、操作数栈、动态链接、方法出口等   GC的主要场所 不需要GC，栈帧随方法调用结束而被弹出   生老病死与JVM紧密相关 生老病死与线程、函数调用紧密相关   不能动态扩容 可以通过配置动态扩容     哪块内存区不会OOM 公有部分： 堆，会OOM；方法区，虽然搬到了原生内存上，但还是有可能OOM的；JVM外的直接内存，肯定是可能OOM的。因此公有区全部有可能OOM。
+线程私有部分： 本地方法栈，为 Native 方法服务，也有OOM可能；虚拟机栈，OOM常客，允许动态扩容时会OOM，不允许则会 OverFlow，因此是会OOM的；程序寄存器，唯一不会出现OOM的区域，就是它。
+ 一个线程OOM后，其它线程能否运行 无论哪种OOM，一个线程OOM后，所占据内存资源会被GC全部释放。无论是线程共享的堆内存，还是不共享的栈内存。
+因此，一个线程的OOM不会影响到其它线程运行，即使主线程抛异常退出，子线程仍能继续，除非子线程是主线程的守护线程。
+ 对象一定是在堆上分配的吗 不一定。JVM通过逃逸分析，能够分析新对象的适用范围，以此确定是否要将对象分配到堆上，对于没有逃逸出方法的对象，很可能会被优先在栈上进行分配。
+ 其实就像我们平常用Spring，有必要将所有对象都注册成Bean吗？肯定没必要，JVM也不傻，并非所有对象都会分配到堆上，毕竟GC也是有开销的。
+  为什么说一次编译，处处执行 两次编译机制，第一次由编译器编译成字节码，第二次由JVM转换到机器码，实际上是解释执行机制，解释工作由本地JVM完成，JVM担任了本地向导的责任，因此不是“处处执行”，是有本地向导，装了JVM的地方执行。
+ 如何动态生成一个类   操作字节码</description>
+    </item>
+    
     <item>
       <title>Java - JVM GC</title>
       <link>https://winterorch.github.io/p/java-jvm-ram_and_gc/</link>

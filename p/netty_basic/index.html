@@ -377,7 +377,8 @@
 <hr>
 <h2 id="netty-中的零拷贝">Netty 中的零拷贝</h2>
 <p>在 <code>Bootstrap</code> 配置参数的时候，使用 <code>.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)</code> 来指定一个池化的 Allocator，并且使用 <code>ByteBuf buf = allocator.directBuffer()</code> 来获取 <code>Bytebuf</code>。</p>
-<p><code>PooledByteBufAllocator</code> 会帮你复用（无需 <code>release</code>，除非你后面还需要用到同一个 <code>bytebuf</code>）而不是每次都重新分配 <code>ByteBuf</code>。在IO操作中，分配<strong>直接内存</strong>而不是JVM的堆空间，避免了在发送数据时，从JVM到直接内存的拷贝过程，这也就是 Zero Copy 的含义。Java NIO 中也有 Zero Copy Buffer 技术。</p>
+<p><code>PooledByteBufAllocator</code> 会帮你复用（无需 <code>release</code>，除非你后面还需要用到同一个 <code>bytebuf</code>）而不是每次都重新分配 <code>ByteBuf</code>。在IO操作中，Netty 接收和发送 ByteBuffer 采用<strong>直接内存</strong>进行Socket读写而不是JVM的堆空间，避免了在发送数据时，从JVM到直接内存的拷贝过程（文件传输采用<code>transferTo</code>，直接将缓冲区数据发到Channel，不存在循环write方式涉及的内存拷贝），这也就是 Zero Copy 的含义。Java NIO 中也有 Zero Copy Buffer 技术。</p>
+<p>同时，Netty 的组合Buffer对象可以聚合多个 <code>ByteBuffer</code> 对象，方便操作，避免通过内存拷贝将小Buffer合并成大的。</p>
 <!-- raw HTML omitted -->
 
 </section>
@@ -418,6 +419,60 @@
                 
                     
 <article class="has-image">
+    <a href="/p/java-jvm-string_pool/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/Sea.jpg" loading="lazy" data-key="java-jvm-string_pool" data-hash="/images/feature/scenes/Sea.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 字符串</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-questions_2/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Library.jpg" loading="lazy" data-key="java-jvm-questions_2" data-hash="/images/feature/ArseniXC/Library.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 问题集合 (下)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-questions_1/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Bunker.jpg" loading="lazy" data-key="java-jvm-questions_1" data-hash="/images/feature/ArseniXC/Bunker.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 问题集合 (上)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
     <a href="/p/redis-spring_trans-pipeline/">
         
         
@@ -436,24 +491,6 @@
                 
                     
 <article class="has-image">
-    <a href="/p/rabbitmq_introduction/">
-        
-        
-            <div class="article-image">
-                
-                    <img src="/images/feature/ArseniXC/Harbor.jpg" loading="lazy" data-key="rabbitmq_introduction" data-hash="/images/feature/ArseniXC/Harbor.jpg"/>
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">RabbitMQ - 基础知识</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="has-image">
     <a href="/p/redis-%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
         
         
@@ -466,42 +503,6 @@
 
         <div class="article-details">
             <h2 class="article-title">Redis - 常用数据类型</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="has-image">
-    <a href="/p/redis-common_questions/">
-        
-        
-            <div class="article-image">
-                
-                    <img src="/images/feature/scenes/Windmill.jpg" loading="lazy" data-key="redis-common_questions" data-hash="/images/feature/scenes/Windmill.jpg"/>
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Redis - 面试常见问题</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="has-image">
-    <a href="/p/spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%8C%BA%E5%88%86/">
-        
-        
-            <div class="article-image">
-                
-                    <img src="/images/feature/scenes/Arctic.jpg" loading="lazy" data-key="" data-hash="/images/feature/scenes/Arctic.jpg"/>
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Spring - 依赖注入注解的区分</h2>
         </div>
     </a>
 </article>

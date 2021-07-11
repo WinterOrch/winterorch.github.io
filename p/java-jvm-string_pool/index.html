@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='JDK7以后的字符串常量池.'><title>Java - JVM 字符串</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/java-jvm-string_pool/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM 字符串'>
+<meta property='og:description' content='JDK7以后的字符串常量池.'>
+<meta property='og:url' content='https://winterorch.github.io/p/java-jvm-string_pool/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='JVM' /><meta property='article:published_time' content='2021-07-11T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-11T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/scenes/Sea.jpg' />
+<meta name="twitter:title" content="Java - JVM 字符串">
+<meta name="twitter:description" content="JDK7以后的字符串常量池."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/scenes/Sea.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java-jvm-string_pool/">
+                
+                    <img src="/images/feature/scenes/Sea.jpg" loading="lazy" alt="Featured image of post Java - JVM 字符串" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/java%E5%9F%BA%E7%A1%80/" style="background-color: #D26900; color: #fff;">
+                Java基础
+            </a>
+        
+            <a href="/categories/%E9%9D%A2%E8%AF%95%E6%8A%80%E6%9C%AF%E5%82%A8%E5%A4%87/" style="background-color: #5A5AAD; color: #fff;">
+                面试技术储备
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/java-jvm-string_pool/">Java - JVM 字符串</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        JDK7以后的字符串常量池.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 11, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <blockquote>
+<p>大部分内容来源这篇美团的文章：https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html，原文非常有深度，这里只捡了一些比较浅的东西出来</p>
+<p>JDK6到7的字符串常量池出现了很大变化，为了防止绕晕，这里只拿了7以后的情况出来</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>直接用双引号声明的 <code>String</code> 对象直接存到常量池</strong></p>
+</li>
+<li>
+<p>用 <code>intern</code> 方法会从字符串常量池查询当前字符串是否存在，若不存在则将当前字符串放入常量池</p>
+</li>
+<li>
+<p><code>new</code> 一个字符串出来最多会生成两个对象</p>
+<ol>
+<li>字符串常量池中的引用对象</li>
+<li>Java Heap 中的<code>String</code>对象</li>
+</ol>
+<p>当然，如果常量池中原本已经存在了被引用对象，则只会多生成一个对象</p>
+</li>
+</ul>
+<h2 id="字符串常量池">字符串常量池</h2>
+<p>字符串常量池的主体是一个 <code>StringTable</code> 。</p>
+<p>HotSpot VM中使用全局表<code>StringTable</code>记录<code>interned string</code>，<code>StringTable</code> 的 <code>intern</code> 方法类似 <code>HashMap</code> ，本质是<code>HashSet&lt;String&gt;</code>，但不能自动扩容，（JDK6）默认大小 1009，（JDK7）通过<code>-XX:StringTableSize=99991</code>参数指定，默认大小 60013。<code>StringTable</code><strong>只存储对<code>String</code>实例的引用</strong>。</p>
+<ul>
+<li>加载字节码文件时，常量（<code>&quot;&quot;</code>圈起来的就是字符串常量）会被加载到运行时常量池 (Runtime Constant Pool) 中，字符串此时只有 <code>CONSTANT_Utf8</code> ，采用 <code>Lazy-Init</code> ，因此未成为 Java 对象，运行到对应位置再进行对象加载。</li>
+</ul>
+<p><strong>类加载阶段</strong></p>
+<p>HotSpot VM 在类加载阶段，JVM会创建常量池中的字符串对象实例，但这一过程是惰性的，加载时仅将字面量放入类的<strong>运行时常量池</strong>，即 <code>CONSTANT_Utf8</code>，而 <code>CONSTANT_String</code> 还没有，也不会进入字符串常量池。（当然静态变量会直接被指定初始值，也就会创建字符串对象，同时保存引用到字符串常量池）</p>
+<!-- raw HTML omitted -->
+<h2 id="intern">intern()</h2>
+<p>JDK7中，<code>intern()</code> 方法将在字符串池中保存堆中的引用并返回（如果已经有则直接返回该引用）。对执行方法的对象本身不会造成任何影响，该指哪指哪。以下为例：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">s3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">)</span> <span class="o">+</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">);</span>
+<span class="n">s3</span><span class="o">.</span><span class="na">intern</span><span class="o">();</span>
+<span class="n">String</span> <span class="n">s4</span> <span class="o">=</span> <span class="s">&#34;11&#34;</span><span class="o">;</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s3</span> <span class="o">==</span> <span class="n">s4</span><span class="o">);</span><span class="c1">//true
+</span></code></pre></div><p><code>s3</code> 实际上在 Heap 上 new 出了一个<code>&quot;11&quot;</code>，且不会保存到常量池中。<code>s3.intern()</code>将这一对象直接保存到了字符串常量池中，<code>s3</code>仍指向这一对象，只是对象本身被保存到了常量池，因此<code>s4</code>显式创建<code>&quot;11&quot;</code>会直接拿常量池中的对象（引用）来用，也就是<code>s3</code>。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">);</span>
+<span class="n">s</span><span class="o">.</span><span class="na">intern</span><span class="o">();</span>
+<span class="n">String</span> <span class="n">s2</span> <span class="o">=</span> <span class="s">&#34;1&#34;</span><span class="o">;</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span> <span class="o">==</span> <span class="n">s2</span><span class="o">);</span><span class="c1">//false
+</span></code></pre></div><p>这一段则有很大不同，<code>new String(&quot;1&quot;)</code> 进行了两步操作——在字符串常量池建了<code>&quot;1&quot;</code>，并且还在 Heap 上建了一个额外的 <code>String</code> 对象并赋给 <code>s</code> ，所以<code>s.intern()</code>不会造成任何改变——常量池已经有<code>&quot;1&quot;</code>，而<code>s</code>也还是指向 Heap 上的 <code>String</code> 。因此<code>s2</code> 直接指向常量池中的<code>&quot;1&quot;</code>，<code>s</code>间接指向<code>1</code>,两者自然不是一个引用。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h2 id="综合案例">综合案例</h2>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">NewTest1</span><span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">s1</span><span class="o">=</span><span class="s">&#34;static&#34;</span><span class="o">;</span>  <span class="c1">// 第一句
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">s1</span><span class="o">=</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;he&#34;</span><span class="o">)+</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;llo&#34;</span><span class="o">);</span> <span class="c1">//第二句
+</span><span class="c1"></span>        <span class="n">s1</span><span class="o">.</span><span class="na">intern</span><span class="o">();</span>   <span class="c1">// 第三句
+</span><span class="c1"></span>        <span class="n">String</span> <span class="n">s2</span><span class="o">=</span><span class="s">&#34;hello&#34;</span><span class="o">;</span>  <span class="c1">//第四句
+</span><span class="c1"></span>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">==</span><span class="n">s2</span><span class="o">);</span><span class="c1">//第五句，输出是true。
+</span><span class="c1"></span>    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>如图，类初始阶段会初始化 <code>s1</code> ，所以在 <code>main()</code> 运行之前字符串常量池里已经有 <code>&quot;static&quot;</code> 。局部变量 <code>s1</code> 由两个字符串拼接而成，拼接过程实际是 <code>StringBuilder</code> 的 <code>append</code>，最后会通过 <code>toString()</code> 方法<!-- raw HTML omitted --><strong>new一个 <code>String</code> 对象，且不会放入字符串常量池</strong><!-- raw HTML omitted -->。在<code>intern()</code>时才会被放入字符串常量池。<code>s2</code>显式创建，发现字符串常量池中已有，因此直接使用，两者就是同一对象，<code>s1==s2</code>。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h2 id="oracle-jdk-8u20-后的新特性">Oracle JDK 8u20 后的新特性</h2>
+<p>Oracle JDK 8u20 后出现了 <code>StringDuplication</code> 特性，默认关闭。允许 G1 GC 下的字符串排重，在 JVM 底层允许相同数据的字符串指向同一数据。这一功能下，G1 会在垃圾收集过程中会把新创建的字符串对象放入队列中，在 Young GC 后，并发地将内部数据（JDK 9 以后就是 <code>byte[]</code>）一致地字符串进行排重。虽然可以节省内存空间，但也会占用额外 CPU，拖慢 Young GC 的作用。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/java/">Java</a>
+        
+            <a href="/tags/jvm/">JVM</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-questions_2/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Library.jpg" loading="lazy" data-key="java-jvm-questions_2" data-hash="/images/feature/ArseniXC/Library.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 问题集合 (下)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-questions_1/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/ArseniXC/Bunker.jpg" loading="lazy" data-key="java-jvm-questions_1" data-hash="/images/feature/ArseniXC/Bunker.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM 问题集合 (上)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-jvm-ram_and_gc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg" loading="lazy" data-key="java-jvm-ram_and_gc" data-hash="/images/feature/lastofus/gamersky_04origin_07_2016715154B35.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - JVM GC</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/abyss/05.jpg" loading="lazy" data-key="" data-hash="/images/feature/abyss/05.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 接口与抽象类的区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/java-%E6%8A%BD%E8%B1%A1%E7%B1%BB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/arknights/Penguin.jpg" loading="lazy" data-key="" data-hash="/images/feature/arknights/Penguin.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java - 抽象类</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#字符串常量池">字符串常量池</a></li>
+    <li><a href="#intern">intern()</a></li>
+    <li><a href="#综合案例">综合案例</a></li>
+    <li><a href="#oracle-jdk-8u20-后的新特性">Oracle JDK 8u20 后的新特性</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

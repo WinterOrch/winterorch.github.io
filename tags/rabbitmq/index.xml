@@ -6,20 +6,19 @@
     <description>Recent content in RabbitMQ on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 04 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/rabbitmq/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 07 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/rabbitmq/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>RabbitMQ - 基础知识</title>
-      <link>https://winterorch.github.io/p/rabbitmq_introduction/</link>
-      <pubDate>Sun, 04 Jul 2021 00:00:00 +0000</pubDate>
+      <title>RabbitMQ - 基本概念和 SpringBoot 下的使用</title>
+      <link>https://winterorch.github.io/p/rabbitmq-basic/</link>
+      <pubDate>Wed, 07 Jul 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://winterorch.github.io/p/rabbitmq_introduction/</guid>
-      <description>示例为 Spring AMQP 中 RabbitMQ 的使用。
- Spring AMQP 官方文档： https://docs.spring.io/spring-amqp/docs/current/reference/html/
+      <guid>https://winterorch.github.io/p/rabbitmq-basic/</guid>
+      <description>生产者通过指定 RoutingKey (路由键) 指定消息路由规则。示例为 Spring AMQP 中 RabbitMQ 的使用。
+ Spring AMQP 文档：https://docs.spring.io/spring-amqp/docs/current/reference/html/
  Exchange Types （交换器类型）   fanout
-最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，常用来广播消息/** * Fanout */ @Bean public FanoutExchange fanoutExc() { return new FanoutExchange(FANOUT_EXCHANGE); } @Bean public Binding fanoutBinding1() { return BindingBuilder.bind(topicQueue1()).to(fanoutExc()); } @Bean public Binding fanoutBinding2() { return BindingBuilder.bind(topicQueue2()).to(fanoutExc()); }   direct
+最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，常用来广播消息/** * Fanout */ @Bean public FanoutExchange fanoutExc() { return new FanoutExchange(FANOUT_EXCHANGE); } @Bean public Binding fanoutBinding1(Queue topicQueue1, FanoutExchange fanoutExc) { return BindingBuilder.bind(topicQueue1).to(fanoutExc); } @Bean public Binding fanoutBinding2(Queue topicQueue2, FanoutExchange fanoutExc) { return BindingBuilder.bind(topicQueue2).to(fanoutExc); }   direct
 将消息路由到 BindingKey 与 RoutingKey 完全匹配的队列中，常用来将有优先级的任务发到对应队列，得到更多处理资源  topic
-将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：
- RoutingKey 为一个点号 . 分隔的字符串（被点号 . 分隔开的每一段独立的字符串称为一个单词），如 com.</description>
+将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：</description>
     </item>
     
   </channel>
