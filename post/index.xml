@@ -6,7 +6,20 @@
     <description>Recent content in Posts on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 11 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 12 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode - 双指针解法在数组中的应用</title>
+      <link>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 12 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>数组中的双指针解法，链表中快慢指针的解法放到链表专题。
+ 双指针滑动窗口问题 N-Sum问题的双指针解法     题目 描述     Leet 11 盛最多水的容器 壁高序列注水问题   Leet 3 无重复字符的最长子串 经典的双指针滑动窗口问题   Leet 16 最接近的三数之和 三数和问题   Leet 992 K 个不同整数的子数组 含有 K 个不同元素的窗口     双指针滑动窗口  Leet 3 无重复字符的最长子串，Leet 424 替换后的最长重复字符, Leet 978 最长湍流子数组, Leet 992 K 个不同整数的子数组, Leet 1004 最大连续1的个数 III, Leet 1040 移动石子直到连续 II
+ 常见形式： 右指针不断右移，直到窗口不符合要求，然后开始调整左指针，释放部分窗口左边界以使窗口满足要求，继续移动右指针。
+例题、
+Leet 3.</description>
+    </item>
+    
     <item>
       <title>Java - JVM 字符串</title>
       <link>https://winterorch.github.io/p/java-jvm-string_pool/</link>
@@ -33,13 +46,14 @@ String s3 = new String(&amp;#34;1&amp;#34;) + new String(&amp;#34;1&amp;#34;); s
       <pubDate>Sat, 10 Jul 2021 00:00:00 +0000</pubDate>
       
       <guid>https://winterorch.github.io/p/java-jvm-questions_2/</guid>
-      <description>指令重排序与 happens-before 原则  https://www.jianshu.com/p/b9186dbebe8e
+      <description>内存、对象、JVM优化相关问题 指令重排序与 happens-before 原则  https://www.jianshu.com/p/b9186dbebe8e
  问题的起因还是指令重排序，重排序之所以存在是因为有多级缓存，线程所作变更先在寄存器或本地缓存完成，然后拷贝到主存以跨越内存栅栏（即完成工作内存到主存间的拷贝动作），跨越序列或顺序称为happens-before。仅当写操作线程先跨越内存栅栏，读线程后跨越内存栅栏，写操作线程所作变更才对其它线程可见。
  程序次序规则： 在一个单独的线程中，按照程序代码的执行流顺序，（时间上）先执行的操作happen—before（时间上）后执行的操作 （同一个线程中前面的所有写操作对后面的操作可见） 管理锁定规则：一个unlock操作happen—before后面（时间上的先后顺序）对同一个锁的lock操作。 （如果线程1解锁了monitor a，接着线程2锁定了a，那么，线程1解锁a之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）） volatile变量规则：对一个volatile变量的写操作happen—before后面（时间上）对该变量的读操作。 （如果线程1写入了volatile变量v（临界资源），接着线程2读取了v，那么，线程1写入v及之前的写操作都对线程2可见（线程1和线程2可以是同一个线程）） 线程启动规则：Thread.start()方法happen—before调用用start的线程前的每一个操作。 （假定线程A在执行过程中，通过执行ThreadB.start()来启动线程B，那么线程A对共享变量的修改在接下来线程B开始执行前对线程B可见。注意：线程B启动之后，线程A在对变量修改线程B未必可见。） 线程终止规则：线程的所有操作都happen—before对此线程的终止检测，可以通过Thread.join（）方法结束、Thread.isAlive（）的返回值等手段检测到线程已经终止执行。 (线程t1写入的所有变量，在任意其它线程t2调用t1.join()，或者t1.isAlive() 成功返回后，都对t2可见。) 线程中断规则：对线程interrupt()的调用 happen—before 发生于被中断线程的代码检测到中断时事件的发生。 (线程t1写入的所有变量，调用Thread.interrupt()，被打断的线程t2，可以看到t1的全部操作) 对象终结规则：一个对象的初始化完成（构造函数执行结束）happen—before它的finalize（）方法的开始。 (对象调用finalize()方法时，对象初始化完成的任意操作，同步到全部主存同步到全部cache。) 传递性：如果操作A happen—before操作B，操作B happen—before操作C，那么可以得出A happen—before操作C。   内存泄漏 JVM通过引用计数法和可达性分析算法来判断对象是否可以被GC，对象长时间没有被GC一般是JVM误以为对象还在引用中，无法回收，即长期存活对象引用短期存活对象，常见的情况包括：
  静态集合类（短生命周期对象）被长生命周期持有引用 各种连接（数据库、网络连接、IO）没有线性关闭，造成对象无法被回收 变量定义作用范围过大 内部类持有外部类，内部类长期被持有，导致外部类对象无法被回收 哈希表中，如果对象哈希值与最初存入时不同，则会导致找不到对象结果，造成泄漏 一些数据结构，如手写栈，在栈不断增长、收缩后，如果不手工清空（引用置null），弹出对象有可能不被GC，造成隐蔽的内存泄漏 缓存结构中，有些对象写入后很可能就再也没有被删除或使用，造成缓存泄漏。WeakHashMap 就是为此诞生的，没有除自身外其它引用的值会被丢弃 监听器和回调，如果注册后没有显示取消就会积聚起来，比较简单的解决方法也是使用弱引用  因此总结下来，防止内存泄漏的办法包括：避免长期存活对象持有不必要的短期对象引用；不使用资源即时回收，尤其是连接、手工数据结构中；难以判断是否可以回收的缓存资源，可以通过弱引用防止内存泄漏。
- Native 关键字 用于告诉 JVM 调用的是本地 C/C++ 方法，因此不能 abstract。使用 JNI 加载动态或静态库时会需要用到这个方法。常见的如 hashCode() 、NIO 中 epoll 相关的内核操作都需要调用本地方法。
- Unsafe 类 可以被用来分配直接内存、获取内存偏移地址、根据偏移地址修改属性（无视对象的可访问等级）、操作数组元素、线程挂起恢复、CAS ……
-访问直接内存、调用直接内存都通过这个类来实现，记住这个名字 sun.misc.Unsafe 。</description>
+ Java 中的四种引用类型 不同引用类型体现为对象不同的可达性状态和对垃圾收集的影响。
+ 强引用就是最常见引用，垃圾收集器不会处理强引用指向的对象，但只要超过了引用的作用域，或显式地赋值为null就可以被回收 软引用相对强引用弱化一些，只有JVM认为内存不足（由JVM进行判定，不同JVM不同模式下对剩余空间的考量不同）时才会取试图回收软引用指向对象，因此可以用于缓存 弱引用指向对象完全不能从GC豁免，仅提供访问在弱引用状态下对象的途径，可以用来维护非强制的映射关系，如果还在就获取，否则重现实例化，也可以用于缓存 虚引用不能被用来访问对象，仅提供确保对象被finalize后做某些事的机制，比如 Post-Mortem 清理机制，Cleaner，监控对象的创建和销毁  引用的可达性可以进行流转，除了虚引用外的引用都可以通过get方法获取原有对象，从而重新指向强引用，人为改变对象的可达性状态。
+但是如果错误地保持了强引用，那对象就没有机会变回弱引用可达性状态了，就会产生内存泄露。
+ Native 关键字 用于告诉 JVM 调用的是本地 C/C++ 方法，因此不能 abstract。使用 JNI 加载动态或静态库时会需要用到这个方法。常见的如 hashCode() 、NIO 中 epoll 相关的内核操作都需要调用本地方法。</description>
     </item>
     
     <item>
@@ -48,7 +62,7 @@ String s3 = new String(&amp;#34;1&amp;#34;) + new String(&amp;#34;1&amp;#34;); s
       <pubDate>Fri, 09 Jul 2021 00:00:00 +0000</pubDate>
       
       <guid>https://winterorch.github.io/p/java-jvm-questions_1/</guid>
-      <description>HotSpot 是什么 使用最广泛的 JVM，OpenJDK SunJDK 的 JVM。最早不是 Java 的虚拟机，在 JIT 方面具有一些先进的理念，被 SUN 收购。
+      <description>JVM 内存结构、类加载相关问题 HotSpot 是什么 使用最广泛的 JVM，OpenJDK SunJDK 的 JVM。最早不是 Java 的虚拟机，在 JIT 方面具有一些先进的理念，被 SUN 收购。
  堆和栈区别是什么 个人理解，不一定全面：
    堆 栈     公有 线程私有   存放绝大多数对象实例、数组 存放局部变量表、操作数栈、动态链接、方法出口等   GC的主要场所 不需要GC，栈帧随方法调用结束而被弹出   生老病死与JVM紧密相关 生老病死与线程、函数调用紧密相关   不能动态扩容 可以通过配置动态扩容     哪块内存区不会OOM 公有部分： 堆，会OOM；方法区，虽然搬到了原生内存上，但还是有可能OOM的；JVM外的直接内存，肯定是可能OOM的。因此公有区全部有可能OOM。
 线程私有部分： 本地方法栈，为 Native 方法服务，也有OOM可能；虚拟机栈，OOM常客，允许动态扩容时会OOM，不允许则会 OverFlow，因此是会OOM的；程序寄存器，唯一不会出现OOM的区域，就是它。
@@ -56,8 +70,7 @@ String s3 = new String(&amp;#34;1&amp;#34;) + new String(&amp;#34;1&amp;#34;); s
 因此，一个线程的OOM不会影响到其它线程运行，即使主线程抛异常退出，子线程仍能继续，除非子线程是主线程的守护线程。
  对象一定是在堆上分配的吗 不一定。JVM通过逃逸分析，能够分析新对象的适用范围，以此确定是否要将对象分配到堆上，对于没有逃逸出方法的对象，很可能会被优先在栈上进行分配。
  其实就像我们平常用Spring，有必要将所有对象都注册成Bean吗？肯定没必要，JVM也不傻，并非所有对象都会分配到堆上，毕竟GC也是有开销的。
-  为什么说一次编译，处处执行 两次编译机制，第一次由编译器编译成字节码，第二次由JVM转换到机器码，实际上是解释执行机制，解释工作由本地JVM完成，JVM担任了本地向导的责任，因此不是“处处执行”，是有本地向导，装了JVM的地方执行。
- 如何动态生成一个类   操作字节码</description>
+  为什么说一次编译，处处执行 两次编译机制，第一次由编译器编译成字节码，第二次由JVM转换到机器码，实际上是解释执行机制，解释工作由本地JVM完成，JVM担任了本地向导的责任，因此不是“处处执行”，是有本地向导，装了JVM的地方执行。</description>
     </item>
     
     <item>

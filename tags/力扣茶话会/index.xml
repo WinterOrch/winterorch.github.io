@@ -6,7 +6,20 @@
     <description>Recent content in 力扣茶话会 on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 12 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode - 双指针解法在数组中的应用</title>
+      <link>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 12 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>数组中的双指针解法，链表中快慢指针的解法放到链表专题。
+ 双指针滑动窗口问题 N-Sum问题的双指针解法     题目 描述     Leet 11 盛最多水的容器 壁高序列注水问题   Leet 3 无重复字符的最长子串 经典的双指针滑动窗口问题   Leet 16 最接近的三数之和 三数和问题   Leet 992 K 个不同整数的子数组 含有 K 个不同元素的窗口     双指针滑动窗口  Leet 3 无重复字符的最长子串，Leet 424 替换后的最长重复字符, Leet 978 最长湍流子数组, Leet 992 K 个不同整数的子数组, Leet 1004 最大连续1的个数 III, Leet 1040 移动石子直到连续 II
+ 常见形式： 右指针不断右移，直到窗口不符合要求，然后开始调整左指针，释放部分窗口左边界以使窗口满足要求，继续移动右指针。
+例题、
+Leet 3.</description>
+    </item>
+    
     <item>
       <title>LeetCode 347 - 前 K 个高频元素</title>
       <link>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</link>

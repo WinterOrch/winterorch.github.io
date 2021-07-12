@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='数组中的双指针问题.'><title>LeetCode - 双指针解法在数组中的应用</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode - 双指针解法在数组中的应用'>
+<meta property='og:description' content='数组中的双指针问题.'>
+<meta property='og:url' content='https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='双指针' /><meta property='article:tag' content='力扣茶话会' /><meta property='article:published_time' content='2021-07-12T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-07-12T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/category/leetcode/TeaParty.jpg' />
+<meta name="twitter:title" content="LeetCode - 双指针解法在数组中的应用">
+<meta name="twitter:description" content="数组中的双指针问题."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/category/leetcode/TeaParty.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="https://winterorch.github.io" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" alt="Featured image of post LeetCode - 双指针解法在数组中的应用" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/leetcode/" style="background-color: #7B7B7B; color: #fff;">
+                Leetcode
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/">LeetCode - 双指针解法在数组中的应用</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        数组中的双指针问题.
+    </h3>
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jul 12, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>数组中的双指针解法，链表中快慢指针的解法放到链表专题。</p>
+<ul>
+<li><a class="link" href="#%e5%8f%8c%e6%8c%87%e9%92%88%e6%bb%91%e5%8a%a8%e7%aa%97%e5%8f%a3" ><strong>双指针滑动窗口问题</strong></a></li>
+<li><a class="link" href="#n-sum%e9%97%ae%e9%a2%98%e7%9a%84%e5%8f%8c%e6%8c%87%e9%92%88%e8%a7%a3%e6%b3%95" ><strong>N-Sum问题的双指针解法</strong></a></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>题目</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leet 11 盛最多水的容器</td>
+<td>壁高序列注水问题</td>
+</tr>
+<tr>
+<td>Leet 3 无重复字符的最长子串</td>
+<td>经典的双指针滑动窗口问题</td>
+</tr>
+<tr>
+<td>Leet 16 最接近的三数之和</td>
+<td>三数和问题</td>
+</tr>
+<tr>
+<td>Leet 992 K 个不同整数的子数组</td>
+<td>含有 K 个不同元素的窗口</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="双指针滑动窗口"><strong>双指针滑动窗口</strong></h2>
+<blockquote>
+<p><a class="link" href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters"  target="_blank" rel="noopener"
+    >Leet 3 无重复字符的最长子串</a>，<a class="link" href="https://leetcode-cn.com/problems/longest-repeating-character-replacement/"  target="_blank" rel="noopener"
+    >Leet 424 替换后的最长重复字符</a>, <a class="link" href="https://leetcode-cn.com/problems/longest-turbulent-subarray/"  target="_blank" rel="noopener"
+    >Leet 978 最长湍流子数组</a>, <a class="link" href="https://leetcode-cn.com/problems/subarrays-with-k-different-integers/"  target="_blank" rel="noopener"
+    >Leet 992 K 个不同整数的子数组</a>, <a class="link" href="https://leetcode-cn.com/problems/max-consecutive-ones-iii/"  target="_blank" rel="noopener"
+    >Leet 1004 最大连续1的个数 III</a>, <a class="link" href="https://leetcode-cn.com/problems/moving-stones-until-consecutive-ii/"  target="_blank" rel="noopener"
+    >Leet 1040 移动石子直到连续 II</a></p>
+</blockquote>
+<p><strong>常见形式：</strong> 右指针不断右移，直到窗口不符合要求，然后开始调整左指针，释放部分窗口左边界以使窗口满足要求，继续移动右指针。</p>
+<!-- raw HTML omitted -->
+<p>例题、</p>
+<h3 id="leet-3-无重复字符的最长子串">Leet 3. 无重复字符的最长子串</h3>
+<p><strong>题目：</strong> 给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。</p>
+<p>示例 1:</p>
+<pre><code>输入: s = &quot;abcabcbb&quot;
+输出: 3 
+解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。
+</code></pre><p>**题解： ** 我们要求的是滑动窗口的最大长度，通过左右两个指针表示。而窗口内出现的字符也需要一个数据结构进行维护，比较容易想到的是 <code>Set</code> ，但是直觉告诉我们 <code>Set</code> 肯定没有数组高效，除非输入的是 <code>String</code> 之类否则应当尽量减少 <code>Set</code> 和 <code>Map</code> 的使用。加之这道题里只有 <code>char</code> ，至多也就 256 种情况，完全可以用一个数组表示。</p>
+<p>如果用 <code>boolean[]</code> 表示，我们发现在右指针发现重复字符，左指针还要继续在右指针搜索过的字符串上进行搜索，显然可以进一步优化。我们不用 <code>boolean</code>  数组，而是 <!-- raw HTML omitted -->在右指针搜索过程中直接将 <strong>字符索引</strong> 存到一个 <code>int</code> 数组里<!-- raw HTML omitted --> ，然后在一开始将数组初始化为 <code>-1</code> ，这样当右指针发现重复字符（数组中该位置不为 <code>-1</code>），直接将左指针移到数组该位置记录的索引处就可以了，每个字符只搜索一遍，时间复杂度 O(n) 。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">lengthOfLongestSubstring</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">256</span><span class="o">];</span>
+    <span class="n">Arrays</span><span class="o">.</span><span class="na">fill</span><span class="o">(</span><span class="n">set</span><span class="o">,</span> <span class="o">-</span><span class="n">1</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">left</span> <span class="o">=</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+    <span class="kt">char</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">set</span><span class="o">[</span><span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]]);</span>
+        <span class="n">set</span><span class="o">[</span><span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]]</span> <span class="o">=</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">left</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="leet-424-替换后的最长重复字符">Leet 424. 替换后的最长重复字符</h3>
+<p><strong>题目：</strong> 给你一个仅由大写英文字母组成的字符串，你可以将任意位置上的字符替换成另外的字符，总共可最多替换 <em>k</em> 次。在执行上述操作后，找到包含重复字母的最长子串的长度。</p>
+<pre><code>输入：s = &quot;AABABBA&quot;, k = 1
+输出：4
+解释：
+将中间的一个'A'替换为'B',字符串变为 &quot;AABBBBA&quot;。
+子串 &quot;BBBB&quot; 有最长重复字母, 答案为 4。
+</code></pre><p><strong>题解：</strong> 还是滑动窗口的思路，要维护的是其中每个字符出现的次数。我们有个出现最多的字符，需要关注除它以外所有其它字符个数，这只需要做个减法就能得到，这个数字一旦超过了<code>k</code>，左指针就需要移动了。</p>
+<p>出现最多的字符有可能发生变化，但也最多只会变成右指针新找到的字符。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">characterReplacement</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">,</span> <span class="kt">int</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">26</span><span class="o">];</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">maxCnt</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="kt">char</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 值得注意的是，随着右指针新取到一个字符c，窗口中出现最多的字符
+</span><span class="c1"></span>        <span class="c1">// 要么不变，要么变成新字符
+</span><span class="c1"></span>        <span class="n">maxCnt</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">maxCnt</span><span class="o">,</span> <span class="o">++</span><span class="n">set</span><span class="o">[</span><span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="sc">&#39;A&#39;</span><span class="o">]);</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="n">1</span> <span class="o">-</span> <span class="n">maxCnt</span> <span class="o">&gt;</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
+            <span class="o">--</span><span class="n">set</span><span class="o">[</span><span class="n">arr</span><span class="o">[</span><span class="n">left</span><span class="o">++]</span> <span class="o">-</span> <span class="sc">&#39;A&#39;</span><span class="o">];</span>
+        <span class="o">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="leet-978-最长湍流子数组">Leet 978 最长湍流子数组</h3>
+<p><strong>题目：</strong> 当 A 的子数组 A[i], A[i+1], &hellip;, A[j] 满足下列条件时，我们称其为湍流子数组：</p>
+<p>若 i &lt;= k &lt; j，当 k 为奇数时， A[k] &gt; A[k+1]，且当 k 为偶数时，A[k] &lt; A[k+1]；
+或 若 i &lt;= k &lt; j，当 k 为偶数时，A[k] &gt; A[k+1] ，且当 k 为奇数时， A[k] &lt; A[k+1]。
+也就是说，如果比较符号在子数组中的每个相邻元素对之间翻转，则该子数组是湍流子数组。</p>
+<p>返回 A 的最大湍流子数组的长度。</p>
+<pre><code>输入：[9,4,2,10,7,8,8,1,9]
+输出：5
+解释：(A[1] &gt; A[2] &lt; A[3] &gt; A[4] &lt; A[5])
+</code></pre><p><strong>题解：</strong> 就是求锯齿数组最长长度，发现锯齿断了其实很简单，只需要当前浪和前一浪方向一样（都上升或都下降），最大的问题是前后两个数一样的情况，按题意是不能出现平浪的，因此相等时我们直接让左指针把这个平浪跳过，跳到两个相等数靠右的这个来。</p>
+<p>如果 left 就在 right 左边一位（在右指针刚开始走，和出现平浪之后都会发生这种情况），那只要不相等，都是可以取的，顺便更新一下浪的方向。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">maxTurbulenceSize</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">arr</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">1</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">arr</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">arr</span><span class="o">[</span><span class="n">0</span><span class="o">]</span> <span class="o">==</span> <span class="n">arr</span><span class="o">[</span><span class="n">1</span><span class="o">])</span> <span class="o">?</span> <span class="n">1</span> <span class="o">:</span> <span class="n">2</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="kt">boolean</span> <span class="n">goingUp</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(;</span> <span class="n">right</span> <span class="o">&lt;</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">==</span> <span class="n">right</span> <span class="o">-</span> <span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">goingUp</span> <span class="o">=</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span> <span class="o">-</span> <span class="n">1</span><span class="o">];</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">goingUp</span> <span class="o">==</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span> <span class="o">-</span> <span class="n">1</span><span class="o">]</span> <span class="o">||</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span><span class="o">]</span> <span class="o">==</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span> <span class="o">{</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="o">);</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="o">(</span><span class="n">arr</span><span class="o">[</span><span class="n">right</span><span class="o">]</span> <span class="o">==</span> <span class="n">arr</span><span class="o">[</span><span class="n">right</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span> <span class="o">?</span> <span class="n">right</span> <span class="o">:</span> <span class="n">right</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">goingUp</span> <span class="o">=</span> <span class="o">!</span><span class="n">goingUp</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="leet-930-和相同的二元子数组">Leet 930 和相同的二元子数组</h3>
+<p><strong>题目：</strong> 给你一个二元数组 <code>nums</code> ，和一个整数 <code>goal</code> ，请你统计并返回有多少个和为 <code>goal</code> 的 <strong>非空</strong> 子数组。<strong>子数组</strong> 是数组的一段连续部分。</p>
+<p>Example 1:</p>
+<pre><code>Input: A = [1,0,1,0,1], S = 2
+Output: 4
+Explanation:
+The 4 subarrays are bolded below:
+[1,0,1]
+[1,0,1,0]
+[0,1,0,1]
+[1,0,1]
+</code></pre><p>Note:</p>
+<ol>
+<li><code>A.length &lt;= 30000</code></li>
+<li><code>0 &lt;= S &lt;= A.length</code></li>
+<li><code>A[i]</code> is either <code>0</code> or <code>1</code>.</li>
+</ol>
+<p><strong>题解：</strong> 首先，这道题是可以通过前缀和来做的。这道题有一个特性，是没有负权值，因此前缀和数组是不严格单调递增的，右指针前进，左指针也必然不会后退。</p>
+<p>可以使用两个左端点，代表在给定右端点前提下满足要求的左端点集合。什么要求呢？两个指针到右指针间的和，分别为刚好小于目标和的最左端端点和刚好不大于目标和的最左端点，两点之间的就是满足要求的刚好等于目标的位置。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">numSubarraysWithSum</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">,</span> <span class="kt">int</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">l1</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">l2</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">r</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="n">s1</span> <span class="o">+=</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">];</span>
+        <span class="n">s2</span> <span class="o">+=</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">];</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">l1</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">s1</span> <span class="o">&gt;</span> <span class="n">t</span><span class="o">)</span>
+            <span class="n">s1</span> <span class="o">-=</span> <span class="n">nums</span><span class="o">[</span><span class="n">l1</span><span class="o">++];</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">l2</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">s2</span> <span class="o">&gt;=</span> <span class="n">t</span><span class="o">)</span>
+            <span class="n">s2</span> <span class="o">-=</span> <span class="n">nums</span><span class="o">[</span><span class="n">l2</span><span class="o">++];</span>
+        <span class="n">ans</span> <span class="o">+=</span> <span class="n">l2</span> <span class="o">-</span> <span class="n">l1</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><p>这道题更通用的做法是用前缀和+Map记忆。因为这道题没有负值，可以直接用数组替代Map，每次找从当前位置前缀和中扣掉后等于目标和的位置，找到的都是可选的左指针位置。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">numWithSum</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">,</span> <span class="kt">int</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">sum</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">1</span><span class="o">];</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">sum</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">sum</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">];</span>
+    <span class="o">}</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">1</span><span class="o">];</span>
+    <span class="n">map</span><span class="o">[</span><span class="n">0</span><span class="o">]</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">sum</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">],</span> <span class="n">l</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">t</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">l</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">map</span><span class="o">[</span><span class="n">l</span><span class="o">];</span>
+        <span class="o">}</span>
+        <span class="o">++</span><span class="n">map</span><span class="o">[</span><span class="n">r</span><span class="o">];</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="leet-992-k-个不同整数的子数组">Leet 992 K 个不同整数的子数组</h3>
+<p><strong>题目：</strong> 给定一个正整数数组 A，如果 A 的某个子数组中不同整数的个数恰好为 K，则称 A 的这个连续、不一定不同的子数组为好子数组。</p>
+<p>（例如，[1,2,3,1,2] 中有 3 个不同的整数：1，2，以及 3。）</p>
+<p>返回 A 中好子数组的数目。</p>
+<pre><code>输入：A = [1,2,1,2,3], K = 2
+输出：7
+解释：恰好由 2 个不同整数组成的子数组：[1,2], [2,1], [1,2], [2,3], [1,2,1], [2,1,2], [1,2,1,2].
+</code></pre><p><strong>题解：</strong>  第一眼看有，求子数组个数，稍微有点像动态规划。用滑动窗口求稍微有点困难，因为要求刚好有<code>k</code>个不同整数的子数组并不是那么方便——问题出在左指针上，左指针我们一般会右移直到满足条件，然而满足条件并不意味着其左侧没有满足条件的子数组了。相反，如果让我们求包含了<code>k</code>个以下整数的子数组，会非常方便——左指针满足条件后，左右指针之间都是满足条件的左指针位置，可以一次性全算上。</p>
+<p>因此，我们换个法子，通过一个<code>helper</code>函数求<code>k</code>个以下整数子数组的个数，然后再算一个<code>k-1</code>以下的，相减就是刚好<code>k</code>的了。</p>
+<p>如何统计每个整数出现的次数呢？正常应当用<code>Map</code>，这里整数的范围已经给定了，那直接用数组快一些。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">subarraysWithKDistinct</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">,</span> <span class="kt">int</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">helper</span><span class="o">(</span><span class="n">nums</span><span class="o">,</span> <span class="n">k</span><span class="o">)</span> <span class="o">-</span> <span class="n">helper</span><span class="o">(</span><span class="n">nums</span><span class="o">,</span> <span class="n">k</span> <span class="o">-</span> <span class="n">1</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="kd">private</span> <span class="kt">int</span> <span class="nf">helper</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">,</span> <span class="kt">int</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">,</span> <span class="n">res</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">numCnt</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">numCnt</span><span class="o">[</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">1</span><span class="o">]++</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="o">--</span><span class="n">k</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(--</span><span class="n">numCnt</span><span class="o">[</span><span class="n">nums</span><span class="o">[</span><span class="n">left</span><span class="o">]</span> <span class="o">-</span> <span class="n">1</span><span class="o">]</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="o">++</span><span class="n">k</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="o">++</span><span class="n">left</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="leet-1040-移动石子直到连续-ii">Leet 1040 移动石子直到连续 II</h3>
+<p><strong>题目：</strong> 在一个长度 无限 的数轴上，第 i 颗石子的位置为 stones[i]。如果一颗石子的位置最小/最大，那么该石子被称作 端点石子 。</p>
+<p>每个回合，你可以将一颗端点石子拿起并移动到一个未占用的位置，使得该石子不再是一颗端点石子。</p>
+<p>值得注意的是，如果石子像 stones = [1,2,5] 这样，你将 无法 移动位于位置 5 的端点石子，因为无论将它移动到任何位置（例如 0 或 3），该石子都仍然会是端点石子。</p>
+<p>当你无法进行任何移动时，即，这些石子的位置连续时，游戏结束。</p>
+<p>要使游戏结束，你可以执行的最小和最大移动次数分别是多少？ 以长度为 2 的数组形式返回答案：answer = [minimum_moves, maximum_moves] 。</p>
+<pre><code>输入：[6,5,4,3,10]
+输出：[2,3]
+解释：
+我们可以移动 3 -&gt; 8，接着是 10 -&gt; 7，游戏结束。
+或者，我们可以移动 3 -&gt; 7, 4 -&gt; 8, 5 -&gt; 9，游戏结束。
+注意，我们无法进行 10 -&gt; 2 这样的移动来结束游戏，因为这是不合要求的移动。
+</code></pre><p>**题解： ** 这道题实际上需要找到一个固定长度为<code>n</code>的滑动窗口，计算处当前窗口中已有数字个数，总个数减去就是最小步数。窗口的左右边界分别是两块任意石头，如果距离超过<code>n</code>则跳过，不超过，就可以看窗口中已有数字个数。</p>
+<p>如果窗口内正好有<code>n-1</code>个数字，窗口大小也是<code>n-1</code>则已经连续了，窗外数字无法直接加到两侧，只能移动两次绕一圈来连续，因此要和2比较取小值。其它情况则跟窗口中空位个数进行比较。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">numMovesStonesII</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">stones</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">stones</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">stones</span><span class="o">.</span><span class="na">length</span><span class="o">,</span> <span class="n">low</span> <span class="o">=</span> <span class="n">n</span><span class="o">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="o">++</span><span class="n">j</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">stones</span><span class="o">[</span><span class="n">j</span><span class="o">]</span> <span class="o">-</span> <span class="n">stones</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="n">1</span> <span class="o">&gt;</span> <span class="n">n</span><span class="o">)</span>
+            <span class="o">++</span><span class="n">i</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">al_store</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">al_store</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="n">1</span> <span class="o">&amp;&amp;</span> <span class="n">stones</span><span class="o">[</span><span class="n">j</span><span class="o">]</span> <span class="o">-</span> <span class="n">stones</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="n">1</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">low</span><span class="o">,</span> <span class="n">2</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">low</span><span class="o">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">al_store</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="n">low</span><span class="o">,</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">stones</span><span class="o">[</span><span class="n">n</span> <span class="o">-</span> <span class="n">1</span><span class="o">]</span> <span class="o">-</span> <span class="n">stones</span><span class="o">[</span><span class="n">1</span><span class="o">]</span> <span class="o">-</span> <span class="n">n</span> <span class="o">+</span> <span class="n">2</span><span class="o">,</span> <span class="n">stones</span><span class="o">[</span><span class="n">n</span> <span class="o">-</span> <span class="n">2</span><span class="o">]</span> <span class="o">-</span> <span class="n">stones</span><span class="o">[</span><span class="n">0</span><span class="o">]</span> <span class="o">-</span> <span class="n">n</span> <span class="o">+</span> <span class="n">2</span><span class="o">)};</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h2 id="n-sum问题的双指针解法"><strong>N-Sum问题的双指针解法</strong></h2>
+<blockquote>
+<p><a class="link" href="https://leetcode-cn.com/problems/3sum"  target="_blank" rel="noopener"
+    ><strong>Leet 15 三数之和</strong></a>, <a class="link" href="https://leetcode-cn.com/problems/3sum-closest/"  target="_blank" rel="noopener"
+    >Leet 16 最接近的三数之和</a>, <a class="link" href="https://leetcode-cn.com/problems/4sum/"  target="_blank" rel="noopener"
+    >Leet 18 四数之和</a></p>
+</blockquote>
+<h3 id="leet-15-三数之和"><strong>Leet 15 三数之和</strong></h3>
+<p>给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组。</p>
+<p><!-- raw HTML omitted -->注意：答案中不可以包含重复的三元组。<!-- raw HTML omitted --></p>
+<p>示例 1：</p>
+<pre><code>输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>0 &lt;= nums.length &lt;= 3000</code></li>
+<li><code>-105 &lt;= nums[i] &lt;= 105</code></li>
+</ul>
+<p><strong>题解：</strong> 因为要用双指针来求解，因此先固定一个最小点<code>i</code>，然后在它的右区间上使用双指针法。</p>
+<p>首先进行一个<code>O(nlogn)</code>的排序，也方便跳过重复元素。因为目标是 0 ，所以双指针搜索的目标是 <code>-num[i]</code>。将左右指针分别放到区间的两个端点，根据和与搜索目标 <code>-num[i]</code> 的大小关系，平移左右指针。这个过程中要跳过重复元素。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="nf">threeSum</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="n">3</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">nums</span><span class="o">);</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">2</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span>
+            <span class="k">break</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span>
+            <span class="k">continue</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">target</span> <span class="o">=</span> <span class="o">-</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">res</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">],</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">]));</span>
+                <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+                <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+                <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span> <span class="o">+</span> <span class="n">1</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="leet-16-最接近的三数之和">Leet 16 最接近的三数之和</h3>
+<p>给定一个包括 n 个整数的数组 nums 和 一个目标值 target。找出 nums 中的三个整数，使得它们的和与 target 最接近。返回这三个数的和。假定每组输入只存在唯一答案。</p>
+<p>示例：</p>
+<pre><code>输入：nums = [-1,2,1,-4], target = 1
+输出：2
+解释：与 target 最接近的和是 2 (-1 + 2 + 1 = 2) 。
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>3 &lt;= nums.length &lt;= 10^3</code></li>
+<li><code>-10^3 &lt;= nums[i] &lt;= 10^3</code></li>
+<li><code>-10^4 &lt;= target &lt;= 10^4</code></li>
+</ul>
+<p><strong>题解：</strong> 和上面一题唯一区别是目标和不一定能被满足，取而代之要求最近的三数和。那么只要在三数和基础上维护一个最近距离，每次指针移动前进行一次判定就行了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">int</span> <span class="nf">threeSumClosest</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">nums</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">nums</span><span class="o">[</span><span class="n">0</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">1</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">2</span><span class="o">],</span> <span class="n">dis</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">abs</span><span class="o">(</span><span class="n">res</span> <span class="o">-</span> <span class="n">target</span><span class="o">);</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span>
+            <span class="k">continue</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">temp</span> <span class="o">==</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">target</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">temp</span> <span class="o">&lt;</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">temp</span> <span class="o">&lt;</span> <span class="n">dis</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">dis</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">temp</span><span class="o">;</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+                <span class="o">}</span>
+                <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">temp</span> <span class="o">-</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">dis</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">dis</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">-</span> <span class="n">t</span><span class="o">;</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">+</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+                <span class="o">}</span>
+                <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="leet-18-四数之和">Leet 18 四数之和</h3>
+<p>给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。</p>
+<p><!-- raw HTML omitted -->注意：答案中不可以包含重复的四元组。<!-- raw HTML omitted --></p>
+<p>示例 1：</p>
+<pre><code>输入：nums = [1,0,-1,0,-2,2], target = 0
+输出：[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+</code></pre><p>示例 2：</p>
+<pre><code>输入：nums = [], target = 0
+输出：[]
+</code></pre><p>提示：</p>
+<ul>
+<li><code>0 &lt;= nums.length &lt;= 200</code></li>
+<li><code>-109 &lt;= nums[i] &lt;= 109</code></li>
+<li><code>-109 &lt;= target &lt;= 109</code></li>
+</ul>
+<p><strong>题解：</strong> 先确定前两个位置，再在后半段通过平移确定后两个点的位置。后两个点跟据总和与目标和的大小关系进行移动，先从距离最远的点——<code>j+1</code> 和 <code>length-1</code> 开始，偏大则右指针左移，偏小则左指针右移。</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="nf">fourSum</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">nums</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="n">4</span><span class="o">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+    <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">nums</span><span class="o">);</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">3</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span>
+            <span class="k">continue</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">2</span><span class="o">;</span> <span class="o">++</span><span class="n">j</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">j</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">1</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">)</span> <span class="o">{</span>
+                <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">j</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">]</span> <span class="o">+</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">sum</span> <span class="o">==</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">res</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">nums</span><span class="o">[</span><span class="n">j</span><span class="o">],</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">],</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">]));</span>
+                    <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">l</span> <span class="o">+</span> <span class="n">1</span><span class="o">])</span>
+                        <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+                    <span class="k">while</span> <span class="o">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span><span class="o">]</span> <span class="o">==</span> <span class="n">nums</span><span class="o">[</span><span class="n">r</span> <span class="o">-</span> <span class="n">1</span><span class="o">])</span>
+                        <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+                    <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+                    <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">sum</span> <span class="o">&lt;</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="o">++</span><span class="n">l</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="o">--</span><span class="n">r</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">双指针</a>
+        
+            <a href="/tags/%E5%8A%9B%E6%89%A3%E8%8C%B6%E8%AF%9D%E4%BC%9A/">力扣茶话会</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 347 - 前 K 个高频元素</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 451 - 根据字符出现频率排序</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 815 - 公交路线</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 752 - 打开转盘锁</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/category/leetcode/TeaParty.jpg" loading="lazy" data-key="" data-hash="/images/category/leetcode/TeaParty.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LeetCode 354 - 俄罗斯套娃信封问题</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+     
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#双指针滑动窗口"><strong>双指针滑动窗口</strong></a>
+      <ol>
+        <li><a href="#leet-3-无重复字符的最长子串">Leet 3. 无重复字符的最长子串</a></li>
+        <li><a href="#leet-424-替换后的最长重复字符">Leet 424. 替换后的最长重复字符</a></li>
+        <li><a href="#leet-978-最长湍流子数组">Leet 978 最长湍流子数组</a></li>
+        <li><a href="#leet-930-和相同的二元子数组">Leet 930 和相同的二元子数组</a></li>
+        <li><a href="#leet-992-k-个不同整数的子数组">Leet 992 K 个不同整数的子数组</a></li>
+        <li><a href="#leet-1040-移动石子直到连续-ii">Leet 1040 移动石子直到连续 II</a></li>
+      </ol>
+    </li>
+    <li><a href="#n-sum问题的双指针解法"><strong>N-Sum问题的双指针解法</strong></a>
+      <ol>
+        <li><a href="#leet-15-三数之和"><strong>Leet 15 三数之和</strong></a></li>
+        <li><a href="#leet-16-最接近的三数之和">Leet 16 最接近的三数之和</a></li>
+        <li><a href="#leet-18-四数之和">Leet 18 四数之和</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
