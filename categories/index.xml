@@ -6,7 +6,16 @@
     <description>Recent content in Categories on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 12 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Album</title>
+      <link>https://winterorch.github.io/categories/album/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/categories/album/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Leetcode</title>
       <link>https://winterorch.github.io/categories/leetcode/</link>
