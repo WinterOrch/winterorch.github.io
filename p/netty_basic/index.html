@@ -93,34 +93,53 @@
     <h3 class="article-subtitle">
         Netty 极大地简化了TCP和UDP套接字服务器等网络编程,性能以及安全性等很多方面都非常优秀. Dubbo, RocketMQ, Elasticsearch, gRPC, Spark, Elasticsearch等开源项目都用到了Netty.
     </h3>
+    
+
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
 </svg>
+                <time class="article-time--published">Jul 02, 2021</time>
+            </div>
+        
 
-
-
-        <time class="article-time--published">Jul 02, 2021</time>
-    </footer></div>
+        
+    </footer>
+    
+</div>
 </header>
 
     <section class="article-content">
     <h2 id="nio-与-aio-模型">NIO 与 AIO 模型</h2>
 <p>NIO（一般用同步非阻塞模式，如果阻塞就是 BIO 了）：服务器实现模式为一个请求一个线程，客户端发送连接请求全部注册到多路复用器上，<strong>多路复用器</strong>轮询到连接有 I/O 请求时才启动一个线程进行处理（解决了连接多而 I/O 少时资源占用问题）。</p>
-<p><figure style="flex-grow: 261; flex-basis: 628px">
-		<a href="/p/netty_basic/image-20210518104803139.png" data-size="1102x421"><img src="/p/netty_basic/image-20210518104803139.png"
-				srcset="/p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_480x0_resize_box_2.png 480w, /p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_1024x0_resize_box_2.png 1024w"
-				width="1102"
-				height="421"
-				loading="lazy"
-				alt="NIO模型">
-		</a>
-		
-		<figcaption>NIO模型</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 261; 
+			flex-basis: 628px"
+	>
+	<a href="/p/netty_basic/image-20210518104803139.png" data-size="1102x421">
+		<img src="/p/netty_basic/image-20210518104803139.png"
+			width="1102"
+			height="421"
+			srcset="/p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_480x0_resize_box_2.png 480w, /p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			alt="NIO模型">
+	</a>
+	
+	<figcaption>NIO模型</figcaption>
+	
+</figure></p>
 <p>AIO（异步非阻塞）：服务器实现模式为一个有效请求一个线程，客户端I/O请求由OS先完成再通知服务器应用启动线程进行处理。</p>
 <p>那么，为什么 Netty 选择 NIO 模型呢？</p>
 <blockquote>
@@ -219,16 +238,23 @@
 <li>读取通信对端的请求或应答消息</li>
 <li>向通信对端发送消息请求或应答消息</li>
 </ul>
-<p><figure style="flex-grow: 229; flex-basis: 551px">
-		<a href="/p/netty_basic/285763-20180123121112287-1483895090.png" data-size="597x260"><img src="/p/netty_basic/285763-20180123121112287-1483895090.png"
-				srcset="/p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_1024x0_resize_box_2.png 1024w"
-				width="597"
-				height="260"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 229; 
+			flex-basis: 551px"
+	>
+	<a href="/p/netty_basic/285763-20180123121112287-1483895090.png" data-size="597x260">
+		<img src="/p/netty_basic/285763-20180123121112287-1483895090.png"
+			width="597"
+			height="260"
+			srcset="/p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>如上图所示，套接字分离、Accept 新连接、分派请求等全部由一个线程完成，对于小容量场景可行，但高负载下一定无法支撑，会造成大量消息积压、大量超时重发请求进一步拥塞系统资源，造成节点故障。</p>
 <!-- raw HTML omitted -->
 <p><strong>Reactor 多线程模型</strong></p>
@@ -238,30 +264,44 @@
 <li>网络 I/O 操作——读、写等由一个 NIO 线程池负责，包含一个任务队列和 N 各可用线程，由这些 NIO 线程负责消息的读取、解码、编码和发送；</li>
 <li>一个 NIO 线程处理多条连接，而一个连接只对应一个 NIO 线程，防止发生并发操作问题。</li>
 </ol>
-<p><figure style="flex-grow: 154; flex-basis: 370px">
-		<a href="/p/netty_basic/285763-20180123121127162-471886539.png" data-size="611x396"><img src="/p/netty_basic/285763-20180123121127162-471886539.png"
-				srcset="/p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_1024x0_resize_box_2.png 1024w"
-				width="611"
-				height="396"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 154; 
+			flex-basis: 370px"
+	>
+	<a href="/p/netty_basic/285763-20180123121127162-471886539.png" data-size="611x396">
+		<img src="/p/netty_basic/285763-20180123121127162-471886539.png"
+			width="611"
+			height="396"
+			srcset="/p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>相比第一种模式，多线程模型已经极大减轻了 Reactor 线程的工作量，但是如果有百万数量的并发连接，而 Reactor 需要对握手信息进行安全认证，这则非常损耗性能。因此这一部分工作可以再分。</p>
 <!-- raw HTML omitted -->
 <p><strong>主从 Reactor 多线程模型</strong></p>
 <p>再将新创建 Channel 注册到线程池这一工作分离出来，交给“从 Reactor”做，主 Reactor 仅负责完成登录、握手、安全认证，一旦链路成功，将链路注册到给后端 从 Reactor 线程，由它分发到后续线程池进行 I/O 操作。通常，从 Reactor 个数可与 CPU 个数相同（实际上，如果我们在 Netty 起服务端的时候调用默认的无参构造方法 <code>NioEventLoopGroup()</code> 构造 <code>workerGroup</code>，会起 <code>NettyRuntime.availableProcessors() * 2</code> ，也就是两倍 CPU 核数的线程，作为从 Reactor 线程池）。</p>
-<p><figure style="flex-grow: 150; flex-basis: 360px">
-		<a href="/p/netty_basic/285763-20180123121145006-1931312241.png" data-size="623x415"><img src="/p/netty_basic/285763-20180123121145006-1931312241.png"
-				srcset="/p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_1024x0_resize_box_2.png 1024w"
-				width="623"
-				height="415"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 150; 
+			flex-basis: 360px"
+	>
+	<a href="/p/netty_basic/285763-20180123121145006-1931312241.png" data-size="623x415">
+		<img src="/p/netty_basic/285763-20180123121145006-1931312241.png"
+			width="623"
+			height="415"
+			srcset="/p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <!-- raw HTML omitted -->
 <p>除上述三种之外，Netty NIO 的默认模式其实是在主从 Reactor 基础上去掉线程池，Netty中的Boss类充当mainReactor，NioWorker类充当subReactor（默认 NioWorker的个数是 <code>Runtime.getRuntime().availableProcessors()</code> ）。在处理新来的请求时，NioWorker读完已收到的数据到 <code>ChannelBuffer</code> 中，之后触发 <code>ChannelPipeline</code> 中的 <code>ChannelHandler</code> 流。</p>
 <p>Netty 是<strong>事件驱动</strong>的，可以通过 <code>ChannelHandler</code> 链来（ <code>ChannelPipline</code> ）控制执行流向。因为<code>ChannelHandler</code> 链的执行过程在 subReactor 中是同步的，所以如果业务处理 handler 耗时长，将严重影响可支持的并发数，例如涉及数据库操作或其它阻塞交互模块时这些问题就会被放大，必须回到第三种模型上，通过线程池化解决。 Netty内置的ChannelHandler实现类–<code>ExecutionHandler</code>可以满足，因为仍然是 <code>Handler</code> ，仍然可以加入到 <code>Pipeline</code> 中，对使用者来说只是添加一行代码而已。</p>
@@ -282,27 +322,41 @@
 <li>事件通道（event channel）为分发器与处理器之间的联系渠道</li>
 <li>事件处理器（event processor）实现业务逻辑，处理完成后会发出事件，触发下一步操作</li>
 </ul>
-<p><figure style="flex-grow: 129; flex-basis: 311px">
-		<a href="/p/netty_basic/11222983-71d582050fe05761.png" data-size="750x578"><img src="/p/netty_basic/11222983-71d582050fe05761.png"
-				srcset="/p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_480x0_resize_box_2.png 480w, /p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_1024x0_resize_box_2.png 1024w"
-				width="750"
-				height="578"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 129; 
+			flex-basis: 311px"
+	>
+	<a href="/p/netty_basic/11222983-71d582050fe05761.png" data-size="750x578">
+		<img src="/p/netty_basic/11222983-71d582050fe05761.png"
+			width="750"
+			height="578"
+			srcset="/p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_480x0_resize_box_2.png 480w, /p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p><code>ChannelPipeline</code>是<code>ChannelHandler</code>的集合，类似拦截器概念，<code>Channel</code>作为网络操作的抽象类，是<code>ChannelEvent</code>的生产者，<code>ChannelEvent</code>是数据或状态的载体。</p>
-<p><figure style="flex-grow: 122; flex-basis: 294px">
-		<a href="/p/netty_basic/11222983-973f17ed9994f4b8.png" data-size="437x356"><img src="/p/netty_basic/11222983-973f17ed9994f4b8.png"
-				srcset="/p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_480x0_resize_box_2.png 480w, /p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_1024x0_resize_box_2.png 1024w"
-				width="437"
-				height="356"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 122; 
+			flex-basis: 294px"
+	>
+	<a href="/p/netty_basic/11222983-973f17ed9994f4b8.png" data-size="437x356">
+		<img src="/p/netty_basic/11222983-973f17ed9994f4b8.png"
+			width="437"
+			height="356"
+			srcset="/p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_480x0_resize_box_2.png 480w, /p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>所有事件都来自 <code>ChannelEvent</code> 接口，涵盖监听接口、建立连接、读写数据等网络通讯各个阶段。事件处理者为 <code>ChannelHandler</code> ，连接处理、协议编解码、超时等机制都通过 <code>Handler</code> 完成。</p>
 <p>这种响应模式就类似于 AWT 中的 Reactor Pattern。</p>
 <!-- raw HTML omitted -->
@@ -314,33 +368,47 @@
 <!-- raw HTML omitted -->
 <hr>
 <h2 id="netty-核心组件">Netty 核心组件</h2>
-<p><figure style="flex-grow: 176; flex-basis: 424px">
-		<a href="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png" data-size="1030x582"><img src="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png"
-				srcset="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_480x0_resize_box_2.png 480w, /p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_1024x0_resize_box_2.png 1024w"
-				width="1030"
-				height="582"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 176; 
+			flex-basis: 424px"
+	>
+	<a href="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png" data-size="1030x582">
+		<img src="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png"
+			width="1030"
+			height="582"
+			srcset="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_480x0_resize_box_2.png 480w, /p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>这一部分主要介绍 Netty 中核心组件的功能，引用框中会补充一些实际使用中的调优技巧.</p>
 <!-- raw HTML omitted -->
 <h3 id="eventloopgroup">EventLoopGroup</h3>
 <p>如图所示，两个 <code>EventLoopGroup</code> 实际上也就是两个线程池，<code>Boss</code> 仅负责接收连接，只需要一个线程，内部封装有一个<code>Selector</code>，<code>Worker</code> 负责具体 IO 处理，每个都有绑定的<code>Selector</code>。</p>
 <p><code>EventloopGroup</code> 将为每个新创建的 <code>Channel</code> 分配一个 <code>EventLoop</code> 。每个 <code>Channel</code> 的整个生命周期内，所有操作都由相同的 <code>Thread</code> 执行。</p>
-<p><figure style="flex-grow: 165; flex-basis: 396px">
-		<a href="/p/netty_basic/image-20210518164909861.png" data-size="677x410"><img src="/p/netty_basic/image-20210518164909861.png"
-				srcset="/p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_480x0_resize_box_2.png 480w, /p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_1024x0_resize_box_2.png 1024w"
-				width="677"
-				height="410"
-				loading="lazy"
-				alt="EventLoop">
-		</a>
-		
-		<figcaption>EventLoop</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 165; 
+			flex-basis: 396px"
+	>
+	<a href="/p/netty_basic/image-20210518164909861.png" data-size="677x410">
+		<img src="/p/netty_basic/image-20210518164909861.png"
+			width="677"
+			height="410"
+			srcset="/p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_480x0_resize_box_2.png 480w, /p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			alt="EventLoop">
+	</a>
+	
+	<figcaption>EventLoop</figcaption>
+	
+</figure></p>
 <!-- raw HTML omitted -->
 <h3 id="channel">Channel</h3>
 <p><code>Channel</code> 为 <code>Netty</code> <strong>网络操作（读写等操作）抽象类</strong>，<code>EventLoop</code> 负责处理注册到其上的 <code>Channel</code> 的 I/O 操作，两个组件配合进行 I/O 操作。<code>Channel</code> 对 Java 原生的 <code>ServerSocketChannel</code> 和 <code>SocketChannel</code> 进行封装，得到了 <code>NioServerSocketChannel</code> 和 <code>NioSocketChannel</code> ，UDP 对应的是 <code>NioDatagramChannel</code> 。</p>
@@ -363,16 +431,23 @@
 <p><code>Future&lt;V&gt;</code> 接口继承自 <code>java.util.concurrent.Future&lt;V&gt;</code> ，同样用于异步调用。增加了 <code>sync()</code> 和 <code>await()</code> 用于阻塞等待，还添加了 <code>Listeners</code> 用于任务结束后回调。</p>
 <p><code>Promise</code> 接口继承自 <code>Future</code> ，实例内部是一个任务，其中的 <code>setSuccess(V result)</code> 和 <code>setFailure(Throwable t)</code> 会在执行任务的线程完成后调用。</p>
 <p>这一回调可能是 <code>Listeners</code> 回调函数进行（不一定是由线程自己执行，也可能是新线程或其他线程），也可能是从 <code>await()</code> 中返回。</p>
-<p><figure style="flex-grow: 228; flex-basis: 548px">
-		<a href="/p/netty_basic/7.png" data-size="1942x850"><img src="/p/netty_basic/7.png"
-				srcset="/p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_480x0_resize_box_2.png 480w, /p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_1024x0_resize_box_2.png 1024w"
-				width="1942"
-				height="850"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 228; 
+			flex-basis: 548px"
+	>
+	<a href="/p/netty_basic/7.png" data-size="1942x850">
+		<img src="/p/netty_basic/7.png"
+			width="1942"
+			height="850"
+			srcset="/p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_480x0_resize_box_2.png 480w, /p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <!-- raw HTML omitted -->
 <hr>
 <h2 id="netty-中的零拷贝">Netty 中的零拷贝</h2>
@@ -407,6 +482,30 @@
     </section>
     </footer>
 
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
     
 </article>
 
@@ -570,9 +669,10 @@
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
+
 
     
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
@@ -672,28 +772,28 @@
                 
                 <div class="widget--toc">
                     <nav id="TableOfContents">
-  <ol>
+  <ul>
     <li><a href="#nio-与-aio-模型">NIO 与 AIO 模型</a>
-      <ol>
+      <ul>
         <li><a href="#netty常见应用场景">Netty常见应用场景</a></li>
         <li><a href="#扩展java-nio">扩展：Java NIO</a></li>
         <li><a href="#扩展linux-epoll">扩展：Linux Epoll</a></li>
-      </ol>
+      </ul>
     </li>
     <li><a href="#netty-支持的三种-reactor-线程模型">Netty 支持的三种 Reactor 线程模型</a></li>
     <li><a href="#netty-中会起多少线程">Netty 中会起多少线程</a></li>
     <li><a href="#netty-事件驱动机制">Netty 事件驱动机制</a></li>
     <li><a href="#netty-的无锁化串行理念">Netty 的无锁化串行理念</a></li>
     <li><a href="#netty-核心组件">Netty 核心组件</a>
-      <ol>
+      <ul>
         <li><a href="#eventloopgroup">EventLoopGroup</a></li>
         <li><a href="#channel">Channel</a></li>
         <li><a href="#handler">Handler</a></li>
         <li><a href="#future">Future</a></li>
-      </ol>
+      </ul>
     </li>
     <li><a href="#netty-中的零拷贝">Netty 中的零拷贝</a></li>
-  </ol>
+  </ul>
 </nav>
                 </div>
             </section>

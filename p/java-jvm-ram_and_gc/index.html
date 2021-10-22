@@ -93,17 +93,29 @@
     <h3 class="article-subtitle">
         垃圾收集的主要场所是 JVM 堆.
     </h3>
+    
+
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
 </svg>
+                <time class="article-time--published">Mar 17, 2021</time>
+            </div>
+        
 
-
-
-        <time class="article-time--published">Mar 17, 2021</time>
-    </footer></div>
+        
+    </footer>
+    
+</div>
 </header>
 
     <section class="article-content">
@@ -111,18 +123,25 @@
 <blockquote>
 <p>下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现</p>
 </blockquote>
-<p><figure style="flex-grow: 151; flex-basis: 363px">
-		<a href="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01.jpg" data-size="640x422"><img src="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01.jpg"
-				srcset="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01_hub12b3faaf1b208ac8b97ef15133c8f43_47678_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01_hub12b3faaf1b208ac8b97ef15133c8f43_47678_1024x0_resize_q75_box.jpg 1024w"
-				width="640"
-				height="422"
-				loading="lazy"
-				alt="JDK1.8以前的Java堆分代">
-		</a>
-		
-		<figcaption>JDK1.8以前的Java堆分代</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 151; 
+			flex-basis: 363px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01.jpg" data-size="640x422">
+		<img src="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01.jpg"
+			width="640"
+			height="422"
+			srcset="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01_hub12b3faaf1b208ac8b97ef15133c8f43_47678_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_01_hub12b3faaf1b208ac8b97ef15133c8f43_47678_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="JDK1.8以前的Java堆分代">
+	</a>
+	
+	<figcaption>JDK1.8以前的Java堆分代</figcaption>
+	
+</figure></p>
 <p>跟据 <code>Object</code> 生命周期分为三个层次</p>
 <ul>
 <li>Young Generation</li>
@@ -151,32 +170,46 @@
 <blockquote>
 <p>字符串常量从JDK1.7开始由永久代转移到堆中(Java heap space)</p>
 </blockquote>
-<p><figure style="flex-grow: 233; flex-basis: 560px">
-		<a href="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326.jpg" data-size="906x388"><img src="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326.jpg"
-				srcset="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326_hu4d0caa410fc3e818e067235fbc466207_43085_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/584866-20170426154633834-741444326_hu4d0caa410fc3e818e067235fbc466207_43085_1024x0_resize_q75_box.jpg 1024w"
-				width="906"
-				height="388"
-				loading="lazy"
-				alt="永久代的变动">
-		</a>
-		
-		<figcaption>永久代的变动</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 233; 
+			flex-basis: 560px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326.jpg" data-size="906x388">
+		<img src="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326.jpg"
+			width="906"
+			height="388"
+			srcset="/p/java-jvm-ram_and_gc/584866-20170426154633834-741444326_hu4d0caa410fc3e818e067235fbc466207_43085_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/584866-20170426154633834-741444326_hu4d0caa410fc3e818e067235fbc466207_43085_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="永久代的变动">
+	</a>
+	
+	<figcaption>永久代的变动</figcaption>
+	
+</figure></p>
 <hr>
 <h3 id="二经典垃圾收集器">二、经典垃圾收集器</h3>
-<p><figure style="flex-grow: 165; flex-basis: 396px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067.jpg" data-size="646x391"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_huc125b85596bf56800848a15061491627_33792_374ba125b9ba3c29f26ec0c4e4dafc10.jpg 480w, /p/java-jvm-ram_and_gc/_huc125b85596bf56800848a15061491627_33792_22263332518873fd5e9431c81e680d52.jpg 1024w"
-				width="646"
-				height="391"
-				loading="lazy"
-				alt="HotSpot中的垃圾收集器">
-		</a>
-		
-		<figcaption>HotSpot中的垃圾收集器</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 165; 
+			flex-basis: 396px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067.jpg" data-size="646x391">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63363235626161302d646465362d343439652d393364662d6333613637663266343330662e6a7067.jpg"
+			width="646"
+			height="391"
+			srcset="/p/java-jvm-ram_and_gc/_huc125b85596bf56800848a15061491627_33792_374ba125b9ba3c29f26ec0c4e4dafc10.jpg 480w, /p/java-jvm-ram_and_gc/_huc125b85596bf56800848a15061491627_33792_22263332518873fd5e9431c81e680d52.jpg 1024w"
+			loading="lazy"
+			alt="HotSpot中的垃圾收集器">
+	</a>
+	
+	<figcaption>HotSpot中的垃圾收集器</figcaption>
+	
+</figure></p>
 <blockquote>
 <p>HotSpot 中的<strong>安全点</strong>一般设置在方法调用、循环跳转、异常跳转等地方，只在安全点位置建立根节点枚举，强制到大安全点后才暂停，进行垃圾收集。</p>
 </blockquote>
@@ -198,16 +231,23 @@
 </li>
 <li>
 <h5 id="serial-old-收集器"><strong>Serial Old</strong> 收集器</h5>
-<p><figure style="flex-grow: 270; flex-basis: 650px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067.jpg" data-size="734x271"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_huc20527f54276b36fc12587954a293a6c_30720_76630a27aef49bb7de23fb5f3fab1f1d.jpg 480w, /p/java-jvm-ram_and_gc/_huc20527f54276b36fc12587954a293a6c_30720_54379a3176373c759f0fc3271188544a.jpg 1024w"
-				width="734"
-				height="271"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 270; 
+			flex-basis: 650px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067.jpg" data-size="734x271">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30386633326664332d663733362d346136372d383163612d3239356232613739373266322e6a7067.jpg"
+			width="734"
+			height="271"
+			srcset="/p/java-jvm-ram_and_gc/_huc20527f54276b36fc12587954a293a6c_30720_76630a27aef49bb7de23fb5f3fab1f1d.jpg 480w, /p/java-jvm-ram_and_gc/_huc20527f54276b36fc12587954a293a6c_30720_54379a3176373c759f0fc3271188544a.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>Serial 收集器的老年代版本，也是给 Client 场景下的虚拟机使用。如果用在 Server 场景下，它有两大用途：</p>
 <ul>
 <li>在 JDK 1.5 以及之前版本（Parallel Old 诞生以前）中与 Parallel Scavenge 收集器搭配使用。</li>
@@ -216,31 +256,45 @@
 </li>
 <li>
 <h5 id="parallel-old-收集器"><strong>Parallel Old 收集器</strong></h5>
-<p><figure style="flex-grow: 274; flex-basis: 657px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067.jpg" data-size="740x270"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_hueef91052027da21d38a698e2c7b0a515_32768_d649da0bdf888d0a5d274283dd409895.jpg 480w, /p/java-jvm-ram_and_gc/_hueef91052027da21d38a698e2c7b0a515_32768_ee62d5740d05e0425c488930000324a5.jpg 1024w"
-				width="740"
-				height="270"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 274; 
+			flex-basis: 657px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067.jpg" data-size="740x270">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f32373866653433312d616638382d346139352d613839352d3963336238303131376465332e6a7067.jpg"
+			width="740"
+			height="270"
+			srcset="/p/java-jvm-ram_and_gc/_hueef91052027da21d38a698e2c7b0a515_32768_d649da0bdf888d0a5d274283dd409895.jpg 480w, /p/java-jvm-ram_and_gc/_hueef91052027da21d38a698e2c7b0a515_32768_ee62d5740d05e0425c488930000324a5.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>是 Parallel Scavenge 收集器的老年代版本。</p>
 <p>在注重吞吐量以及 CPU 资源敏感的场合，都可以优先考虑 Parallel Scavenge 加 Parallel Old 收集器。</p>
 </li>
 <li>
 <h5 id="cms"><strong>CMS</strong></h5>
-<p><figure style="flex-grow: 277; flex-basis: 666px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067.jpg" data-size="733x264"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_hue5ca3b82e39af9a63b15c7449c6096e6_39936_72a30ff8d6df0189b35041862f14c84e.jpg 480w, /p/java-jvm-ram_and_gc/_hue5ca3b82e39af9a63b15c7449c6096e6_39936_0129a065244d24867f96319ee163e818.jpg 1024w"
-				width="733"
-				height="264"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 277; 
+			flex-basis: 666px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067.jpg" data-size="733x264">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36326537373939372d363935372d346236382d386431322d6266643630396262326336382e6a7067.jpg"
+			width="733"
+			height="264"
+			srcset="/p/java-jvm-ram_and_gc/_hue5ca3b82e39af9a63b15c7449c6096e6_39936_72a30ff8d6df0189b35041862f14c84e.jpg 480w, /p/java-jvm-ram_and_gc/_hue5ca3b82e39af9a63b15c7449c6096e6_39936_0129a065244d24867f96319ee163e818.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <p>CMS（Concurrent Mark Sweep），Mark Sweep 指的是标记 - 清除算法。</p>
 <p>分为以下四个流程：</p>
 <ul>
@@ -261,31 +315,45 @@
 <h5 id="g1"><strong>G1</strong></h5>
 <p>G1（Garbage-First），它是一款面向<strong>服务端应用</strong>的垃圾收集器，在<strong>多 CPU 和大内存的场景</strong>下有很好的性能。HotSpot 开发团队赋予它的使命是未来可以替换掉 CMS 收集器。</p>
 <p>堆被分为新生代和老年代，其它收集器进行收集的范围都是整个新生代或者老年代，而 G1 可以直接对新生代和老年代一起回收。</p>
-<p><figure style="flex-grow: 177; flex-basis: 427px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67.jpg" data-size="735x413"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_huf07e0273188795bf1b85dbf7fe1e2283_28672_81247275f1300ec09efc4db5e03567bd.jpg 480w, /p/java-jvm-ram_and_gc/_huf07e0273188795bf1b85dbf7fe1e2283_28672_0d8655b8da24fe44312840f73e6cf4f4.jpg 1024w"
-				width="735"
-				height="413"
-				loading="lazy"
-				alt="img">
-		</a>
-		
-		<figcaption>img</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 177; 
+			flex-basis: 427px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67.jpg" data-size="735x413">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34636637313161382d376162322d343135322d623835632d6435633232363733333830372e706e67.jpg"
+			width="735"
+			height="413"
+			srcset="/p/java-jvm-ram_and_gc/_huf07e0273188795bf1b85dbf7fe1e2283_28672_81247275f1300ec09efc4db5e03567bd.jpg 480w, /p/java-jvm-ram_and_gc/_huf07e0273188795bf1b85dbf7fe1e2283_28672_0d8655b8da24fe44312840f73e6cf4f4.jpg 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
 <p><!-- raw HTML omitted -->G1 把堆划分成多个大小相等的<strong>独立区域</strong>（Region），新生代和老年代不再物理隔离。<!-- raw HTML omitted --></p>
-<p><figure style="flex-grow: 139; flex-basis: 334px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67.jpg" data-size="713x511"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_huf8a58e7b7f9cca3cbf2b94924ded6248_29696_49c5ff9c3d62e4565e73cbd0d191372b.jpg 480w, /p/java-jvm-ram_and_gc/_huf8a58e7b7f9cca3cbf2b94924ded6248_29696_00cb4697ef5ee94bda06ae34801c64b5.jpg 1024w"
-				width="713"
-				height="511"
-				loading="lazy"
-				alt="img">
-		</a>
-		
-		<figcaption>img</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 139; 
+			flex-basis: 334px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67.jpg" data-size="713x511">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39626264646565622d653933392d343166302d386538652d3262316130616137653061372e706e67.jpg"
+			width="713"
+			height="511"
+			srcset="/p/java-jvm-ram_and_gc/_huf8a58e7b7f9cca3cbf2b94924ded6248_29696_49c5ff9c3d62e4565e73cbd0d191372b.jpg 480w, /p/java-jvm-ram_and_gc/_huf8a58e7b7f9cca3cbf2b94924ded6248_29696_00cb4697ef5ee94bda06ae34801c64b5.jpg 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
 <p>通过引入 Region 的概念，从而将原来的一整块内存空间划分成多个的小空间，使得每个小空间可以单独进行垃圾回收。这种划分方法带来了很大的灵活性，使得可预测的停顿时间模型成为可能。通过记录每个 Region 垃圾回收时间以及回收所获得的空间（这两个值是通过过去回收的经验获得），并维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的 Region。</p>
 <p>每个 Region 都有一个 Remembered Set，用来记录该 Region 对象的引用对象所在的 Region。通过使用 Remembered Set，在做可达性分析的时候就可以避免全堆扫描。</p>
 <blockquote>
@@ -296,18 +364,25 @@
 <blockquote>
 <p>因为大小固定，和大对象很难保证一致，容易造成空间浪费，也很容易令大对象很难找到连续空间存放。</p>
 </blockquote>
-<p><figure style="flex-grow: 306; flex-basis: 735px">
-		<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067.jpg" data-size="763x249"><img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067.jpg"
-				srcset="/p/java-jvm-ram_and_gc/_hub533c5874b46ffc58619fcd23bdf83e7_37888_06a1df7256dcc09a87a63e468e1b07da.jpg 480w, /p/java-jvm-ram_and_gc/_hub533c5874b46ffc58619fcd23bdf83e7_37888_a303b3ee4753587e7219c1a2c75c7fdb.jpg 1024w"
-				width="763"
-				height="249"
-				loading="lazy"
-				alt="img">
-		</a>
-		
-		<figcaption>img</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 306; 
+			flex-basis: 735px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067.jpg" data-size="763x249">
+		<img src="/p/java-jvm-ram_and_gc/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66393965653737312d633536662d343766622d393134382d6330303336363935623566652e6a7067.jpg"
+			width="763"
+			height="249"
+			srcset="/p/java-jvm-ram_and_gc/_hub533c5874b46ffc58619fcd23bdf83e7_37888_06a1df7256dcc09a87a63e468e1b07da.jpg 480w, /p/java-jvm-ram_and_gc/_hub533c5874b46ffc58619fcd23bdf83e7_37888_a303b3ee4753587e7219c1a2c75c7fdb.jpg 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
 <p>如果不计算维护 Remembered Set 的操作，G1 收集器的运作大致可划分为以下几个步骤：</p>
 <ul>
 <li><strong>初始标记</strong>：<strong>短暂停顿线程</strong>以标记 GC Roots 直接关联到的对象，并修改 TAMS (Next Top at Mark Start) 值，让下一并发阶段能在正确 Region 中创建新对象。</li>
@@ -394,18 +469,25 @@
 <p>Java 虚拟机不使用引用计数算法，因为两个对象如果循环引用，则引用计数器永远无法为 0。</p>
 </blockquote>
 <h4 id="可达性分析">可达性分析</h4>
-<p><figure style="flex-grow: 256; flex-basis: 615px">
-		<a href="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02.jpg" data-size="600x234"><img src="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02.jpg"
-				srcset="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02_hu820897081684813e6d8ebae4abd3e3d5_30966_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02_hu820897081684813e6d8ebae4abd3e3d5_30966_1024x0_resize_q75_box.jpg 1024w"
-				width="600"
-				height="234"
-				loading="lazy"
-				alt="可达树">
-		</a>
-		
-		<figcaption>可达树</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 256; 
+			flex-basis: 615px"
+	>
+	<a href="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02.jpg" data-size="600x234">
+		<img src="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02.jpg"
+			width="600"
+			height="234"
+			srcset="/p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02_hu820897081684813e6d8ebae4abd3e3d5_30966_480x0_resize_q75_box.jpg 480w, /p/java-jvm-ram_and_gc/java-jvm-ram_and_gc_02_hu820897081684813e6d8ebae4abd3e3d5_30966_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="可达树">
+	</a>
+	
+	<figcaption>可达树</figcaption>
+	
+</figure></p>
 <p>根搜索方法，将所有 Java 对象构成“搜索树”结构，有一个根节点 <code>root</code>，每次从根节点触发进行搜索，遍历完后，不存在的变量成为可销毁对象。</p>
 <p><code>root</code> 包括所有正在运行线程栈上的引用变量、所有全局变量、所有 <code>ClassLoader</code> 。</p>
 <h4 id="类的卸载">类的卸载</h4>
@@ -442,6 +524,30 @@
     </section>
     </footer>
 
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
     
 </article>
 
@@ -605,9 +711,10 @@
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
+
 
     
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
@@ -707,30 +814,30 @@
                 
                 <div class="widget--toc">
                     <nav id="TableOfContents">
-  <ol>
+  <ul>
     <li>
-      <ol>
+      <ul>
         <li><a href="#一垃圾收集算法">一、垃圾收集算法</a></li>
         <li><a href="#二经典垃圾收集器">二、经典垃圾收集器</a>
-          <ol>
+          <ul>
             <li></li>
-          </ol>
+          </ul>
         </li>
         <li><a href="#三内存分配与回收策略">三、内存分配与回收策略</a>
-          <ol>
+          <ul>
             <li><a href="#内存分配策略">内存分配策略</a></li>
             <li><a href="#full-gc-的触发条件">Full GC 的触发条件</a></li>
-          </ol>
+          </ul>
         </li>
         <li><a href="#四可销毁对象">四、可销毁对象</a>
-          <ol>
+          <ul>
             <li><a href="#可达性分析">可达性分析</a></li>
             <li><a href="#类的卸载">类的卸载</a></li>
-          </ol>
+          </ul>
         </li>
-      </ol>
+      </ul>
     </li>
-  </ol>
+  </ul>
 </nav>
                 </div>
             </section>

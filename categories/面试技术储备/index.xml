@@ -79,7 +79,7 @@ Redis Transactions Redis 原本通过 multi exec 和 discard 指令执行事务�
       
       <guid>https://winterorch.github.io/p/netty_basic/</guid>
       <description>NIO 与 AIO 模型 NIO（一般用同步非阻塞模式，如果阻塞就是 BIO 了）：服务器实现模式为一个请求一个线程，客户端发送连接请求全部注册到多路复用器上，多路复用器轮询到连接有 I/O 请求时才启动一个线程进行处理（解决了连接多而 I/O 少时资源占用问题）。
-NIO模型
+ NIO模型 
 AIO（异步非阻塞）：服务器实现模式为一个有效请求一个线程，客户端I/O请求由OS先完成再通知服务器应用启动线程进行处理。
 那么，为什么 Netty 选择 NIO 模型呢？
  由于 UNIX 系统上 AIO 不成熟，底层仍然使用 EPOLL，没有很好实现 AIO，且 JDK 加了一层封装，因此实际速度并不比 NIO (epoll) 快。
@@ -168,7 +168,7 @@ Bean 的扫描   @ComponentScan
       <guid>https://winterorch.github.io/p/computer_network-transport_layer/</guid>
       <description>网络层只把分组发送到目的主机，但是真正通信的并不是主机而是主机中的进程。传输层提供了进程间的逻辑通信，传输层向高层用户屏蔽了下面网络层的核心细节，使应用程序看起来像是在两个传输层实体之间有一条端到端的逻辑通信信道。
  TCP 与 UDP 协议区别     连接 传输可靠性 传输形式 传输效率 所需资源 应用场景 首部字节     TCP 面向连接 可靠 字节流 低 多 要求数据可靠性 20 - 60   UDP 无连接 不可靠 数据报文段 高 少 要求通信效率 8     TCP（Transmission Control Protocol） TCP 提供面向连接的服务。在传送数据之前必须先建立连接，数据传送结束后要释放连接。 TCP 不提供广播或多播服务。由于 TCP 要提供可靠的，面向连接的传输服务（TCP的可靠体现在TCP在传递数据之前，会有三次握手来建立连接，而且在数据传递时，有确认、窗口、重传、拥塞控制机制，在数据传完后，还会断开连接用来节约系统资源），这一难以避免增加了许多开销，如确认，流量控制，计时器以及连接管理等。这不仅使协议数据单元的首部增大很多，还要占用许多处理机资源。TCP 一般用于文件传输、发送和接收邮件、远程登录等场景。
-
+ 
   序号 ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。
   确认号 ：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</description>
     </item>
@@ -189,7 +189,7 @@ Bean 的扫描   @ComponentScan
       
       <guid>https://winterorch.github.io/p/java-jvm-ram_and_gc/</guid>
       <description>一、垃圾收集算法  下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现
- JDK1.8以前的Java堆分代
+  JDK1.8以前的Java堆分代 
 跟据 Object 生命周期分为三个层次
  Young Generation Old Generation Permanent Generation  Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 s0 或 s1 ，清理 Eden 和使用过的一块 Survivor。
  HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。

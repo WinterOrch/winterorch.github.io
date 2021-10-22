@@ -112,7 +112,7 @@ public interface Hockey extends Sports, Event    接口与抽象类区别 接口
       
       <guid>https://winterorch.github.io/p/java-jvm-ram_and_gc/</guid>
       <description>一、垃圾收集算法  下面这张图中存在 Permanent Space ，因此明显是基于 JDK 1.8 以前版本画的，在之后版本，元空间取代了永久代成为了 HotSpot 对方法区的实现
- JDK1.8以前的Java堆分代
+  JDK1.8以前的Java堆分代 
 跟据 Object 生命周期分为三个层次
  Young Generation Old Generation Permanent Generation  Young Generation 包括 Eden 区和两个存活区（From 和 To），采用“停止-复制（Stop-and-copy）”清理法。大部分对象在 Eden 区域分配，一次新生代垃圾回收后如果对象还存活，则升1岁进入 s0 或 s1 ，清理 Eden 和使用过的一块 Survivor。
  HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 8:1，保证内存利用率有 90%。

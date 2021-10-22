@@ -93,17 +93,29 @@
     <h3 class="article-subtitle">
         应用层为特定应用程序提供数据传输服务，例如 HTTP，DNS 等协议，数据单位为报文.
     </h3>
+    
+
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
 </svg>
+                <time class="article-time--published">May 31, 2021</time>
+            </div>
+        
 
-
-
-        <time class="article-time--published">May 31, 2021</time>
-    </footer></div>
+        
+    </footer>
+    
+</div>
 </header>
 
     <section class="article-content">
@@ -195,18 +207,25 @@
 <h3 id="域名系统"><strong>域名系统</strong></h3>
 <p>DNS ( Domain Name System ) 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。</p>
 <p>域名具有层次结构，从上到下依次为：根域名、顶级域名、二级域名。</p>
-<p><figure style="flex-grow: 300; flex-basis: 720px">
-		<a href="/p/computer_network-application_layer/computer_network-application_layer_01.jpg" data-size="859x286"><img src="/p/computer_network-application_layer/computer_network-application_layer_01.jpg"
-				srcset="/p/computer_network-application_layer/computer_network-application_layer_01_hufba0b3631add348eabcfdb5a4ebf3980_31744_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_01_hufba0b3631add348eabcfdb5a4ebf3980_31744_1024x0_resize_q75_box.jpg 1024w"
-				width="859"
-				height="286"
-				loading="lazy"
-				alt="DNS分层">
-		</a>
-		
-		<figcaption>DNS分层</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 300; 
+			flex-basis: 720px"
+	>
+	<a href="/p/computer_network-application_layer/computer_network-application_layer_01.jpg" data-size="859x286">
+		<img src="/p/computer_network-application_layer/computer_network-application_layer_01.jpg"
+			width="859"
+			height="286"
+			srcset="/p/computer_network-application_layer/computer_network-application_layer_01_hufba0b3631add348eabcfdb5a4ebf3980_31744_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_01_hufba0b3631add348eabcfdb5a4ebf3980_31744_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="DNS分层">
+	</a>
+	
+	<figcaption>DNS分层</figcaption>
+	
+</figure></p>
 <h4 id="dns-使用-udptcp">DNS 使用 UDP/TCP</h4>
 <p>DNS 可以使用 UDP 或者 TCP 进行传输，使用的端口号都为 53。大多数情况下 DNS 使用 UDP 进行传输，这样 DNS 服务器负载更低，响应更快，不过这要求域名解析器和域名服务器都必须自己处理超时和重传从而保证可靠性。一般在两种情况下会使用 TCP 进行传输：</p>
 <ul>
@@ -232,33 +251,47 @@
 <ul>
 <li>主动模式：服务器端主动建立数据连接，其中服务器端的端口号为 20，客户端的端口号随机，但是必须大于 1024，因为 0~1023 是熟知端口号。</li>
 </ul>
-<p><figure style="flex-grow: 285; flex-basis: 684px">
-		<a href="/p/computer_network-application_layer/computer_network-application_layer_02.jpg" data-size="764x268"><img src="/p/computer_network-application_layer/computer_network-application_layer_02.jpg"
-				srcset="/p/computer_network-application_layer/computer_network-application_layer_02_hu1aec4b200965459def9222c505b7c483_33792_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_02_hu1aec4b200965459def9222c505b7c483_33792_1024x0_resize_q75_box.jpg 1024w"
-				width="764"
-				height="268"
-				loading="lazy"
-				alt="主动模式">
-		</a>
-		
-		<figcaption>主动模式</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 285; 
+			flex-basis: 684px"
+	>
+	<a href="/p/computer_network-application_layer/computer_network-application_layer_02.jpg" data-size="764x268">
+		<img src="/p/computer_network-application_layer/computer_network-application_layer_02.jpg"
+			width="764"
+			height="268"
+			srcset="/p/computer_network-application_layer/computer_network-application_layer_02_hu1aec4b200965459def9222c505b7c483_33792_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_02_hu1aec4b200965459def9222c505b7c483_33792_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="主动模式">
+	</a>
+	
+	<figcaption>主动模式</figcaption>
+	
+</figure></p>
 <ul>
 <li>被动模式：客户端主动建立数据连接，其中客户端的端口号由客户端自己指定，服务器端的端口号随机。</li>
 </ul>
-<p><figure style="flex-grow: 241; flex-basis: 580px">
-		<a href="/p/computer_network-application_layer/computer_network-application_layer_03.jpg" data-size="752x311"><img src="/p/computer_network-application_layer/computer_network-application_layer_03.jpg"
-				srcset="/p/computer_network-application_layer/computer_network-application_layer_03_hu3c6dede512833d5a711609b7e9aeda9f_35840_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_03_hu3c6dede512833d5a711609b7e9aeda9f_35840_1024x0_resize_q75_box.jpg 1024w"
-				width="752"
-				height="311"
-				loading="lazy"
-				alt="被动模式">
-		</a>
-		
-		<figcaption>被动模式</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 241; 
+			flex-basis: 580px"
+	>
+	<a href="/p/computer_network-application_layer/computer_network-application_layer_03.jpg" data-size="752x311">
+		<img src="/p/computer_network-application_layer/computer_network-application_layer_03.jpg"
+			width="752"
+			height="311"
+			srcset="/p/computer_network-application_layer/computer_network-application_layer_03_hu3c6dede512833d5a711609b7e9aeda9f_35840_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_03_hu3c6dede512833d5a711609b7e9aeda9f_35840_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="被动模式">
+	</a>
+	
+	<figcaption>被动模式</figcaption>
+	
+</figure></p>
 <p>主动模式要求客户端开放端口号给服务器端，需要去配置客户端的防火墙。被动模式只需要服务器端开放端口号即可，无需客户端配置防火墙。但是被动模式会导致服务器端的安全性减弱，因为开放了过多的端口号。</p>
 <hr>
 <h3 id="动态主机配置协议"><strong>动态主机配置协议</strong></h3>
@@ -270,18 +303,25 @@
 <li>如果客户端选择了某个 DHCP 服务器提供的信息，那么就发送 Request 报文给该 DHCP 服务器。</li>
 <li>DHCP 服务器发送 Ack 报文，表示客户端此时可以使用提供给它的信息。</li>
 </ol>
-<p><figure style="flex-grow: 211; flex-basis: 508px">
-		<a href="/p/computer_network-application_layer/computer_network-application_layer_04.jpg" data-size="621x293"><img src="/p/computer_network-application_layer/computer_network-application_layer_04.jpg"
-				srcset="/p/computer_network-application_layer/computer_network-application_layer_04_hub3947bd7fbae808b21eeaaf0dda4a5ff_34816_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_04_hub3947bd7fbae808b21eeaaf0dda4a5ff_34816_1024x0_resize_q75_box.jpg 1024w"
-				width="621"
-				height="293"
-				loading="lazy"
-				alt="DHCP">
-		</a>
-		
-		<figcaption>DHCP</figcaption>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 211; 
+			flex-basis: 508px"
+	>
+	<a href="/p/computer_network-application_layer/computer_network-application_layer_04.jpg" data-size="621x293">
+		<img src="/p/computer_network-application_layer/computer_network-application_layer_04.jpg"
+			width="621"
+			height="293"
+			srcset="/p/computer_network-application_layer/computer_network-application_layer_04_hub3947bd7fbae808b21eeaaf0dda4a5ff_34816_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_04_hub3947bd7fbae808b21eeaaf0dda4a5ff_34816_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			alt="DHCP">
+	</a>
+	
+	<figcaption>DHCP</figcaption>
+	
+</figure></p>
 <hr>
 <h3 id="远程登录协议"><strong>远程登录协议</strong></h3>
 <p>TELNET 用于登录到远程主机上，并且远程主机上的输出也会返回。</p>
@@ -290,32 +330,46 @@
 <h3 id="电子邮件协议"><strong>电子邮件协议</strong></h3>
 <p>一个电子邮件系统由三部分组成：用户代理、邮件服务器以及邮件协议。</p>
 <p>邮件协议包含发送协议和读取协议，发送协议常用 SMTP，读取协议常用 POP3 和 IMAP。</p>
-<p><figure style="flex-grow: 157; flex-basis: 377px">
-		<a href="/p/computer_network-application_layer/computer_network-application_layer_05.jpg" data-size="1072x681"><img src="/p/computer_network-application_layer/computer_network-application_layer_05.jpg"
-				srcset="/p/computer_network-application_layer/computer_network-application_layer_05_hudb8861bcdee8f2951bb15a85a22ce3f3_155481_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_05_hudb8861bcdee8f2951bb15a85a22ce3f3_155481_1024x0_resize_q75_box.jpg 1024w"
-				width="1072"
-				height="681"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 157; 
+			flex-basis: 377px"
+	>
+	<a href="/p/computer_network-application_layer/computer_network-application_layer_05.jpg" data-size="1072x681">
+		<img src="/p/computer_network-application_layer/computer_network-application_layer_05.jpg"
+			width="1072"
+			height="681"
+			srcset="/p/computer_network-application_layer/computer_network-application_layer_05_hudb8861bcdee8f2951bb15a85a22ce3f3_155481_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_05_hudb8861bcdee8f2951bb15a85a22ce3f3_155481_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <ol>
 <li>
 <p>SMTP</p>
 <p>SMTP 只能发送 ASCII 码，而互联网邮件扩充 MIME 可以发送二进制文件。MIME 并没有改动或者取代 SMTP，而是增加邮件主体的结构，定义了非 ASCII 码的编码规则。</p>
 </li>
 </ol>
-<p><figure style="flex-grow: 231; flex-basis: 554px">
-		<a href="/p/computer_network-application_layer/computer_network-application_layer_06.jpg" data-size="462x200"><img src="/p/computer_network-application_layer/computer_network-application_layer_06.jpg"
-				srcset="/p/computer_network-application_layer/computer_network-application_layer_06_hue521dcf586ae6054d57fa6d469194a3c_18917_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_06_hue521dcf586ae6054d57fa6d469194a3c_18917_1024x0_resize_q75_box.jpg 1024w"
-				width="462"
-				height="200"
-				loading="lazy"
-				>
-		</a>
-		
-	</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 231; 
+			flex-basis: 554px"
+	>
+	<a href="/p/computer_network-application_layer/computer_network-application_layer_06.jpg" data-size="462x200">
+		<img src="/p/computer_network-application_layer/computer_network-application_layer_06.jpg"
+			width="462"
+			height="200"
+			srcset="/p/computer_network-application_layer/computer_network-application_layer_06_hue521dcf586ae6054d57fa6d469194a3c_18917_480x0_resize_q75_box.jpg 480w, /p/computer_network-application_layer/computer_network-application_layer_06_hue521dcf586ae6054d57fa6d469194a3c_18917_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
 <ol start="2">
 <li>
 <p>POP3</p>
@@ -510,6 +564,30 @@
     </section>
     </footer>
 
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
     
 </article>
 
@@ -673,9 +751,10 @@
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.4.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
+
 
     
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
@@ -775,15 +854,15 @@
                 
                 <div class="widget--toc">
                     <nav id="TableOfContents">
-  <ol>
+  <ul>
     <li>
-      <ol>
+      <ul>
         <li><a href="#常用端口及协议"><strong>常用端口及协议</strong></a></li>
         <li><a href="#域名系统"><strong>域名系统</strong></a>
-          <ol>
+          <ul>
             <li><a href="#dns-使用-udptcp">DNS 使用 UDP/TCP</a></li>
             <li><a href="#dns-缓存">DNS 缓存</a></li>
-          </ol>
+          </ul>
         </li>
         <li><a href="#文件传送协议"><strong>文件传送协议</strong></a></li>
         <li><a href="#动态主机配置协议"><strong>动态主机配置协议</strong></a></li>
@@ -791,9 +870,9 @@
         <li><a href="#电子邮件协议"><strong>电子邮件协议</strong></a></li>
         <li><a href="#http--https"><strong>HTTP / HTTPS</strong></a></li>
         <li><a href="#web-页面请求过程"><strong>Web 页面请求过程</strong></a></li>
-      </ol>
+      </ul>
     </li>
-  </ol>
+  </ul>
 </nav>
                 </div>
             </section>

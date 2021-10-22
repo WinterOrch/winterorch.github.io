@@ -14,7 +14,7 @@
       
       <guid>https://winterorch.github.io/p/netty_basic/</guid>
       <description>NIO 与 AIO 模型 NIO（一般用同步非阻塞模式，如果阻塞就是 BIO 了）：服务器实现模式为一个请求一个线程，客户端发送连接请求全部注册到多路复用器上，多路复用器轮询到连接有 I/O 请求时才启动一个线程进行处理（解决了连接多而 I/O 少时资源占用问题）。
-NIO模型
+ NIO模型 
 AIO（异步非阻塞）：服务器实现模式为一个有效请求一个线程，客户端I/O请求由OS先完成再通知服务器应用启动线程进行处理。
 那么，为什么 Netty 选择 NIO 模型呢？
  由于 UNIX 系统上 AIO 不成熟，底层仍然使用 EPOLL，没有很好实现 AIO，且 JDK 加了一层封装，因此实际速度并不比 NIO (epoll) 快。
