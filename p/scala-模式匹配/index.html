@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Scala 提供了强大的模式匹配机制，应用也非常广泛，match case 只是其中一隅'><title>Scala - 模式匹配</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/'>
+
+<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Scala - 模式匹配'>
+<meta property='og:description' content='Scala 提供了强大的模式匹配机制，应用也非常广泛，match case 只是其中一隅'>
+<meta property='og:url' content='https://winterorch.github.io/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Scala' /><meta property='article:tag' content='模式匹配' /><meta property='article:published_time' content='2021-12-27T19:13:22&#43;08:00'/><meta property='article:modified_time' content='2021-12-27T19:13:22&#43;08:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/kora/planets.jpg' />
+<meta name="twitter:title" content="Scala - 模式匹配">
+<meta name="twitter:description" content="Scala 提供了强大的模式匹配机制，应用也非常广泛，match case 只是其中一隅"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/kora/planets.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/">
+                
+                    <img src="/images/feature/kora/planets.jpg" loading="lazy" alt="Featured image of post Scala - 模式匹配" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/scala/" style="background-color: #D26900; color: #fff;">
+                Scala
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/">Scala - 模式匹配</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        Scala 提供了强大的模式匹配机制，应用也非常广泛，match case 只是其中一隅
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 27, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <blockquote>
+<p>参考来源：
+<a href="https://windor.gitbooks.io/beginners-guide-to-scala/content">https://windor.gitbooks.io/beginners-guide-to-scala/content</a>
+<a href="https://docs.scala-lang.org/scala3/book">https://docs.scala-lang.org/scala3/book</a></p>
+</blockquote>
+<p>一个不同数据类型的模式匹配如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">Test</span> <span class="o">{</span>
+   <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+      <span class="n">println</span><span class="o">(</span><span class="n">matchTest</span><span class="o">(</span><span class="s">&#34;two&#34;</span><span class="o">))</span>
+      <span class="n">println</span><span class="o">(</span><span class="n">matchTest</span><span class="o">(</span><span class="s">&#34;test&#34;</span><span class="o">))</span>
+      <span class="n">println</span><span class="o">(</span><span class="n">matchTest</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
+      <span class="n">println</span><span class="o">(</span><span class="n">matchTest</span><span class="o">(</span><span class="mi">6</span><span class="o">))</span>
+   <span class="o">}</span>
+   <span class="k">def</span> <span class="n">matchTest</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">Any</span> <span class="o">=</span> <span class="n">x</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="mi">1</span> <span class="k">=&gt;</span> <span class="s">&#34;one&#34;</span>
+      <span class="k">case</span> <span class="s">&#34;two&#34;</span> <span class="k">=&gt;</span> <span class="mi">2</span>
+      <span class="k">case</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="s">&#34;scala.Int&#34;</span>
+      <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="s">&#34;many&#34;</span>									<span class="c1">// Same as default in switch
+</span><span class="c1"></span>   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p><code>case</code> 的用法相当多，包括逻辑符号 <code>|</code> 以及 <code>if</code> 条件语句都可以适用，与 <code>switch</code> 的区别在于只会匹配一项，所以也不需要 <code>break</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="mi">0</span> <span class="o">|</span> <span class="s">&#34;&#34;</span> <span class="k">=&gt;</span> <span class="kc">false</span>
+<span class="k">case</span> <span class="mi">2</span> <span class="o">|</span> <span class="mi">4</span> <span class="o">|</span> <span class="mi">6</span> <span class="o">|</span> <span class="mi">8</span> <span class="o">|</span> <span class="mi">10</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="s">&#34;偶数&#34;</span><span class="o">)</span>
+<span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">||</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="s">&#34;two&#39;s company, three&#39;s a crowd&#34;</span><span class="o">)</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="提取器-extractor-objects">提取器 (Extractor Objects)</h3>
+<p>典型的提取器具有两个方法</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">Twice</span> <span class="o">{</span>                              
+  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+  <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">z</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="nc">Some</span><span class="o">(</span><span class="n">z</span><span class="o">/</span><span class="mi">2</span><span class="o">)</span> <span class="k">else</span> <span class="nc">None</span>
+<span class="o">}</span>
+</code></pre></div><ul>
+<li>
+<p><code>unapply</code> 最为关键，将被用于模式匹配</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">x</span> <span class="k">match</span> <span class="o">{</span> <span class="k">case</span> <span class="nc">Twice</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">}</span>
+</code></pre></div><p>这里的 <code>case Twice(n)</code> 实际调用的就是 <code>Twice.unapply</code></p>
+<ul>
+<li>如果只需要判断，<code>unapply</code> 的返回值只要 <code>Boolean</code> 就行，匹配代码也只需要 <code>case Twice()</code> ，因为没有次值 (sub-value)</li>
+<li>如果需要返回的是单个次值，如这里例子所示，返回 <code>Option[T]</code></li>
+<li>如果需要返回多个次值，用 <code>Option[Seq[B]]</code></li>
+</ul>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p><code>apply</code> 并不必要，很多情况下只是模拟一个构造器，或者说是一个 <strong>工厂方法</strong>，尤其是对于样例类而言</p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<p>提取器并不一定需要要在伴生对象中定义，匹配成功后的实例也可以通过 <code>@</code> 操作符来绑定到一个变量上</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">premiumCandidate</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">FreeUser</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">upgradeProbability</span> <span class="o">&gt;</span> <span class="mf">0.75</span>
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="n">user</span><span class="k">:</span> <span class="kt">User</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FreeUser</span><span class="o">(</span><span class="s">&#34;Daniel&#34;</span><span class="o">,</span> <span class="mi">2500</span><span class="o">,</span> <span class="mf">0.8d</span><span class="o">)</span>
+<span class="n">user</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="n">freeUser</span> <span class="k">@</span> <span class="n">premiumCandidate</span><span class="o">()</span> <span class="k">=&gt;</span> <span class="n">initiateSpamProgram</span><span class="o">(</span><span class="n">freeUser</span><span class="o">)</span>
+  <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="n">sendRegularNewsletter</span><span class="o">(</span><span class="n">user</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></div><p>以上是一个布尔提取器的例子</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="样例类-case-class">样例类 (Case Class)</h3>
+<blockquote>
+<p>样例类本质是个语法糖，可以看作是不可变的数据对象（<code>var</code>是允许的，但官方文档并不推荐），对所有构造参数增加 <code>getter</code> 访问和 <code>toString</code> <code>hashCode</code> <code>equals</code> 等方法
+除了这些 &ldquo;lombok&rdquo; 功能外，最重要的是实现了一个伴生对象，并定义了 <code>apply</code> 方法 和 <code>unapply</code> 方法</p>
+</blockquote>
+<p>样例类在编译阶段会混入 <code>Product</code> 特质 和 <code>Serializable</code> 特质，同时增加 <code>copy</code> / <code>equals</code> / <code>hashCode</code> / <code>toString</code> 等方法，这里的 <code>copy</code> 进行的是 <strong>浅拷贝</strong>；
+伴生对象则增加了 <code>apply</code> 和 <code>unapply</code> 方法，继承了 <code>AbstractFunction</code> （这其实是因为 Scala 中的工厂方法遵从 <code>AbstractFunction</code>，而这个伴生对象也有工厂方法的成分）</p>
+<p>当参数个数大于等于2，<code>AbstractFunction</code> 提供一个 <code>tupled</code> 方法作为参数来构造出结果</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">scala</span><span class="o">&gt;</span> <span class="k">case</span> <span class="k">class</span> <span class="nc">A</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">A</span><span class="o">.</span><span class="n">tupled</span>
+<span class="n">res11</span><span class="k">:</span> <span class="o">((</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">))</span> <span class="k">=&gt;</span> <span class="n">A</span> <span class="k">=</span> <span class="o">&lt;</span><span class="n">function1</span><span class="o">&gt;</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="k">val</span> <span class="n">t</span> <span class="k">=</span> <span class="o">(</span><span class="mi">100</span><span class="o">,</span><span class="mi">100</span><span class="o">)</span>
+<span class="n">t</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="mi">100</span><span class="o">,</span><span class="mi">100</span><span class="o">)</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">A</span><span class="o">.</span><span class="n">tupled</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+<span class="n">res9</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">(</span><span class="mi">100</span><span class="o">,</span><span class="mi">100</span><span class="o">)</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h4 id="样例类与模式识别">样例类与模式识别</h4>
+<p>Scala 会自动为样例类创建一个 伴生对象 —— 包含了 <code>apply</code> 和 <code>unapply</code> 方法的 单例对象，因此可以直接被当作提取器使用</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="流提取器">流提取器</h3>
+<h4 id="中缀表达方式">中缀表达方式</h4>
+<p>列表、流 的解析和创建方法类似，都可以用 <code>cons</code> 操作符 <code>::</code> <code>#::</code> ，比如</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">xs</span> <span class="k">=</span> <span class="mi">58</span> <span class="o">#</span><span class="k">:</span><span class="kt">:</span> <span class="err">43</span> <span class="k">#</span><span class="kt">::</span> <span class="err">93</span> <span class="k">#</span><span class="kt">::</span> <span class="kt">Stream.empty</span>
+</code></pre></div><p>匹配也使用中缀方式，<code>head #:: tail</code> 也可以写成 <code>#::(head, tail)</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="n">first</span> <span class="o">#</span><span class="k">:</span><span class="kt">:</span> <span class="kt">second</span> <span class="k">#</span><span class="kt">::</span> <span class="k">_</span> <span class="o">=&gt;</span> <span class="n">first</span> <span class="o">-</span> <span class="n">second</span>
+  <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="o">-</span><span class="mi">1</span>
+<span class="o">}</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h4 id="流提取器-1">流提取器</h4>
+<p>完整的 <code>#::</code> 提取器代码如下</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="err">#</span><span class="nc">::</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">unapply</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[(</span><span class="kt">A</span>, <span class="kt">Stream</span><span class="o">[</span><span class="kt">A</span><span class="o">])]</span> <span class="k">=</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">xs</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="nc">None</span>
+    <span class="k">else</span> <span class="nc">Some</span><span class="o">((</span><span class="n">xs</span><span class="o">.</span><span class="n">head</span><span class="o">,</span> <span class="n">xs</span><span class="o">.</span><span class="n">tail</span><span class="o">))</span>
+<span class="o">}</span>
+</code></pre></div><p>如果流为空，提取器直接返回 <code>None</code> ，匹配直接失败。否则返回一个 <code>Tuple2</code> ，第一个元素是流的头，第二个元素是流的尾，尾本身当然也是一个流。这样，<code>case head #:: tail</code> 就会匹配有一个或多个元素的流。如果只有一个元素，则 <code>tail</code> 又会被绑定成空流。</p>
+<p>将中缀写法换成一般写法，<code>case first #:: second #:: _ =&gt; first - second</code> 就成了 <code>case #::(first, #::(second, _)) =&gt; first - second</code> 。第一次调用时的 <code>head</code> 是 58，被绑给 <code>first</code> ，其余继续提取，<code>second</code> 被绑定成 <code>43</code> ，剩下的绑到 <code>_</code> ，也就直接扔掉。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="序列提取">序列提取</h3>
+<p>对于多个元素的列表可以对元素个数进行匹配：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">xs</span> <span class="k">=</span> <span class="mi">3</span> <span class="k">:</span><span class="kt">:</span> <span class="err">6</span> <span class="kt">::</span> <span class="err">12</span> <span class="kt">::</span> <span class="kt">Nil</span>
+<span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
+ <span class="k">case</span> <span class="nc">List</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+ <span class="k">case</span> <span class="nc">List</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+ <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="mi">0</span>
+<span class="o">}</span>
+</code></pre></div><p>通配符 <code>_*</code> 可以用来匹配不确定长度列表，只取前几个元素</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">xs</span> <span class="k">=</span> <span class="mi">3</span> <span class="k">:</span><span class="kt">:</span> <span class="err">6</span> <span class="kt">::</span> <span class="err">12</span> <span class="kt">::</span> <span class="err">24</span> <span class="kt">::</span> <span class="kt">Nil</span>
+<span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
+ <span class="k">case</span> <span class="nc">List</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">,</span> <span class="k">_</span><span class="o">*)</span> <span class="k">=&gt;</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+ <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="mi">0</span>
+<span class="o">}</span>
+</code></pre></div><p>要构造对应的提取器就需要用到 <code>unapplySeq</code> 来将某一对象解析成列表，且这一列表的长度在编译器并不确定</p>
+<p>譬如，某个人可能名字很长，比如 <code>Albus Percival Wulfric Brian Dumbledore</code> ，我们现在希望通过提取器仅将姓氏和名字提出来，中间名单独分开来就行，写出来大致是这样的</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">Names</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">unapplySeq</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">String</span>, <span class="kt">Seq</span><span class="o">[</span><span class="kt">String</span><span class="o">])]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">names</span> <span class="k">=</span> <span class="n">name</span><span class="o">.</span><span class="n">trim</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&#34; &#34;</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">names</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">)</span> <span class="nc">None</span>
+    <span class="k">else</span> <span class="nc">Some</span><span class="o">((</span><span class="n">names</span><span class="o">.</span><span class="n">last</span><span class="o">,</span> <span class="n">names</span><span class="o">.</span><span class="n">head</span><span class="o">,</span> <span class="n">names</span><span class="o">.</span><span class="n">drop</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">dropRight</span><span class="o">(</span><span class="mi">1</span><span class="o">)))</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>用字符串操作把名字分割成列表，如果长度小于2则连姓名都无法提取到，返回 <code>None</code>
+这里分割完后的是一个 <code>Array</code> ，直接通过 <code>last</code> <code>head</code> 和 <code>drop</code> 操作就可以将姓名的三部分分开来，以构造 <code>Some</code> 的方式返回一个类型参数为 <code>Tuple3</code> 的 <code>Option</code></p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="值定义中的模式匹配">值定义中的模式匹配</h3>
+<p>类似于 Python 中的 序列解包，Scala 在值定义过程中也可以使用模式，从而在赋值给变量的同时去结构它</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Player</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">score</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>		<span class="c1">// 每个玩家有姓名和得分
+</span><span class="c1"></span>
+<span class="k">val</span> <span class="nc">Player</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">=</span> <span class="n">currentPlayer</span><span class="o">()</span>					<span class="c1">// 模式匹配
+</span><span class="c1"></span><span class="n">doSomethingWithName</span><span class="o">(</span><span class="n">name</span><span class="o">)</span>
+</code></pre></div><p>当然，如果无法匹配会抛 <code>MatchError</code> ，例如下面这个例子：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">scores</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">()</span>
+<span class="k">val</span> <span class="n">best</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">rest</span> <span class="o">=</span> <span class="n">scores</span>												<span class="c1">// 列表为空，匹配不到 best
+</span><span class="c1"></span><span class="n">println</span><span class="o">(</span><span class="s">&#34;The score of our champion is &#34;</span> <span class="o">+</span> <span class="n">best</span><span class="o">)</span>
+</code></pre></div><p>值定义模式匹配可以很好地配合元组使用，从而提高代码可读性，如下面这个匹配方式：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">gameResult</span><span class="o">()</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="s">&#34;Daniel&#34;</span><span class="o">,</span> <span class="mi">3500</span><span class="o">)</span>
+</code></pre></div><p>如果我们用一个变量记录这一元组，会出现一个问题——<code>Tuple</code>访问内部变量可读性很差：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="n">gameResult</span><span class="o">()</span>
+<span class="n">println</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="n">_1</span> <span class="o">+</span> <span class="s">&#34;: &#34;</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>							<span class="c1">// 有点回到Java Pair的意思
+</span></code></pre></div><p>但是在赋值同时做解构就非常安全，且很整洁：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">result</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">score</span><span class="o">)</span> <span class="k">=</span> <span class="n">gameResult</span><span class="o">()</span>
+<span class="n">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&#34;: &#34;</span> <span class="o">+</span> <span class="n">score</span><span class="o">)</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h3 id="循环中的模式匹配">循环中的模式匹配</h3>
+<p>结合 <code>for {} yield</code> 使用：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">gameResults</span><span class="o">()</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span>
+	<span class="o">(</span><span class="s">&#34;Daniel&#34;</span><span class="o">,</span> <span class="mi">3500</span><span class="o">)</span> <span class="k">:</span><span class="kt">:</span> <span class="o">(</span><span class="err">&#34;</span><span class="kt">Melissa</span><span class="err">&#34;</span><span class="o">,</span> <span class="err">13000</span><span class="o">)</span> <span class="k">:</span><span class="kt">:</span> <span class="o">(</span><span class="err">&#34;</span><span class="kt">John</span><span class="err">&#34;</span><span class="o">,</span> <span class="err">7000</span><span class="o">)</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">Nil</span>
+
+<span class="k">def</span> <span class="n">hallOfFame</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">result</span> <span class="k">&lt;-</span> <span class="n">gameResults</span><span class="o">()</span>
+  <span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">score</span><span class="o">)</span> <span class="k">=</span> <span class="n">result</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">score</span> <span class="o">&gt;</span> <span class="mi">5000</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">name</span>
+</code></pre></div><p>可以看到，这个 <code>result</code> 实际也是多余，可以改成这样：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">hallOfFame</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">score</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="n">gameResults</span><span class="o">()</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">score</span> <span class="o">&gt;</span> <span class="mi">5000</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">name</span>
+</code></pre></div><p>生成器左侧的模式也可以用来过滤，因为匹配失败的元素也会被直接滤掉
+如下面这个滤掉所有空列表的方案：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">lists</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">)</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">List.empty</span> <span class="kt">::</span> <span class="kt">List</span><span class="o">(</span><span class="err">5</span><span class="o">,</span><span class="err">3</span><span class="o">)</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">Nil</span>
+<span class="k">for</span> <span class="o">{</span>
+  <span class="n">list</span> <span class="k">@</span> <span class="n">head</span> <span class="k">:</span><span class="kt">:</span> <span class="k">_</span> <span class="kt">&lt;-</span> <span class="kt">lists</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">list</span><span class="o">.</span><span class="n">size</span>
+</code></pre></div><p>起到过滤效果的是这句 <code>head :: _</code> ，因为空列表无法匹配到 <code>head</code> ，因此只有非空列表能被匹配，从而绑定给 <code>list</code> 。</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="用模式匹配改造代码">用模式匹配改造代码</h3>
+<h4 id="匿名函数">匿名函数</h4>
+<p>对于一个 <code>List</code> ，可以很轻松地搭配匿名函数使用，如一个 List[String]</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">songTitles</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="s">&#34;The White Hare&#34;</span><span class="o">,</span> <span class="s">&#34;Childe the Hunter&#34;</span><span class="o">,</span> <span class="s">&#34;Take no Rogues&#34;</span><span class="o">)</span>
+</code></pre></div><p>可以很轻松地使用 <code>.map</code> 搭配占位符 (placeholder) 和匿名函数:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">songTitles</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toLowerCase</span><span class="o">)</span>
+</code></pre></div><p>但是对于元组列表，模式匹配就很有用，考虑一个 <code>(String, Int)</code> 的元组列表
+我们现在要对列表中第二个值高于3的对象，取出第一个对象组成新的列表</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">wordFrequencies</span><span class="o">.</span><span class="n">filter</span> <span class="o">{</span> <span class="k">case</span> <span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="n">f</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">f</span> <span class="o">&lt;</span> <span class="mi">25</span> <span class="o">}</span> <span class="n">map</span> <span class="o">{</span> <span class="k">case</span> <span class="o">(</span><span class="n">w</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">w</span> <span class="o">}</span>
+</code></pre></div><blockquote>
+<p>匿名函数的缺点在于，编译器无法从中推导出值的类型，必须显式声明</p>
+</blockquote>
+<p>在上面这种方法中，虽然先 <code>filter</code> 再 <code>map</code> 解决了问题，但必须遍历两次，无论从效率还是代码整洁上看都不是最佳，因此可以用到偏函数 (PartialFunction)</p>
+<!-- raw HTML omitted -->
+<h4 id="偏函数">偏函数</h4>
+<p>偏函数出现在集合 API 的 <code>collect</code> 方法，这个方法签名如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">collect</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">pf</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">A</span>, <span class="kt">B</span><span class="o">])</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span>
+</code></pre></div><p>类型 <code>PartialFunction[A, B]</code> 扩展了类型 <code>(A) =&gt; B</code> ，是一个一元函数，主要包含 <code>apply</code> 和 <code>isDefinedAt</code> 两个方法，因此如果显示扩展一个 <code>PartialFunction</code> 特质，就要像这样实现这两个方法：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">pf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">PartialFunction</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)</span>, <span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">wordFrequency</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Int</span><span class="o">))</span> <span class="k">=</span> <span class="n">wordFrequency</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="o">(</span><span class="n">word</span><span class="o">,</span> <span class="n">freq</span><span class="o">)</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">freq</span> <span class="o">&lt;</span> <span class="mi">25</span> <span class="k">=&gt;</span> <span class="n">word</span>
+  <span class="o">}</span>
+  <span class="k">def</span> <span class="n">isDefinedAt</span><span class="o">(</span><span class="n">wordFrequency</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Int</span><span class="o">))</span> <span class="k">=</span> <span class="n">wordFrequency</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="o">(</span><span class="n">word</span><span class="o">,</span> <span class="n">freq</span><span class="o">)</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">freq</span> <span class="o">&lt;</span> <span class="mi">25</span> <span class="k">=&gt;</span> <span class="kc">true</span>
+    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="kc">false</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>可以看到，<code>idSefinedAt</code> 只用来过滤入参范围，而 <code>apply</code> 才是真正的业务逻辑，而 <code>apply</code> 也不能省略筛选部分代码，<code>idDefinedAt</code> 部分功能多少有些多余
+我们完全可以用这样的方法定义偏函数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">pf</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="n">cas</span> <span class="o">(</span><span class="n">word</span><span class="o">,</span> <span class="n">freq</span><span class="o">)</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">freq</span> <span class="o">&lt;</span> <span class="mi">25</span> <span class="k">=&gt;</span> <span class="n">word</span>
+<span class="o">}</span>
+</code></pre></div><p>当然，偏函数只能用在 <code>.collect</code> 函数而不能用在 <code>.map</code> 函数中，因为这个函数是为处理一个集合中的所有元素设计的，有不匹配项会抛 <code>MatchError</code> 。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/scala/">Scala</a>
+        
+            <a href="/tags/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/">模式匹配</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/scala-%E7%B1%BB%E5%9E%8B-option/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/kora/sunset.jpg" loading="lazy" data-key="" data-hash="/images/feature/kora/sunset.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Scala - 类型 Option</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#提取器-extractor-objects">提取器 (Extractor Objects)</a></li>
+        <li><a href="#样例类-case-class">样例类 (Case Class)</a>
+          <ul>
+            <li><a href="#样例类与模式识别">样例类与模式识别</a></li>
+          </ul>
+        </li>
+        <li><a href="#流提取器">流提取器</a>
+          <ul>
+            <li><a href="#中缀表达方式">中缀表达方式</a></li>
+            <li><a href="#流提取器-1">流提取器</a></li>
+          </ul>
+        </li>
+        <li><a href="#序列提取">序列提取</a></li>
+        <li><a href="#值定义中的模式匹配">值定义中的模式匹配</a></li>
+        <li><a href="#循环中的模式匹配">循环中的模式匹配</a></li>
+        <li><a href="#用模式匹配改造代码">用模式匹配改造代码</a>
+          <ul>
+            <li><a href="#匿名函数">匿名函数</a></li>
+            <li><a href="#偏函数">偏函数</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scala on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/scala/</link>
+    <description>Recent content in Scala on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 28 Dec 2021 16:12:22 +0800</lastBuildDate><atom:link href="https://winterorch.github.io/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Scala - 类型 Option</title>
+      <link>https://winterorch.github.io/p/scala-%E7%B1%BB%E5%9E%8B-option/</link>
+      <pubDate>Tue, 28 Dec 2021 16:12:22 +0800</pubDate>
+      
+      <guid>https://winterorch.github.io/p/scala-%E7%B1%BB%E5%9E%8B-option/</guid>
+      <description>有人认为 null 是 Java 最糟糕的设计之一，这个极其有面向对象特色的特殊值实际生产中带来了极大的不便，因为它使得 NullPointerException 成为最常见的异常
+为了搞定这个问题，Groovy 有安全运算符 (Safe Navigation Operator) ?. 来防止在对象是 null 是引发异常，而是直接返回 null ，Clojure 则将 null 弱化为了 nil ，使它可以在调用层级中向上冒泡，将问题转嫁到高层
+Java 8 提供了 Optional&amp;lt;T&amp;gt; 类来解决这个问题，Scala 中的 Option[T] 则更加方便，因为 Java 原生的 Optional&amp;lt;T&amp;gt; 无论如何自己不可能是 null ，而 Scala 中的 Option[T] 在值不存在时就是对象 None，因此 Option 的使用是强制的，可以完全替代 None 来表示一个值的缺失
+ 示例代码场景：
+case class User ( id: Int, firstName: String, lastName: String, age: Int, gender: Option[String] ) object User { private val users = Map(1 -&amp;gt; User(1, &amp;#34;John&amp;#34;, &amp;#34;Doe&amp;#34;, 32, Some(&amp;#34;male&amp;#34;)), 2 -&amp;gt; User(2, &amp;#34;Johanna&amp;#34;, &amp;#34;Doe&amp;#34;, 30, None)) def findById(id: Int): Option[User] = users.</description>
+    </item>
+    
+    <item>
+      <title>Scala - 模式匹配</title>
+      <link>https://winterorch.github.io/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/</link>
+      <pubDate>Mon, 27 Dec 2021 19:13:22 +0800</pubDate>
+      
+      <guid>https://winterorch.github.io/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/</guid>
+      <description>参考来源： https://windor.gitbooks.io/beginners-guide-to-scala/content https://docs.scala-lang.org/scala3/book
+ 一个不同数据类型的模式匹配如下：
+object Test { def main(args: Array[String]) { println(matchTest(&amp;#34;two&amp;#34;)) println(matchTest(&amp;#34;test&amp;#34;)) println(matchTest(1)) println(matchTest(6)) } def matchTest(x: Any): Any = x match { case 1 =&amp;gt; &amp;#34;one&amp;#34; case &amp;#34;two&amp;#34; =&amp;gt; 2 case y: Int =&amp;gt; &amp;#34;scala.Int&amp;#34; case _ =&amp;gt; &amp;#34;many&amp;#34;	// Same as default in switch  } } case 的用法相当多，包括逻辑符号 | 以及 if 条件语句都可以适用，与 switch 的区别在于只会匹配一项，所以也不需要 break
+case 0 | &amp;#34;&amp;#34; =&amp;gt; false case 2 | 4 | 6 | 8 | 10 =&amp;gt; println(&amp;#34;偶数&amp;#34;) case x if x == 2 || x == 3 =&amp;gt; println(&amp;#34;two&amp;#39;s company, three&amp;#39;s a crowd&amp;#34;)  提取器 (Extractor Objects) 典型的提取器具有两个方法</description>
+    </item>
+    
+  </channel>
+</rss>

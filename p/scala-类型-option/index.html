@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Scala 中的 Option 类似 Java Optional 类，但使用更加方便，可直接用于模式识别，且可以像集合一样使用'><title>Scala - 类型 Option</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/scala-%E7%B1%BB%E5%9E%8B-option/'>
+
+<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Scala - 类型 Option'>
+<meta property='og:description' content='Scala 中的 Option 类似 Java Optional 类，但使用更加方便，可直接用于模式识别，且可以像集合一样使用'>
+<meta property='og:url' content='https://winterorch.github.io/p/scala-%E7%B1%BB%E5%9E%8B-option/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Scala' /><meta property='article:tag' content='类型系统' /><meta property='article:published_time' content='2021-12-28T16:12:22&#43;08:00'/><meta property='article:modified_time' content='2021-12-28T16:12:22&#43;08:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/kora/sunset.jpg' />
+<meta name="twitter:title" content="Scala - 类型 Option">
+<meta name="twitter:description" content="Scala 中的 Option 类似 Java Optional 类，但使用更加方便，可直接用于模式识别，且可以像集合一样使用"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/kora/sunset.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/scala-%E7%B1%BB%E5%9E%8B-option/">
+                
+                    <img src="/images/feature/kora/sunset.jpg" loading="lazy" alt="Featured image of post Scala - 类型 Option" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/scala/" style="background-color: #D26900; color: #fff;">
+                Scala
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/scala-%E7%B1%BB%E5%9E%8B-option/">Scala - 类型 Option</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        Scala 中的 Option 类似 Java Optional 类，但使用更加方便，可直接用于模式识别，且可以像集合一样使用
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 28, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <p>有人认为 <code>null</code> 是 <code>Java</code> 最糟糕的设计之一，这个极其有面向对象特色的特殊值实际生产中带来了极大的不便，因为它使得 <code>NullPointerException</code> 成为最常见的异常</p>
+<p>为了搞定这个问题，Groovy 有安全运算符 (Safe Navigation Operator) <code>?.</code> 来防止在对象是 <code>null</code> 是引发异常，而是直接返回 <code>null</code> ，Clojure 则将 <code>null</code> 弱化为了 <code>nil</code> ，使它可以在调用层级中向上冒泡，将问题转嫁到高层</p>
+<p>Java 8 提供了 <code>Optional&lt;T&gt;</code> 类来解决这个问题，Scala 中的 <code>Option[T]</code> 则更加方便，因为 Java 原生的 <code>Optional&lt;T&gt;</code> 无论如何自己不可能是 <code>null</code> ，而 Scala 中的 <code>Option[T]</code> 在值不存在时就是对象 <code>None</code>，因此 <code>Option</code> 的使用是强制的，可以完全替代 <code>None</code> 来表示一个值的缺失</p>
+<blockquote>
+<p>示例代码场景：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">User</span> <span class="o">(</span>
+<span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+<span class="n">firstName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+<span class="n">lastName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+<span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+<span class="n">gender</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+<span class="o">)</span>
+
+<span class="k">object</span> <span class="nc">User</span> <span class="o">{</span>
+<span class="k">private</span> <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span><span class="mi">1</span> <span class="o">-&gt;</span> <span class="nc">User</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;John&#34;</span><span class="o">,</span> <span class="s">&#34;Doe&#34;</span><span class="o">,</span> <span class="mi">32</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="s">&#34;male&#34;</span><span class="o">)),</span>
+                       <span class="mi">2</span> <span class="o">-&gt;</span> <span class="nc">User</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="s">&#34;Johanna&#34;</span><span class="o">,</span> <span class="s">&#34;Doe&#34;</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="nc">None</span><span class="o">))</span>
+<span class="k">def</span> <span class="n">findById</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">findAll</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="n">users</span><span class="o">.</span><span class="n">values</span>
+<span class="o">}</span>
+</code></pre></div></blockquote>
+<!-- raw HTML omitted -->
+<h3 id="创建">创建</h3>
+<p>如果值并不缺失，<code>Option[A]</code> 就是一个 <code>Some[A]</code> ，所以可以直接实例化为 <code>Some</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">existed</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="s">&#34;Hello world&#34;</span><span class="o">)</span>
+</code></pre></div><p>而在缺失情况下直接使用 <code>None</code>  对象就行了</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">absent</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
+</code></pre></div><p>或者以 <code>null</code> 为入参，这样写代码与 Java 库更通用</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">absent</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="kc">null</span><span class="o">)</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="使用默认值">使用默认值</h3>
+<p>虽然有 <code>isDefined</code> 方法来检查值是否存在，但这样做太过笨重，大部分时候还是使用 <code>getOrElse</code> 提供默认值更方便</p>
+<p>我们对 <code>gender</code> 直接访问</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">user</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="s">&#34;Johanna&#34;</span><span class="o">,</span> <span class="s">&#34;Doe&#34;</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="nc">None</span><span class="o">)</span>
+<span class="n">println</span><span class="o">(</span><span class="s">&#34;Gender: &#34;</span> <span class="o">+</span> <span class="n">user</span><span class="o">.</span><span class="n">gender</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="s">&#34;not specified&#34;</span><span class="o">))</span> <span class="c1">// will print &#34;not specified&#34;
+</span></code></pre></div><p>从这个样例类的构造也可以看出，<code>Option</code> 的使用使得可能出现 <code>None</code> 的位置非常清晰</p>
+<!-- raw HTML omitted -->
+<h3 id="链式使用">链式使用</h3>
+<p><code>Option</code> 的 <code>orElse</code> 方法接收另一个 <code>Option</code> 为参数，用于解决多个 <code>Option</code> 取第一个非 <code>None</code> 来进行使用的情况，也就是 <code>getOrElse</code> 的链式情况</p>
+<p>典型的使用案例就是按优先级对多个不同的目录进行搜索，如下面例子，首先搜索 config 文件夹，然后调用 <code>orElse</code> 方法，以传递备用目录：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Resource</span><span class="o">(</span><span class="n">content</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+<span class="k">val</span> <span class="n">resourceFromConfigDir</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Resource</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
+<span class="k">val</span> <span class="n">resourceFromClasspath</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Resource</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="nc">Resource</span><span class="o">(</span><span class="s">&#34;I was found on the classpath&#34;</span><span class="o">))</span>
+<span class="k">val</span> <span class="n">resource</span> <span class="k">=</span> <span class="n">resourceFromConfigDir</span> <span class="n">orElse</span> <span class="n">resourceFromClasspath</span>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="模式匹配">模式匹配</h3>
+<p>由于 <code>Some</code> 是样例类，所以可以使用在模式匹配中：</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">user</span><span class="o">.</span><span class="n">gender</span><span class="o">.</span><span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">gender</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="s">&#34;Gender: &#34;</span> <span class="o">+</span> <span class="n">gender</span><span class="o">)</span>
+  <span class="k">case</span> <span class="nc">None</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="s">&#34;Gender: not specified&#34;</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></div><p>在这里使用模式匹配并不方便，甚至非常多余，更常简的还是使用默认值的方法</p>
+<p>同样，<code>Option</code> 也能使用 <code>filter</code> ，如下面这个例子，这就非常像一个集合了</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">age</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="o">)</span> <span class="c1">// None, because age is &lt;= 30
+</span><span class="c1"></span><span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">age</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="o">)</span> <span class="c1">// Some(user), because age is &gt; 30
+</span><span class="c1"></span><span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">3</span><span class="o">).</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">age</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="o">)</span> <span class="c1">// None, because user is already None
+</span></code></pre></div><!-- raw HTML omitted -->
+<h3 id="option-作为集合">Option 作为集合</h3>
+<p>我们知道 <code>User.findById</code> 得到的结果是一个 <code>Option[User]</code> ，这个 <code>Option</code> 对象完全可以当作 集合 (Collection) 使用，如使用 <code>foreach</code>, <code>map</code>, <code>flatMap</code> 进行操作</p>
+<p>比方说 <code>foreach</code>，我们知道 <code>Option</code> 作为一个容器，包含元素个数不是 1 就是 0，所以 <code>foreach</code> 函数最多只会被调用一次，而如果是 <code>None</code> 则一次也不会被调用</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span><span class="n">user</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="n">firstName</span><span class="o">))</span>
+</code></pre></div><p><code>Option</code> 也可以用 <code>map</code> ，我们知道例子中 <code>age</code> 返回结果一定是一个 <code>Int</code> ，因此在 <code>Option[User]</code> 中访问年龄，得到的一定是一个 <code>Option[Int]</code> ，可能是 <code>Some(Int)</code> ，如果 <code>Option[User]</code> 不存在则结果还是 <code>None</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+</code></pre></div><p>但如果我们访问 <code>gender</code> ，由于 <code>gender</code> 本身就是一个 <code>Option</code> 容器，直接用 <code>Map</code> 可能会造成嵌套，带来一个 <code>Option[Option[String]]</code> 作为结果</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">gender</span><span class="o">)</span>
+</code></pre></div><p>这种情况下就可以使用 <code>flatMap</code> ，这和 <code>List</code> 中 <code>flatMap</code> 道理完全相同，两个嵌套的 <code>Option</code> 会被“拍扁”成为一个，由于 <code>Option</code> 本身只能含一个元素，多次嵌套也只能是一个，当然过程中只要 <code>user</code> 和 <code>gender</code> 一方为 <code>None</code> ，结果就是 <code>None</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">gender1</span> <span class="k">=</span> <span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">flatMap</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">gender</span><span class="o">)</span> <span class="c1">// gender is Some(&#34;male&#34;)
+</span><span class="c1"></span><span class="k">val</span> <span class="n">gender2</span> <span class="k">=</span> <span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="n">flatMap</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">gender</span><span class="o">)</span> <span class="c1">// gender is None
+</span><span class="c1"></span><span class="k">val</span> <span class="n">gender3</span> <span class="k">=</span> <span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">3</span><span class="o">).</span><span class="n">flatMap</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">gender</span><span class="o">)</span> <span class="c1">// gender is None
+</span></code></pre></div><p>而如果我们操作一个包含 <code>Option</code> 的列表，效果也是类似的，只是 <code>None</code> 会直接被过滤，不出现在结果中</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">names</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="s">&#34;Johanna&#34;</span><span class="o">),</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="s">&#34;Daniel&#34;</span><span class="o">))</span>
+<span class="n">names</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toUpperCase</span><span class="o">))</span> <span class="c1">// List(Some(&#34;JOHANNA&#34;), None, Some(&#34;DANIEL&#34;))
+</span><span class="c1"></span><span class="n">names</span><span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="n">xs</span> <span class="k">=&gt;</span> <span class="n">xs</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toUpperCase</span><span class="o">))</span> <span class="c1">// List(&#34;JOHANNA&#34;, &#34;DANIEL&#34;)
+</span></code></pre></div><!-- raw HTML omitted -->
+<h4 id="在-for-循环中使用">在 for 循环中使用</h4>
+<p>既然已经可以当作集合使用了，直接用 <code>for</code> 语句代替 <code>flatMap</code> 肯定也是可以的</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
+  <span class="n">user</span> <span class="k">&lt;-</span> <span class="nc">User</span><span class="o">.</span><span class="n">findById</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+  <span class="n">gender</span> <span class="k">&lt;-</span> <span class="n">user</span><span class="o">.</span><span class="n">gender</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">gender</span> <span class="c1">// results in Some(&#34;male&#34;)
+</span></code></pre></div><!-- raw HTML omitted -->
+<h4 id="结合-for-循环与模式匹配使用">结合 for 循环与模式匹配使用</h4>
+<p>生成器左侧也是一个模式，通过在生成器左侧用 <code>Some</code> 模式也可以排除掉集合中 <code>gender</code> 为 <code>None</code> 的元素</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
+  <span class="nc">User</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">gender</span><span class="o">))</span> <span class="k">&lt;-</span> <span class="nc">UserRepository</span><span class="o">.</span><span class="n">findAll</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">gender</span>
+</code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/scala/">Scala</a>
+        
+            <a href="/tags/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/">类型系统</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/scala-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/kora/planets.jpg" loading="lazy" data-key="" data-hash="/images/feature/kora/planets.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Scala - 模式匹配</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#创建">创建</a></li>
+        <li><a href="#使用默认值">使用默认值</a></li>
+        <li><a href="#链式使用">链式使用</a></li>
+        <li><a href="#模式匹配">模式匹配</a></li>
+        <li><a href="#option-作为集合">Option 作为集合</a>
+          <ul>
+            <li><a href="#在-for-循环中使用">在 for 循环中使用</a></li>
+            <li><a href="#结合-for-循环与模式匹配使用">结合 for 循环与模式匹配使用</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
