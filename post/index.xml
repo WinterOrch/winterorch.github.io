@@ -6,7 +6,43 @@
     <description>Recent content in Posts on 图拉国营噄茶馆</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 28 Dec 2021 16:12:22 +0800</lastBuildDate><atom:link href="https://winterorch.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 06 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python - 用Selenium抢体育场地</title>
+      <link>https://winterorch.github.io/p/python-selenium_reserve/</link>
+      <pubDate>Mon, 06 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/python-selenium_reserve/</guid>
+      <description>学校用来预约场地的服务器实在承载能力有限。八点钟登上去，起码要八点零五才能第一次刷新成功，加上一般就开放五六片场地，根本不可能抢不到
+那么，就只能用科技对付科技了，也好让我早上多睡会好歹脚本抢不到没有拼手速被服务器gank那么气
+一、安装Chrome 先将Chrome RPM包下载下来
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm 安装两个依赖包
+yum install -y lsb yum install -y libXScrnSaver 从已下载到本地的RPM包安装Chrome
+yum localinstall -y google-chrome-stable_current_x86_64.rpm  image-20220601154438196 
+2022年六月，安装的版本是102.0.5005.61
+ 二、安装chromedriver 从淘宝镜像库找对应Chrome版本的驱动 http://npm.taobao.org/mirrors/chromedriver/
+wget https://registry.npmmirror.com/-/binary/chromedriver/102.0.5005.61/chromedriver_linux64.zip unzip chromedriver_linux64.zip mv chromedriver /usr/bin/ chromedriver --version 只提供了zip包，如果系统没有装unzip zip的话一并装了就行了yum install -y unzip zip
+最后通过chromedriver --version验证安装版本
+ image-20220601160030594 
+ 三、安装Python3 Centos7本身是有Python2.7的，但是因为yum依赖于Python2.7，直接卸载旧版本换新的会有很多问题所以还是比较建议装新版本时候软链接用/usr/bin/python3而不是直接写python，毕竟python本身就存在2和3不兼容问题，好区分一点
+  安装依赖
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc* make -y   下载安装包</description>
+    </item>
+    
+    <item>
+      <title>饥荒服务端食用指南-Centos7</title>
+      <link>https://winterorch.github.io/p/game-dst_server_guide/</link>
+      <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/game-dst_server_guide/</guid>
+      <description>饥荒服务端与STEAM耦合程度比较高，虽然安装和配MOD过程变简单了，配置认证信息却不是那么方便。
+1. 服务端安装 先把运行环境准备好
+# 安装依赖库 sudo yum -y install glibc.i686 libstdc++.i686 libcurl4-gnutls-dev.i686 libcurl.i686 screen cd /usr/lib ln -s libcurl.so.4 libcurl-gnutls.so.4 安装steamcmd
+cd ~ &amp;amp;&amp;amp; mkdir steamcmd &amp;amp;&amp;amp; cd steamcmd wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz tar -xvzf steamcmd_linux.tar.gz 从steamcmd匿名登录并安装
+./steamcmd.sh login anonymous force_install_dir /usr/local/dst/dstserver app_update 343050 validate	# 等STEAM把饥荒装好 quit 创建启动主世界和洞窟服务器的sh文件，注意这里我们使用的存档路径是/usr/local/dst/dstsave
+echo &amp;#34;./dontstarve_dedicated_server_nullrenderer -console -persistent_storage_root /usr/local/dst/dstsave -conf_dir dst -cluster World1 -shard Master&amp;#34; &amp;gt; master_start.sh echo &amp;#34;./dontstarve_dedicated_server_nullrenderer -console -persistent_storage_root /usr/local/dst/dstsave -conf_dir dst -cluster World1 -shard Caves&amp;#34; &amp;gt; cave_start.</description>
+    </item>
+    
     <item>
       <title>Scala - 类型 Option</title>
       <link>https://winterorch.github.io/p/scala-%E7%B1%BB%E5%9E%8B-option/</link>

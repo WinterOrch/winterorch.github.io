@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SteamCMD on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/tags/steamcmd/</link>
+    <description>Recent content in SteamCMD on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 01 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/tags/steamcmd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>饥荒服务端食用指南-Centos7</title>
+      <link>https://winterorch.github.io/p/game-dst_server_guide/</link>
+      <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/game-dst_server_guide/</guid>
+      <description>饥荒服务端与STEAM耦合程度比较高，虽然安装和配MOD过程变简单了，配置认证信息却不是那么方便。
+1. 服务端安装 先把运行环境准备好
+# 安装依赖库 sudo yum -y install glibc.i686 libstdc++.i686 libcurl4-gnutls-dev.i686 libcurl.i686 screen cd /usr/lib ln -s libcurl.so.4 libcurl-gnutls.so.4 安装steamcmd
+cd ~ &amp;amp;&amp;amp; mkdir steamcmd &amp;amp;&amp;amp; cd steamcmd wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz tar -xvzf steamcmd_linux.tar.gz 从steamcmd匿名登录并安装
+./steamcmd.sh login anonymous force_install_dir /usr/local/dst/dstserver app_update 343050 validate	# 等STEAM把饥荒装好 quit 创建启动主世界和洞窟服务器的sh文件，注意这里我们使用的存档路径是/usr/local/dst/dstsave
+echo &amp;#34;./dontstarve_dedicated_server_nullrenderer -console -persistent_storage_root /usr/local/dst/dstsave -conf_dir dst -cluster World1 -shard Master&amp;#34; &amp;gt; master_start.sh echo &amp;#34;./dontstarve_dedicated_server_nullrenderer -console -persistent_storage_root /usr/local/dst/dstsave -conf_dir dst -cluster World1 -shard Caves&amp;#34; &amp;gt; cave_start.</description>
+    </item>
+    
+  </channel>
+</rss>

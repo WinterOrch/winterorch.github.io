@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='最近学校服务器登上去都难，别说抢羽毛球场地了，赶紧弄个脚本帮忙抢'><title>Python - 用Selenium抢体育场地</title>
+
+<link rel='canonical' href='https://winterorch.github.io/p/python-selenium_reserve/'>
+
+<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Python - 用Selenium抢体育场地'>
+<meta property='og:description' content='最近学校服务器登上去都难，别说抢羽毛球场地了，赶紧弄个脚本帮忙抢'>
+<meta property='og:url' content='https://winterorch.github.io/p/python-selenium_reserve/'>
+<meta property='og:site_name' content='图拉国营噄茶馆'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Selenium' /><meta property='article:tag' content='Python' /><meta property='article:published_time' content='2022-06-06T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2022-06-06T00:00:00&#43;00:00'/><meta property='og:image' content='https://winterorch.github.io/images/feature/kora/sunflower.jpg' />
+<meta name="twitter:title" content="Python - 用Selenium抢体育场地">
+<meta name="twitter:description" content="最近学校服务器登上去都难，别说抢羽毛球场地了，赶紧弄个脚本帮忙抢"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://winterorch.github.io/images/feature/kora/sunflower.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/python-selenium_reserve/">
+                
+                    <img src="/images/feature/kora/sunflower.jpg" loading="lazy" alt="Featured image of post Python - 用Selenium抢体育场地" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/python/" style="background-color: #FFF4C1; color: #4F4F4F;">
+                Python
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/python-selenium_reserve/">Python - 用Selenium抢体育场地</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        最近学校服务器登上去都难，别说抢羽毛球场地了，赶紧弄个脚本帮忙抢
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 06, 2022</time>
+            </div>
+        
+
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <p>学校用来预约场地的服务器实在承载能力有限。八点钟登上去，起码要八点零五才能第一次刷新成功，加上一般就开放五六片场地，根本不可能抢不到</p>
+<p>那么，就只能用科技对付科技了，<del>也好让我早上多睡会</del>好歹脚本抢不到没有拼手速被服务器gank那么气</p>
+<h2 id="一安装chrome">一、安装Chrome</h2>
+<p>先将Chrome RPM包下载下来</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+</code></pre></div><p>安装两个依赖包</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">yum install -y lsb
+yum install -y libXScrnSaver
+</code></pre></div><p>从已下载到本地的RPM包安装Chrome</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">yum localinstall -y google-chrome-stable_current_x86_64.rpm
+</code></pre></div><p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 125; 
+			flex-basis: 300px"
+	>
+	<a href="/p/python-selenium_reserve/image-20220601154438196-16540694857511.png" data-size="884x705">
+		<img src="/p/python-selenium_reserve/image-20220601154438196-16540694857511.png"
+			width="884"
+			height="705"
+			srcset="/p/python-selenium_reserve/image-20220601154438196-16540694857511_huc68b14a4d131527ae8e0dc920a4e5d35_79755_480x0_resize_box_2.png 480w, /p/python-selenium_reserve/image-20220601154438196-16540694857511_huc68b14a4d131527ae8e0dc920a4e5d35_79755_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			alt="image-20220601154438196">
+	</a>
+	
+	<figcaption>image-20220601154438196</figcaption>
+	
+</figure></p>
+<p>2022年六月，安装的版本是<code>102.0.5005.61</code></p>
+<!-- raw HTML omitted -->
+<hr>
+<h2 id="二安装chromedriver">二、安装chromedriver</h2>
+<p>从淘宝镜像库找对应Chrome版本的驱动 <a href="http://npm.taobao.org/mirrors/chromedriver/">http://npm.taobao.org/mirrors/chromedriver/</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">wget https://registry.npmmirror.com/-/binary/chromedriver/102.0.5005.61/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+mv chromedriver /usr/bin/
+chromedriver --version
+</code></pre></div><p>只提供了zip包，如果系统没有装unzip zip的话一并装了就行了<code>yum install -y unzip zip</code></p>
+<p>最后通过<code>chromedriver --version</code>验证安装版本</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 2851; 
+			flex-basis: 6843px"
+	>
+	<a href="/p/python-selenium_reserve/image-20220601160030594-16540704322732.png" data-size="884x31">
+		<img src="/p/python-selenium_reserve/image-20220601160030594-16540704322732.png"
+			width="884"
+			height="31"
+			srcset="/p/python-selenium_reserve/image-20220601160030594-16540704322732_huc3a1e884ac8655305fc7584983488e4c_4726_480x0_resize_box_2.png 480w, /p/python-selenium_reserve/image-20220601160030594-16540704322732_huc3a1e884ac8655305fc7584983488e4c_4726_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			alt="image-20220601160030594">
+	</a>
+	
+	<figcaption>image-20220601160030594</figcaption>
+	
+</figure></p>
+<!-- raw HTML omitted -->
+<hr>
+<h2 id="三安装python3">三、安装Python3</h2>
+<p>Centos7本身是有Python2.7的，但是因为yum依赖于Python2.7，直接卸载旧版本换新的会有很多问题<!-- raw HTML omitted -->所以还是比较建议装新版本时候软链接用<code>/usr/bin/python3</code>而不是直接写<code>python</code>，毕竟<code>python</code>本身就存在2和3不兼容问题，好区分一点</p>
+<ol>
+<li>
+<p>安装依赖</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc* make -y
+</code></pre></div></li>
+<li>
+<p>下载安装包</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">wget https://www.python.org/ftp/python/3.8.10/Python-3.8.10.tar.xz
+</code></pre></div></li>
+<li>
+<p>解压</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">tar -Jxvf Python-3.8.10.tar.xz
+</code></pre></div></li>
+<li>
+<p>配置安装路径</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">cd</span> Python-3.8.10
+./configure <span class="nv">prefix</span><span class="o">=</span>/usr/local/python3
+</code></pre></div></li>
+<li>
+<p>编译安装</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">make <span class="o">&amp;&amp;</span> make install
+</code></pre></div></li>
+<li>
+<p>配置软连接</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">ln -s /usr/local/python3/bin/python3 /usr/bin/python3
+ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
+</code></pre></div></li>
+<li>
+<p>安装pip</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">wget py		<span class="c1"># 下载</span>
+python3 get-pip.py													<span class="c1"># 安装</span>
+pip -V
+</code></pre></div></li>
+</ol>
+<p>用<code>pip3</code>在linux上一个个添依赖是比较麻烦的事情，如果在Windows上有比较完整的依赖，可以直接dump一个依赖列表到服务器上，让<code>pip</code>自动添加</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1">#	在Windows上CMD</span>
+<span class="nb">cd</span> Desktop
+pip freeze &gt; packages.txt
+</code></pre></div><blockquote>
+<p>如果Python版本不同强烈不建议这么搞，很容易发生版本对不上问题</p>
+</blockquote>
+<p>然后到Centos上进行<code>pip3</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">pip3 install -r packages.txt
+</code></pre></div><p>当然如果只需要Selenium，直接装就行了</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">pip3 install selenium
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h2 id="四chrome_options">四、chrome_options</h2>
+<p>使用selenium调用chromedriver也并不顺利，以下是Centos7配合上述Chrome版本，实际可用的一套设置</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">chrome_options</span> <span class="o">=</span> <span class="n">Options</span><span class="p">()</span>
+<span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--headless&#39;</span><span class="p">)</span>  <span class="c1"># 无界面</span>
+<span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no-sandbox&#39;</span><span class="p">)</span>  <span class="c1"># 解决DevToolsActivePort文件不存在报错问题</span>
+<span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--disable-gpu&#39;</span><span class="p">)</span>   <span class="c1"># 禁用GPU硬件加速。如果软件渲染器没有就位，则GPU进程将不会启动。</span>
+<span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--disable-dev-shm-usage&#39;</span><span class="p">)</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="s1">&#39;chromedriver&#39;</span><span class="p">,</span><span class="n">chrome_options</span><span class="o">=</span><span class="n">chrome_options</span><span class="p">)</span>
+</code></pre></div><!-- raw HTML omitted -->
+<hr>
+<h2 id="五定时任务">五、定时任务</h2>
+<p>因为是一个预约球场的脚本，每天系统开放时间是早上八点，那么我们用定时任务让脚本在七点五十九跑起来<!-- raw HTML omitted -->Centos7下默认安装有crontab，如果没有也可以直接yum <code>yum install crontabs</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">crontab -e		<span class="c1"># 编辑定时任务，会以vim的形式编辑</span>
+<span class="c1"># 在文档里加一条定时任务，每天的7点59分执行，注意用绝对路径</span>
+<span class="m">59</span> <span class="m">7</span> * * * /usr/bin/python3 /usr/local/reserve/reserve.py
+</code></pre></div><p>接下来重启一下crontab服务</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">service crond restart
+</code></pre></div><p>再查看一下当前系统的定时任务列表</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">crontab -l
+</code></pre></div><p>没有问题的话，就大功告成了</p>
+<!-- raw HTML omitted -->
+<hr>
+<h2 id="六顺便贴一下脚本代码">六、顺便贴一下脚本代码</h2>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.by</span> <span class="kn">import</span> <span class="n">By</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span> <span class="k">as</span> <span class="n">EC</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">ddddocr</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;default.log&#39;</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">stream</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="n">myheaders</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&#34;Accept&#34;</span><span class="p">:</span> <span class="s2">&#34;text/plain, */*; q=0.01&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;Accept-Encoding&#34;</span><span class="p">:</span> <span class="s2">&#34;br, gzip, deflate&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;Accept-Language&#34;</span><span class="p">:</span> <span class="s2">&#34;zh-cn&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;Host&#34;</span><span class="p">:</span> <span class="s2">&#34;yuyue.seu.edu.cn&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;User-Agent&#34;</span><span class="p">:</span> <span class="s2">&#34;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36&#34;</span>
+<span class="p">}</span>
+<span class="n">myurl</span> <span class="o">=</span> <span class="s2">&#34;http://yuyue.seu.edu.cn/eduplus/order/order/order/judgeUseUser.do?sclId=1&#34;</span>
+<span class="n">logfile</span> <span class="o">=</span> <span class="s1">&#39;default.log&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">wait_element_click</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">wait</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="n">wait</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">EC</span><span class="o">.</span><span class="n">element_to_be_clickable</span><span class="p">((</span><span class="n">By</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span> <span class="n">path</span><span class="p">)))</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">request_check_code</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="n">ocr</span> <span class="o">=</span> <span class="n">ddddocr</span><span class="o">.</span><span class="n">DdddOcr</span><span class="p">(</span><span class="n">show_ad</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ocr</span><span class="o">.</span><span class="n">classification</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">pwd</span><span class="p">):</span>
+    <span class="c1"># chromedriver_autoinstaller.install()</span>
+    <span class="n">chrome_options</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">ChromeOptions</span><span class="p">()</span>
+    <span class="c1"># 指定chrome启动类型为headless 并且禁用gpu</span>
+    <span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--headless&#39;</span><span class="p">)</span>  <span class="c1"># 无界面</span>
+    <span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no-sandbox&#39;</span><span class="p">)</span>  <span class="c1"># 解决DevToolsActivePort文件不存在报错问题</span>
+    <span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--disable-gpu&#39;</span><span class="p">)</span>   <span class="c1"># 禁用GPU硬件加速。如果软件渲染器没有就位，则GPU进程将不会启动。</span>
+    <span class="n">chrome_options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--disable-dev-shm-usage&#39;</span><span class="p">)</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">chrome_options</span><span class="p">)</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;http://yuyue.seu.edu.cn/eduplus/order/initOrderIndex.do?sclId=1&#34;</span><span class="p">)</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s2">&#34;//div[@class=&#39;auth_tab_content&#39;]/div[1]/form/p[1]/input&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s2">&#34;//div[@class=&#39;auth_tab_content&#39;]/div[1]/form/p[2]/input&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s2">&#34;//div[@class=&#39;auth_tab_content&#39;]/div[1]/form/p[5]/button&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+    <span class="n">wait</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">alert</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">alert</span>  <span class="c1"># 切换到弹窗</span>
+        <span class="c1"># print(&#34;alert: &#34; + alert.text)  # 打印弹窗显示的信息：Alert Message</span>
+        <span class="n">alert</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># print(&#34;no alert&#34;)</span>
+        <span class="k">pass</span>
+    <span class="n">driver_cookies</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">get_cookies</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">driver_cookies</span><span class="p">}</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+
+<span class="k">def</span> <span class="nf">reserve</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s2">&#34;uid&#34;</span><span class="p">]</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s2">&#34;pwd&#34;</span><span class="p">]</span>
+    <span class="n">target_time</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s2">&#34;target_time&#34;</span><span class="p">]</span>
+    <span class="n">target_weight</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s2">&#34;target_weight&#34;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s2">&#34;name&#34;</span><span class="p">]</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s2">&#34;phone&#34;</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">login</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+    <span class="c1"># r=requests.post(url,headers=myheaders,params=payload,cookies=c)</span>
+    <span class="n">image_url</span> <span class="o">=</span> <span class="s2">&#34;http://yuyue.seu.edu.cn/eduplus/validateimage&#34;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">vc</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+    <span class="n">vc</span> <span class="o">=</span> <span class="n">request_check_code</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">vc</span><span class="p">)</span>
+    <span class="n">url_judge</span> <span class="o">=</span> <span class="s2">&#34;http://yuyue.seu.edu.cn/eduplus/order/order/order/judgeUseUser.do?sclId=1&#34;</span>
+    <span class="s2">&#34;&#34;&#34;itemId
+</span><span class="s2">        羽毛球 10
+</span><span class="s2">        乒乓球 7
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="n">payload_judges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">date_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&#34;%Y-%m-</span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target_time</span><span class="p">,</span> <span class="n">target_weight</span><span class="p">):</span>
+        <span class="n">order_time</span> <span class="o">=</span> <span class="n">date_time</span> <span class="o">+</span> <span class="s2">&#34; &#34;</span> <span class="o">+</span> <span class="n">time</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">order_time</span> <span class="o">+</span> <span class="s2">&#34; &#34;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">payload_judge</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&#34;ids&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="s2">&#34;useTime&#34;</span><span class="p">:</span> <span class="n">order_time</span><span class="p">,</span> <span class="s2">&#34;phone&#34;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span> <span class="s2">&#34;remark&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="s2">&#34;itemId&#34;</span><span class="p">:</span> <span class="s2">&#34;10&#34;</span><span class="p">,</span>
+                         <span class="s2">&#34;allowHalf&#34;</span><span class="p">:</span> <span class="s2">&#34;2&#34;</span><span class="p">,</span>
+                         <span class="s2">&#34;validateCode&#34;</span><span class="p">:</span> <span class="n">vc</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">weight</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)):</span>
+            <span class="n">payload_judges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payload_judge</span><span class="p">)</span>
+    <span class="s2">&#34;&#34;&#34; First Touch
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url_judge</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">payload_judges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&#34;code&#34;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&#34;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="s2">&#34;get new code------------&#34;</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">vc</span> <span class="o">=</span> <span class="n">request_check_code</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">payload_judges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&#34;validateCode&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vc</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url_judge</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">payload_judges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">vc</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">current_target</span> <span class="o">=</span> <span class="n">payload_judges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&#34;useTime&#34;</span><span class="p">]</span>
+    <span class="s2">&#34;&#34;&#34; Repeat
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="k">while</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&#34;error&#34;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">payload_judge</span> <span class="ow">in</span> <span class="n">payload_judges</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">payload_judge</span><span class="p">[</span><span class="s2">&#34;useTime&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="n">current_target</span><span class="p">:</span>
+                <span class="n">payload_judge</span><span class="p">[</span><span class="s2">&#34;validateCode&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+                <span class="n">payload_judge</span><span class="p">[</span><span class="s2">&#34;validateCode&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request_check_code</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url_judge</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">payload_judge</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&#34;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="n">payload_judge</span><span class="p">[</span><span class="s2">&#34;useTime&#34;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&#34;code&#34;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&#34;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="s2">&#34;get new code------------&#34;</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+                <span class="n">vc</span> <span class="o">=</span> <span class="n">request_check_code</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">payload_judge</span><span class="p">[</span><span class="s2">&#34;validateCode&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vc</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url_judge</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">payload_judge</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">myheaders</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">vc</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&#34;failed&#34;</span> <span class="o">+</span> <span class="s2">&#34;  i=&#34;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&#34;success&#34;</span> <span class="o">+</span> <span class="s2">&#34;  i=&#34;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">logfile</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">logfile</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>  <span class="c1"># redirect std err, if necessary</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&#34;uid&#34;</span><span class="p">:</span> <span class="s2">&#34;#{一卡通号}&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;pwd&#34;</span><span class="p">:</span> <span class="s2">&#34;#{一卡通号}&#34;</span><span class="p">,</span>
+      	<span class="c1"># 因为每天开放时间段都不一样，可以定几个时间按请求比例抢</span>
+        <span class="s2">&#34;target_time&#34;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&#34;16:00-17:00&#34;</span><span class="p">,</span> <span class="s2">&#34;15:00-16:00&#34;</span><span class="p">,</span> <span class="s2">&#34;17:00-18:00&#34;</span><span class="p">,</span> <span class="s2">&#34;18:00-19:00&#34;</span><span class="p">,</span> <span class="s2">&#34;19:00-20:00&#34;</span><span class="p">),</span>
+        <span class="s2">&#34;target_weight&#34;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+        <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;#{姓名，写啥都行}&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;phone&#34;</span><span class="p">:</span> <span class="s2">&#34;#{手机号，也是写啥都行}&#34;</span>
+    <span class="p">}</span>
+    <span class="n">reserve</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+</code></pre></div><ul>
+<li><input checked="" disabled="" type="checkbox"> 稍微优化了一下，可以几个时间段一起抢</li>
+<li><input checked="" disabled="" type="checkbox"> 输出日志，没抢到可以看到原因</li>
+</ul>
+<!-- raw HTML omitted -->
+<hr>
+<p>第二天早上起来一看</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 828; 
+			flex-basis: 1987px"
+	>
+	<a href="/p/python-selenium_reserve/image-20220606232337133-16545290200551.png" data-size="969x117">
+		<img src="/p/python-selenium_reserve/image-20220606232337133-16545290200551.png"
+			width="969"
+			height="117"
+			srcset="/p/python-selenium_reserve/image-20220606232337133-16545290200551_hu6ebccf9b1fe50c40cd0b41c6b0c4df2d_9577_480x0_resize_box_2.png 480w, /p/python-selenium_reserve/image-20220606232337133-16545290200551_hu6ebccf9b1fe50c40cd0b41c6b0c4df2d_9577_1024x0_resize_box_2.png 1024w"
+			loading="lazy"
+			alt="image-20220606232337133">
+	</a>
+	
+	<figcaption>image-20220606232337133</figcaption>
+	
+</figure></p>
+<p>YES!</p>
+<blockquote>
+<p>好吧，其实这是一周里唯一一次成功抢到的，靠的还是学校大发慈悲放了四片场地</p>
+</blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/selenium/">Selenium</a>
+        
+            <a href="/tags/python/">Python</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/python-pyqt_bloody_tips/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/images/feature/scenes/UAZ.jpg" loading="lazy" data-key="python-pyqt_bloody_tips" data-hash="/images/feature/scenes/UAZ.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Python - PYQT 踩坑记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "winterorchoir" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 图拉国营噄茶馆
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一安装chrome">一、安装Chrome</a></li>
+    <li><a href="#二安装chromedriver">二、安装chromedriver</a></li>
+    <li><a href="#三安装python3">三、安装Python3</a></li>
+    <li><a href="#四chrome_options">四、chrome_options</a></li>
+    <li><a href="#五定时任务">五、定时任务</a></li>
+    <li><a href="#六顺便贴一下脚本代码">六、顺便贴一下脚本代码</a></li>
+  </ul>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
