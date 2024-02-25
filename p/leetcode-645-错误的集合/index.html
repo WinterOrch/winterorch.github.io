@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='LeetCode 645 - 错误的集合'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode 645 - 错误的集合'>
 <meta property='og:description' content='表，位运算.'>
 <meta property='og:url' content='https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -124,10 +124,10 @@
 <p>请你找出重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。</p>
 </blockquote>
 <p><strong>示例 1：</strong></p>
-<pre><code>输入：nums = [1,2,2,4]
+<pre tabindex="0"><code>输入：nums = [1,2,2,4]
 输出：[2,3]
 </code></pre><p><strong>示例 2：</strong></p>
-<pre><code>输入：nums = [1,1]
+<pre tabindex="0"><code>输入：nums = [1,1]
 输出：[1,2]
 </code></pre><p><strong>提示：</strong></p>
 <ul>
@@ -140,81 +140,81 @@
 <p>以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。</p>
 <p>在[<a class="link" href="https://winterorch.github.io/p/leetcode-451-%e6%a0%b9%e6%8d%ae%e5%ad%97%e7%ac%a6%e5%87%ba%e7%8e%b0%e9%a2%91%e7%8e%87%e6%8e%92%e5%ba%8f/"  target="_blank" rel="noopener"
     >LeetCode 451 - 根据字符出现频率排序</a>]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">findErrorNums</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">//创建map用于指示数字是否出现过
-</span><span class="c1"></span>        <span class="kt">boolean</span><span class="o">[]</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">boolean</span><span class="o">[</span><span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
-        <span class="kt">int</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">2</span><span class="o">];</span>
-        
-        <span class="c1">//存储的同时查询数字是否为第二次出现
-</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">){</span>
-            <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">[</span><span class="n">num</span> <span class="o">-</span> <span class="n">1</span><span class="o">]){</span>
-                <span class="n">res</span><span class="o">[</span><span class="n">0</span><span class="o">]</span> <span class="o">=</span> <span class="n">num</span><span class="o">;</span>
-            <span class="o">}</span><span class="k">else</span><span class="o">{</span>
-                <span class="n">map</span><span class="o">[</span><span class="n">num</span> <span class="o">-</span> <span class="n">1</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        
-        <span class="c1">//遍历hash表，查找丢失的数字
-</span><span class="c1"></span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">map</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++){</span>
-            <span class="k">if</span><span class="o">(!</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]){</span>
-                <span class="n">res</span><span class="o">[</span><span class="n">1</span><span class="o">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><h3 id="思路2位运算">思路2：位运算</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">findErrorNums</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//创建map用于指示数字是否出现过</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">boolean</span><span class="o">[]</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">boolean</span><span class="o">[</span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">2</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//存储的同时查询数字是否为第二次出现</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">map</span><span class="o">[</span><span class="n">num</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="o">]</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">res</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="k">else</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">map</span><span class="o">[</span><span class="n">num</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//遍历hash表，查找丢失的数字</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">map</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">map</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">res</span><span class="o">[</span><span class="n">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="思路2位运算">思路2：位运算</h3>
 <p>如果将 <code>nums</code> 和<code>1</code> ~ <code>n</code> 这2n个数字异或，最后的结果 <code>xor</code> 将会是丢失的数字 <code>n1</code> 与重复的数字 <code>n2</code> 的异或。<code>xor</code> 中的每一个值都是 <code>n1</code> 与 <code>n2</code> 的二进制表示中不相同的位。</p>
 <p>取其中的一位 <code>bit</code> 与 <code>nums</code> 逐个异或，可以将 <code>nums</code> 分成两组，一组应该存在 <code>n1</code>但它缺失了，另一组 <code>n2</code> 出现了两次。</p>
 <p>取  <code>bit</code> 和 <code>1</code> ~ <code>n</code> 逐个异或同样可以将其分成两组。将对应的组别异或即可得到 <code>n1</code> 与 <code>n2</code> 。</p>
 <p>最后查找 <code>nums</code> 中出现过的数字为 <code>n2</code> ，否则其为 <code>n1</code> 。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">findErrorNums</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">nums</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-        
-        <span class="c1">//计算 n1 ^ n2
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">xor</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">xor</span> <span class="o">^=</span> <span class="n">num</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">xor</span> <span class="o">^=</span> <span class="n">i</span><span class="o">;</span>
-        <span class="o">}</span>
-        
-        <span class="c1">//取 n1 与 n2 二进制表示中一个不相同的位
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">lowbit</span> <span class="o">=</span> <span class="n">xor</span> <span class="o">&amp;</span> <span class="o">(-</span><span class="n">xor</span><span class="o">);</span>
-        
-        <span class="c1">//将 nums 分成两组
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">num1</span> <span class="o">=</span> <span class="n">0</span><span class="o">,</span> <span class="n">num2</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">((</span><span class="n">num</span> <span class="o">&amp;</span> <span class="n">lowbit</span><span class="o">)</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">num1</span> <span class="o">^=</span> <span class="n">num</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="n">num2</span> <span class="o">^=</span> <span class="n">num</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        
-        <span class="c1">//将 1 ~ n 分成两组并异或得到 n1 和 n2
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">((</span><span class="n">i</span> <span class="o">&amp;</span> <span class="n">lowbit</span><span class="o">)</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">num1</span> <span class="o">^=</span> <span class="n">i</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="n">num2</span> <span class="o">^=</span> <span class="n">i</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        
-        <span class="c1">//辨别 n1 和 n2
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">==</span> <span class="n">num1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="n">num1</span><span class="o">,</span> <span class="n">num2</span><span class="o">};</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="n">num2</span><span class="o">,</span> <span class="n">num1</span><span class="o">};</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">findErrorNums</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//计算 n1 ^ n2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">xor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">xor</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">xor</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//取 n1 与 n2 二进制表示中一个不相同的位</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">lowbit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xor</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">xor</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//将 nums 分成两组</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">num1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">num2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">num</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">lowbit</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">num1</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">num2</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//将 1 ~ n 分成两组并异或得到 n1 和 n2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">i</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">lowbit</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">num1</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">num2</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//辨别 n1 和 n2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">num</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">num1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="p">{</span><span class="n">num1</span><span class="p">,</span><span class="w"> </span><span class="n">num2</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="p">{</span><span class="n">num2</span><span class="p">,</span><span class="w"> </span><span class="n">num1</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div>
 </section>
 
 
@@ -271,8 +271,6 @@
 </script>
     
 </article>
-
-    
 
     <aside class="related-contents--wrapper">
     
@@ -377,12 +375,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -429,12 +427,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

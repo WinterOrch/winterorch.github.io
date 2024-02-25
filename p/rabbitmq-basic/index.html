@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/rabbitmq-basic/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='RabbitMQ - 基本概念和 SpringBoot 下的使用'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='RabbitMQ - 基本概念和 SpringBoot 下的使用'>
 <meta property='og:description' content='整理了一下RabbitMQ学习和在SpringBoot使用过程中作的笔记.'>
 <meta property='og:url' content='https://winterorch.github.io/p/rabbitmq-basic/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -128,23 +128,23 @@
 <li>
 <p><strong>fanout</strong></p>
 <p>最快的路由规则，Exchange 将所有接收到消息发送导与其绑定的所有队列中，不做任何判断操作，即使绑了路由键也会直接无视，<!-- raw HTML omitted -->常用来广播消息<!-- raw HTML omitted --></p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
-</span><span class="cm"> * Fanout
-</span><span class="cm"> */</span>
-<span class="nd">@Bean</span>
-<span class="kd">public</span> <span class="n">FanoutExchange</span> <span class="nf">fanoutExc</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="n">FanoutExchange</span><span class="o">(</span><span class="n">FANOUT_EXCHANGE</span><span class="o">);</span>
-<span class="o">}</span>
-<span class="nd">@Bean</span>
-<span class="kd">public</span> <span class="n">Binding</span> <span class="nf">fanoutBinding1</span><span class="o">(</span><span class="n">Queue</span> <span class="n">topicQueue1</span><span class="o">,</span> <span class="n">FanoutExchange</span> <span class="n">fanoutExc</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">topicQueue1</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">fanoutExc</span><span class="o">);</span>
-<span class="o">}</span>
-
-<span class="nd">@Bean</span>
-<span class="kd">public</span> <span class="n">Binding</span> <span class="nf">fanoutBinding2</span><span class="o">(</span><span class="n">Queue</span> <span class="n">topicQueue2</span><span class="o">,</span> <span class="n">FanoutExchange</span> <span class="n">fanoutExc</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">topicQueue2</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">fanoutExc</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Fanout
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">FanoutExchange</span><span class="w"> </span><span class="nf">fanoutExc</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FanoutExchange</span><span class="p">(</span><span class="n">FANOUT_EXCHANGE</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Binding</span><span class="w"> </span><span class="nf">fanoutBinding1</span><span class="p">(</span><span class="n">Queue</span><span class="w"> </span><span class="n">topicQueue1</span><span class="p">,</span><span class="w"> </span><span class="n">FanoutExchange</span><span class="w"> </span><span class="n">fanoutExc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">BindingBuilder</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="n">topicQueue1</span><span class="p">).</span><span class="na">to</span><span class="p">(</span><span class="n">fanoutExc</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Binding</span><span class="w"> </span><span class="nf">fanoutBinding2</span><span class="p">(</span><span class="n">Queue</span><span class="w"> </span><span class="n">topicQueue2</span><span class="p">,</span><span class="w"> </span><span class="n">FanoutExchange</span><span class="w"> </span><span class="n">fanoutExc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">BindingBuilder</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="n">topicQueue2</span><span class="p">).</span><span class="na">to</span><span class="p">(</span><span class="n">fanoutExc</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><!-- raw HTML omitted -->
 </li>
 <li>
 <p><strong>direct</strong></p>
@@ -166,22 +166,22 @@
 <li>
 <p><strong>headers</strong> （不推荐）</p>
 <p>不依赖路由键而是 headers 属性进行完全匹配，性能很差因而不实用</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Bean</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="n">HeadersExchange</span> <span class="nf">headersExc</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="n">HeadersExchange</span><span class="o">(</span><span class="n">HEADERS_EXCHANGE</span><span class="o">);</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="n">Queue</span> <span class="nf">headerQueue</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="n">Queue</span><span class="o">(</span><span class="n">HEADER_QUEUE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-<span class="o">}</span>
-<span class="nd">@Bean</span>
-<span class="kd">public</span> <span class="n">Binding</span> <span class="nf">headerBinding</span><span class="o">()</span> <span class="o">{</span>
-    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;header1&#34;</span><span class="o">,</span> <span class="s">&#34;value1&#34;</span><span class="o">);</span>
-    <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;header2&#34;</span><span class="o">,</span> <span class="s">&#34;value2&#34;</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">headerQueue</span><span class="o">()).</span><span class="na">to</span><span class="o">(</span><span class="n">headersExc</span><span class="o">()).</span><span class="na">whereAll</span><span class="o">(</span><span class="n">map</span><span class="o">).</span><span class="na">match</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">HeadersExchange</span><span class="w"> </span><span class="nf">headersExc</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HeadersExchange</span><span class="p">(</span><span class="n">HEADERS_EXCHANGE</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="nf">headerQueue</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Queue</span><span class="p">(</span><span class="n">HEADER_QUEUE</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Binding</span><span class="w"> </span><span class="nf">headerBinding</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;header1&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;value1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;header2&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;value2&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">BindingBuilder</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="n">headerQueue</span><span class="p">()).</span><span class="na">to</span><span class="p">(</span><span class="n">headersExc</span><span class="p">()).</span><span class="na">whereAll</span><span class="p">(</span><span class="n">map</span><span class="p">).</span><span class="na">match</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><!-- raw HTML omitted -->
 </li>
 </ul>
 <hr>
@@ -269,82 +269,82 @@
 <h3 id="一般-producer-consumer-设置">一般 Producer Consumer 设置</h3>
 <p><strong>Producer</strong></p>
 <p>写一个 <code>Config</code> 类来进行 Binding</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BindingConfig</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">first</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">Exchange_NAME</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">RoutingKey1</span><span class="o">=</span><span class="s">&#34;directKey1&#34;</span><span class="o">;</span>
-    
-   <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="n">Queue</span> <span class="nf">queueFirst</span><span class="o">(){</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">Queue</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="n">DirectExchange</span> <span class="nf">directExchange</span><span class="o">(){</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">DirectExchange</span><span class="o">(</span><span class="n">Exchange_NAME</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="c1">//利用BindingBuilder绑定Direct与queueFirst
-</span><span class="c1"></span>    <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="n">Binding</span> <span class="nf">bindingExchangeFirst</span><span class="o">(</span><span class="n">Queue</span> <span class="n">queueFirst</span><span class="o">,</span> <span class="n">DirectExchange</span> <span class="n">directExchange</span><span class="o">){</span>
-        <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">queueFirst</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">directExchange</span><span class="o">).</span><span class="na">with</span><span class="o">(</span><span class="n">RoutingKey1</span><span class="o">);</span>
-    <span class="o">}</span>  
-<span class="o">}</span>
-</code></pre></div><p>为消息套一个 UUID，方便在ack或nack时回调处理。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="n">CorrelationData</span> <span class="nf">getCorrelationData</span><span class="o">()</span> <span class="o">{</span>
-  <span class="k">return</span> <span class="k">new</span> <span class="n">CorrelationData</span><span class="o">(</span><span class="n">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
-<span class="o">}</span>
-</code></pre></div><p><code>ConfirmCallBack</code> 只返回标识值，因此作为 Publisher，可以维护一个 CorrelationID 到 发送信息 的 K-V 关系，从而在发送失败时再做处理，或者删除绑定关系。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BindingConfig</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">first</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">Exchange_NAME</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">RoutingKey1</span><span class="o">=</span><span class="s">&#34;directKey1&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="nf">queueFirst</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Queue</span><span class="p">(</span><span class="n">first</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">DirectExchange</span><span class="w"> </span><span class="nf">directExchange</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DirectExchange</span><span class="p">(</span><span class="n">Exchange_NAME</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//利用BindingBuilder绑定Direct与queueFirst</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Binding</span><span class="w"> </span><span class="nf">bindingExchangeFirst</span><span class="p">(</span><span class="n">Queue</span><span class="w"> </span><span class="n">queueFirst</span><span class="p">,</span><span class="w"> </span><span class="n">DirectExchange</span><span class="w"> </span><span class="n">directExchange</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">BindingBuilder</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="n">queueFirst</span><span class="p">).</span><span class="na">to</span><span class="p">(</span><span class="n">directExchange</span><span class="p">).</span><span class="na">with</span><span class="p">(</span><span class="n">RoutingKey1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>为消息套一个 UUID，方便在ack或nack时回调处理。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span><span class="w"> </span><span class="n">CorrelationData</span><span class="w"> </span><span class="nf">getCorrelationData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CorrelationData</span><span class="p">(</span><span class="n">UUID</span><span class="p">.</span><span class="na">randomUUID</span><span class="p">().</span><span class="na">toString</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p><code>ConfirmCallBack</code> 只返回标识值，因此作为 Publisher，可以维护一个 CorrelationID 到 发送信息 的 K-V 关系，从而在发送失败时再做处理，或者删除绑定关系。</p>
 <!-- raw HTML omitted -->
 <p><strong>Consumer</strong></p>
 <p>Consumer 侧的 <code>ConnectionFactory</code> 配置和 Producer 侧是完全一样的。<code>BindingConfig</code> 也完全一致：</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BindingConfig</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">first</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">Exchange_NAME</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">RoutingKey1</span><span class="o">=</span><span class="s">&#34;directKey1&#34;</span><span class="o">;</span>
-    
-   <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="n">Queue</span> <span class="nf">queueFirst</span><span class="o">(){</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">Queue</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="n">DirectExchange</span> <span class="nf">directExchange</span><span class="o">(){</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">DirectExchange</span><span class="o">(</span><span class="n">Exchange_NAME</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="c1">//利用BindingBuilder绑定Direct与queueFirst
-</span><span class="c1"></span>    <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="n">Binding</span> <span class="nf">bindingExchangeFirst</span><span class="o">(</span><span class="n">Queue</span> <span class="n">queueFirst</span><span class="o">,</span> <span class="n">DirectExchange</span> <span class="n">directExchange</span><span class="o">){</span>
-        <span class="k">return</span> <span class="n">BindingBuilder</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">queueFirst</span><span class="o">).</span><span class="na">to</span><span class="o">(</span><span class="n">directExchange</span><span class="o">).</span><span class="na">with</span><span class="o">(</span><span class="n">RoutingKey1</span><span class="o">);</span>
-    <span class="o">}</span>  
-<span class="o">}</span>
-</code></pre></div><p>然后通过 <code>@RabbitListener</code> 定义响应函数：</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
-<span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMqListener</span> <span class="o">{</span>
-  
-  <span class="nd">@RabbitHandler</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handler</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>Binding 过程也可以在 <code>RabbitMqListener</code> 中完成：</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
-<span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">bindings</span><span class="o">=</span><span class="nd">@QueueBinding</span><span class="o">(</span>
-<span class="n">exchange</span><span class="o">=</span><span class="nd">@Exchange</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="o">),</span>
-<span class="n">value</span><span class="o">=</span><span class="nd">@Queue</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;direct.second&#34;</span><span class="o">),</span>
-<span class="n">key</span><span class="o">=</span><span class="s">&#34;directKey2&#34;</span><span class="o">))</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitListener</span> <span class="o">{</span>
-  
-  <span class="nd">@RabbitHandler</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handler</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BindingConfig</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">first</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">Exchange_NAME</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">RoutingKey1</span><span class="o">=</span><span class="s">&#34;directKey1&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="nf">queueFirst</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Queue</span><span class="p">(</span><span class="n">first</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">DirectExchange</span><span class="w"> </span><span class="nf">directExchange</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DirectExchange</span><span class="p">(</span><span class="n">Exchange_NAME</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//利用BindingBuilder绑定Direct与queueFirst</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Binding</span><span class="w"> </span><span class="nf">bindingExchangeFirst</span><span class="p">(</span><span class="n">Queue</span><span class="w"> </span><span class="n">queueFirst</span><span class="p">,</span><span class="w"> </span><span class="n">DirectExchange</span><span class="w"> </span><span class="n">directExchange</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">BindingBuilder</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="n">queueFirst</span><span class="p">).</span><span class="na">to</span><span class="p">(</span><span class="n">directExchange</span><span class="p">).</span><span class="na">with</span><span class="p">(</span><span class="n">RoutingKey1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>然后通过 <code>@RabbitListener</code> 定义响应函数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@RabbitListener</span><span class="p">(</span><span class="n">queues</span><span class="o">=</span><span class="s">&#34;direct.first&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RabbitMqListener</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@RabbitHandler</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">handler</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">message</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>Binding 过程也可以在 <code>RabbitMqListener</code> 中完成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@RabbitListener</span><span class="p">(</span><span class="n">bindings</span><span class="o">=</span><span class="nd">@QueueBinding</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">exchange</span><span class="o">=</span><span class="nd">@Exchange</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;directExchange&#34;</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">value</span><span class="o">=</span><span class="nd">@Queue</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;direct.second&#34;</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">key</span><span class="o">=</span><span class="s">&#34;directKey2&#34;</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RabbitListener</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@RabbitHandler</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">handler</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">message</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><!-- raw HTML omitted -->
 <hr>
 <h3 id="回调配置">回调配置</h3>
 <p>AMQP 有三个相关参数：<code>publisher-confirms</code> <code>publisher-returns</code> 和 <code>mandatory</code> 。</p>
@@ -407,20 +407,18 @@
     
 </article>
 
-    
-
     <aside class="related-contents--wrapper">
     
     
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -467,12 +465,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/netty_basic/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Netty - 基础知识'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Netty - 基础知识'>
 <meta property='og:description' content='Netty 极大地简化了TCP和UDP套接字服务器等网络编程,性能以及安全性等很多方面都非常优秀. Dubbo, RocketMQ, Elasticsearch, gRPC, Spark, Elasticsearch等开源项目都用到了Netty.'>
 <meta property='og:url' content='https://winterorch.github.io/p/netty_basic/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -132,7 +132,7 @@
 		<img src="/p/netty_basic/image-20210518104803139.png"
 			width="1102"
 			height="421"
-			srcset="/p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_480x0_resize_box_2.png 480w, /p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_480x0_resize_box_3.png 480w, /p/netty_basic/image-20210518104803139_huc008409611bb0c3cd3948eb69306f848_190296_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			alt="NIO模型">
 	</a>
@@ -171,10 +171,10 @@
 <ul>
 <li>
 <p><code>Channel</code> 被注册到 <code>Selector</code> 上，<code>FileChannel</code> 不支持非阻塞</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">configureBlocking</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
-<span class="c1">// 注册
-</span><span class="c1"></span><span class="n">SelectionKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">selector</span><span class="o">,</span> <span class="n">SelectionKey</span><span class="o">.</span><span class="na">OP_READ</span><span class="o">);</span>
-</code></pre></div><p>第二个参数表明感兴趣事件，通过掩码形式传入：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">channel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// 注册</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SelectionKey</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span><span class="w"> </span><span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_READ</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>第二个参数表明感兴趣事件，通过掩码形式传入：</p>
 <ul>
 <li>
 <p>SelectionKey.OP_READ</p>
@@ -215,12 +215,12 @@
 <h3 id="扩展linux-epoll">扩展：Linux Epoll</h3>
 <blockquote>
 <p>Linux 下的 Epoll 实例（<code>epfd</code> 通过本地方法 <code>epoll_create</code> 创建）用文件描述符表示，程序中注册的 Socket Channel 都会放到 Selector（Epoll）内部的 <code>channel</code> 集合中。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">epoll_create</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">);</span>
-<span class="c1">//	创建epoll实例，返回文件描述符用于epoll接口后续调用
-</span></code></pre></div><p>当多路复用器进行 <code>select</code> ，通过本地方法 <code>epollCtl</code> 将事件注册到 <code>epfd</code> 上进行监听。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">epoll_ctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">epfd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">op</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">epoll_event</span> <span class="o">*</span><span class="n">event</span><span class="p">);</span>
-<span class="c1">//	用文件描述符epfd引用的epoll实例，对目标文件描述符fd执行op操作
-</span></code></pre></div><p>本地方法 <code>epollWait</code> 阻塞等待读写事件发生，如果发生则由 OS 通过中断程序调用回调函数放到 Epoll 内的就绪事件列表 <code>rdlist</code> 。因此如果 <code>rdlist</code> 中已经有了 socket 引用，<code>epoll_wait</code> 返回，如果为空则阻塞进程。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">epoll_create</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//	创建epoll实例，返回文件描述符用于epoll接口后续调用
+</span></span></span></code></pre></div><p>当多路复用器进行 <code>select</code> ，通过本地方法 <code>epollCtl</code> 将事件注册到 <code>epfd</code> 上进行监听。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">epoll_ctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">epfd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">op</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">epoll_event</span> <span class="o">*</span><span class="n">event</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//	用文件描述符epfd引用的epoll实例，对目标文件描述符fd执行op操作
+</span></span></span></code></pre></div><p>本地方法 <code>epollWait</code> 阻塞等待读写事件发生，如果发生则由 OS 通过中断程序调用回调函数放到 Epoll 内的就绪事件列表 <code>rdlist</code> 。因此如果 <code>rdlist</code> 中已经有了 socket 引用，<code>epoll_wait</code> 返回，如果为空则阻塞进程。</p>
 <!-- raw HTML omitted -->
 <p><strong>Epoll Select Poll 三种底层机制的差异</strong></p>
 <p><strong>select</strong> 基于对所有 <code>channel</code> 的轮询遍历，每次调用都进行线性遍历，时间复杂度 $O(n)$ ，由于在数组上实现，最大连接有上限。</p>
@@ -249,7 +249,7 @@
 		<img src="/p/netty_basic/285763-20180123121112287-1483895090.png"
 			width="597"
 			height="260"
-			srcset="/p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_480x0_resize_box_3.png 480w, /p/netty_basic/285763-20180123121112287-1483895090_hu3309e5c540c5d4a51b3b47d41aa9d360_76444_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -275,7 +275,7 @@
 		<img src="/p/netty_basic/285763-20180123121127162-471886539.png"
 			width="611"
 			height="396"
-			srcset="/p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_480x0_resize_box_3.png 480w, /p/netty_basic/285763-20180123121127162-471886539_hub233a51e07b34ba68fd94fc14f134635_102588_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -296,7 +296,7 @@
 		<img src="/p/netty_basic/285763-20180123121145006-1931312241.png"
 			width="623"
 			height="415"
-			srcset="/p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_480x0_resize_box_2.png 480w, /p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_480x0_resize_box_3.png 480w, /p/netty_basic/285763-20180123121145006-1931312241_hu2fb480a29cd1fa91980de3fa454b5890_112069_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -333,7 +333,7 @@
 		<img src="/p/netty_basic/11222983-71d582050fe05761.png"
 			width="750"
 			height="578"
-			srcset="/p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_480x0_resize_box_2.png 480w, /p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_480x0_resize_box_3.png 480w, /p/netty_basic/11222983-71d582050fe05761_hu832c152a4bb6fb6da0faefb298560c1e_23296_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -351,7 +351,7 @@
 		<img src="/p/netty_basic/11222983-973f17ed9994f4b8.png"
 			width="437"
 			height="356"
-			srcset="/p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_480x0_resize_box_2.png 480w, /p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_480x0_resize_box_3.png 480w, /p/netty_basic/11222983-973f17ed9994f4b8_huf5257a4c1b5364119954d84f0327fbb3_8338_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -379,7 +379,7 @@
 		<img src="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340.png"
 			width="1030"
 			height="582"
-			srcset="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_480x0_resize_box_2.png 480w, /p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_480x0_resize_box_3.png 480w, /p/netty_basic/0c8871a17950bfbc7bd351fd8d3a2340_huaa5ff7920c4f084a7ff9fda9d1b4466e_138381_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -401,7 +401,7 @@
 		<img src="/p/netty_basic/image-20210518164909861.png"
 			width="677"
 			height="410"
-			srcset="/p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_480x0_resize_box_2.png 480w, /p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_480x0_resize_box_3.png 480w, /p/netty_basic/image-20210518164909861_hu9ce186662367a206ce6560460c8a4342_181678_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			alt="EventLoop">
 	</a>
@@ -412,10 +412,10 @@
 <!-- raw HTML omitted -->
 <h3 id="channel">Channel</h3>
 <p><code>Channel</code> 为 <code>Netty</code> <strong>网络操作（读写等操作）抽象类</strong>，<code>EventLoop</code> 负责处理注册到其上的 <code>Channel</code> 的 I/O 操作，两个组件配合进行 I/O 操作。<code>Channel</code> 对 Java 原生的 <code>ServerSocketChannel</code> 和 <code>SocketChannel</code> 进行封装，得到了 <code>NioServerSocketChannel</code> 和 <code>NioSocketChannel</code> ，UDP 对应的是 <code>NioDatagramChannel</code> 。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">ServerBootstrap</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServerBootstrap</span><span class="o">();</span>
-<span class="n">b</span><span class="o">.</span><span class="na">group</span><span class="o">(</span><span class="n">bossGroup</span><span class="o">,</span> <span class="n">workerGroup</span><span class="o">)</span>
- <span class="o">.</span><span class="na">channel</span><span class="o">(</span><span class="n">NioServerSocketChannel</span><span class="o">.</span><span class="na">class</span><span class="o">)......</span>
-</code></pre></div><p>如上图所示，<code>channel</code> 通过传一个 <code>.class</code> 对象给 <code>Bootstrap</code> ，很明显是工厂模式通过反射方式来创建实例，这一实例的实际实例化时机，也就是源码中 <code>.newChannel()</code> 调用，是在 <code>Bootstrap</code> 进行 <code>bind(PORT)</code> （对服务端而言）和 <code>connect(HOST, PORT)</code> （对客户端而言）时。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ServerBootstrap</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ServerBootstrap</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">b</span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="n">bossGroup</span><span class="p">,</span><span class="w"> </span><span class="n">workerGroup</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">NioServerSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">)......</span><span class="w">
+</span></span></span></code></pre></div><p>如上图所示，<code>channel</code> 通过传一个 <code>.class</code> 对象给 <code>Bootstrap</code> ，很明显是工厂模式通过反射方式来创建实例，这一实例的实际实例化时机，也就是源码中 <code>.newChannel()</code> 调用，是在 <code>Bootstrap</code> 进行 <code>bind(PORT)</code> （对服务端而言）和 <code>connect(HOST, PORT)</code> （对客户端而言）时。</p>
 <blockquote>
 <p>对于两个指定端点可以使用唯一 <code>Channel</code> ，在第一次创建后保存 <code>Channel</code> ，对同一 IP 地址下一次通信中复用而不需要重新建立。但这样做也需要保存不同 IP 的 <code>Channel</code> ，在初始化时可能存在一些并发问题，很多实际项目都有相应解决方法，https://mp.weixin.qq.com/s/JRsbK1Un2av9GKmJ8DK7IQ 介绍了一些解决方案。</p>
 </blockquote>
@@ -442,7 +442,7 @@
 		<img src="/p/netty_basic/7.png"
 			width="1942"
 			height="850"
-			srcset="/p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_480x0_resize_box_2.png 480w, /p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_1024x0_resize_box_2.png 1024w"
+			srcset="/p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_480x0_resize_box_3.png 480w, /p/netty_basic/7_hu7b533c229e2915c53316edb52c827da2_33927_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			>
 	</a>
@@ -508,8 +508,6 @@
 </script>
     
 </article>
-
-    
 
     <aside class="related-contents--wrapper">
     
@@ -614,12 +612,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -666,12 +664,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

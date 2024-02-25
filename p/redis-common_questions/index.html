@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/redis-common_questions/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Redis - 面试常见问题'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Redis - 面试常见问题'>
 <meta property='og:description' content='整理一些Redis基础知识，数据结构和使用场景在另一篇笔记中收录.'>
 <meta property='og:url' content='https://winterorch.github.io/p/redis-common_questions/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -218,11 +218,11 @@
 <p>为了保证Redis挂掉后再重启数据可以进行恢复，需要将内存数据写入硬盘。两种持久化机制分别是快照 (<strong>snapshotting, RDB</strong>) 和只追加文件 (<strong>append-only file, AOF</strong>) 。</p>
 <p><strong>RDB 记录的是内存快照，AOF 记录的是执行过的所有命令。</strong></p>
 <p>快照持久化是 Redis 默认采用的持久化方式，可以将快照复制到其他服务器从而创建具相同数据的服务器副本，在 Redis.conf 配置文件中默认有此下配置：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">save <span class="m">900</span> <span class="m">1</span>           <span class="c1">#在900秒(15分钟)之后，如果至少有1个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
-save <span class="m">300</span> <span class="m">10</span>          <span class="c1">#在300秒(5分钟)之后，如果至少有10个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
-save <span class="m">60</span> <span class="m">10000</span>        <span class="c1">#在60秒(1分钟)之后，如果至少有10000个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
-<span class="c1"># 大部分情况下，15分钟够用，只保留这一条即可</span>
-</code></pre></div><p>RDB提供了三种机制</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">save <span class="m">900</span> <span class="m">1</span>           <span class="c1">#在900秒(15分钟)之后，如果至少有1个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
+</span></span><span class="line"><span class="cl">save <span class="m">300</span> <span class="m">10</span>          <span class="c1">#在300秒(5分钟)之后，如果至少有10个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
+</span></span><span class="line"><span class="cl">save <span class="m">60</span> <span class="m">10000</span>        <span class="c1">#在60秒(1分钟)之后，如果至少有10000个key发生变化，Redis就会自动触发BGSAVE命令创建快照。</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 大部分情况下，15分钟够用，只保留这一条即可</span>
+</span></span></code></pre></div><p>RDB提供了三种机制</p>
 <ul>
 <li><code>save</code> 命令将阻塞服务器主线程直到 RDB 完成 （不推荐）</li>
 <li><code>bgsave</code> 命令 <code>fork()</code> 一个子线程在后台异步进行快照操作，<strong>同样会阻塞</strong>，但只发生在 <code>fork()</code> 阶段，时间较短。RDB 快照持久化期间父进程修改的数据不会被保存。</li>
@@ -230,10 +230,10 @@ save <span class="m">60</span> <span class="m">10000</span>        <span class="
 </ul>
 <!-- raw HTML omitted -->
 <p>AOF 持久化 的实时性更好，因此已成为主流的持久化方案。默认情况下 Redis 没有开启 AOF（append only file）方式的持久化，可以通过 appendonly 参数开启：</p>
-<pre><code>appendonly yes
+<pre tabindex="0"><code>appendonly yes
 </code></pre><p>开启 AOF 持久化后每执行一条会更改 Redis 中的数据的命令，Redis 就会将该命令写入硬盘中的 AOF 文件。AOF 文件的保存位置和 RDB 文件的位置相同，都是通过 dir 参数设置的，默认的文件名是 appendonly.aof。</p>
 <p>在 Redis 的配置文件中存在三种不同的 AOF 持久化方式，它们分别是：</p>
-<pre><code>appendfsync always    #每次有数据修改发生时都会写入AOF文件,这样会严重降低Redis的速度
+<pre tabindex="0"><code>appendfsync always    #每次有数据修改发生时都会写入AOF文件,这样会严重降低Redis的速度
 appendfsync everysec  #每秒钟同步一次，显示地将多个写命令同步到硬盘
 appendfsync no        #让操作系统决定何时进行同步
 </code></pre><p><code>appendfsync everysec</code> 比较好</p>
@@ -471,8 +471,6 @@ appendfsync no        #让操作系统决定何时进行同步
     
 </article>
 
-    
-
     <aside class="related-contents--wrapper">
     
     
@@ -576,12 +574,12 @@ appendfsync no        #让操作系统决定何时进行同步
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -628,12 +626,12 @@ appendfsync no        #让操作系统决定何时进行同步
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

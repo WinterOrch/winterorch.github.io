@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/java-jvm-questions_2/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Java - JVM 问题集合 (下)'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM 问题集合 (下)'>
 <meta property='og:description' content='翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.'>
 <meta property='og:url' content='https://winterorch.github.io/p/java-jvm-questions_2/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -122,7 +122,8 @@
     <h2 id="内存对象jvm优化相关问题">内存、对象、JVM优化相关问题</h2>
 <h3 id="指令重排序与-happens-before-原则">指令重排序与 happens-before 原则</h3>
 <blockquote>
-<p><a href="https://www.jianshu.com/p/b9186dbebe8e">https://www.jianshu.com/p/b9186dbebe8e</a></p>
+<p><a class="link" href="https://www.jianshu.com/p/b9186dbebe8e"  target="_blank" rel="noopener"
+    >https://www.jianshu.com/p/b9186dbebe8e</a></p>
 </blockquote>
 <p>问题的起因还是指令重排序，重排序之所以存在是因为有多级缓存，线程所作变更先在寄存器或本地缓存完成，然后拷贝到主存以<strong>跨越内存栅栏</strong>（即完成工作内存到主存间的拷贝动作），跨越序列或顺序称为<code>happens-before</code>。仅当写操作线程先跨越内存栅栏，读线程后跨越内存栅栏，写操作线程所作变更才对其它线程可见。</p>
 <ul>
@@ -225,39 +226,40 @@
 <h3 id="jvm-调优命令和问题定位工具">JVM 调优命令和问题定位工具</h3>
 <p>调优命令太多了，参考这篇</p>
 <blockquote>
-<p><a href="https://www.cnblogs.com/xifengxiaoma/p/9415357.html">https://www.cnblogs.com/xifengxiaoma/p/9415357.html</a></p>
+<p><a class="link" href="https://www.cnblogs.com/xifengxiaoma/p/9415357.html"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/xifengxiaoma/p/9415357.html</a></p>
 <p>强调几个常用的：<code>jstack</code>用于定位线程异常，包括死锁、死循环；<code>jmap</code>用于分析内存问题，如溢出、频繁Full GC；<code>jstat</code>用于监控GC相关信息；<code>jps</code>查看系统Java进程</p>
 </blockquote>
 <p>问题定位工具，除了调优命令，还有JDB、VisualVM、JConsole、JProfiler、BTrace等等</p>
 <hr>
 <h3 id="宏变量与宏替换">宏变量与宏替换</h3>
 <p>用<code>final</code>定义的变量，编译器会尝试对其进行宏替换，如以下程序片段：</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;hello&#34;</span><span class="o">;</span>
-<span class="kd">final</span> <span class="n">String</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
-<span class="kd">final</span> <span class="n">String</span> <span class="n">c</span> <span class="o">=</span> <span class="n">getHello</span><span class="o">();</span>
-</code></pre></div><p>a 会在编译期间被全部替换成<code>&quot;hello&quot;</code>，而b、c不行，因此 a 是宏变量，bc 不是。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;hello&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getHello</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></div><p>a 会在编译期间被全部替换成<code>&quot;hello&quot;</code>，而b、c不行，因此 a 是宏变量，bc 不是。</p>
 <p>有这样一段程序：</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">String</span> <span class="n">hw</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="o">;</span>
-
-    <span class="n">String</span> <span class="n">hello</span> <span class="o">=</span> <span class="s">&#34;hello&#34;</span><span class="o">;</span>
-    <span class="kd">final</span> <span class="n">String</span> <span class="n">finalWorld2</span> <span class="o">=</span> <span class="s">&#34;hello&#34;</span><span class="o">;</span>
-    <span class="kd">final</span> <span class="n">String</span> <span class="n">finalWorld3</span> <span class="o">=</span> <span class="n">hello</span><span class="o">;</span>
-    <span class="kd">final</span> <span class="n">String</span> <span class="n">finalWorld4</span> <span class="o">=</span> <span class="s">&#34;he&#34;</span> <span class="o">+</span> <span class="s">&#34;llo&#34;</span><span class="o">;</span>
-
-    <span class="n">String</span> <span class="n">hw1</span> <span class="o">=</span> <span class="n">hello</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
-    <span class="n">String</span> <span class="n">hw2</span> <span class="o">=</span> <span class="n">finalWorld2</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
-    <span class="n">String</span> <span class="n">hw3</span> <span class="o">=</span> <span class="n">finalWorld3</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
-    <span class="n">String</span> <span class="n">hw4</span> <span class="o">=</span> <span class="n">finalWorld4</span> <span class="o">+</span> <span class="s">&#34; world&#34;</span><span class="o">;</span>
-
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw1</span><span class="o">);</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw2</span><span class="o">);</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw3</span><span class="o">);</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span> <span class="o">==</span> <span class="n">hw4</span><span class="o">);</span>
-<span class="o">}</span>
-
-<span class="n">原文链接</span><span class="err">：</span><span class="n">https</span><span class="o">:</span><span class="c1">//blog.csdn.net/youanyyou/article/details/78990305
-</span></code></pre></div><p><code>finalWorld2</code> <code>finalWorld4</code> 就是宏变量，最终结果它们会和 hw 相等，因为就是指向同一块字符串常量池。而 <code>finalWorld1</code> <code>finalWorld3</code> 就不会了，这在字符串篇会提到，<code>StringBuilder</code> 的合并是个比较例外的操作，会新建一个对象，两者都和 hw 不等。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;hello world&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hello</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;hello&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">finalWorld2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;hello&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">finalWorld3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hello</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">finalWorld4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;he&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;llo&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hw1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hello</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; world&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hw2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">finalWorld2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; world&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hw3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">finalWorld3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; world&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hw4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">finalWorld4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; world&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">hw</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">hw1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">hw</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">hw2</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">hw</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">hw3</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">hw</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">hw4</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">原文链接</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//blog.csdn.net/youanyyou/article/details/78990305</span><span class="w">
+</span></span></span></code></pre></div><p><code>finalWorld2</code> <code>finalWorld4</code> 就是宏变量，最终结果它们会和 hw 相等，因为就是指向同一块字符串常量池。而 <code>finalWorld1</code> <code>finalWorld3</code> 就不会了，这在字符串篇会提到，<code>StringBuilder</code> 的合并是个比较例外的操作，会新建一个对象，两者都和 hw 不等。</p>
 <p>所以结果是：<code>false true false true</code></p>
 <hr>
 <h3 id="怎样查看字节码">怎样查看字节码</h3>
@@ -270,17 +272,18 @@
 <hr>
 <h3 id="java-中什么是伪共享怎么解决">Java 中什么是伪共享，怎么解决</h3>
 <blockquote>
-<p><a href="https://www.cnblogs.com/javastack/p/9117134.html">https://www.cnblogs.com/javastack/p/9117134.html</a></p>
+<p><a class="link" href="https://www.cnblogs.com/javastack/p/9117134.html"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/javastack/p/9117134.html</a></p>
 </blockquote>
 <p>CPU 缓存系统中是以缓存行（cache line）为单位存储的。目前主流的 CPU Cache 的 Cache Line 大小都是 64 Bytes。在多线程情况下，如果需要修改“共享同一个缓存行的变量”，就会无意中影响彼此的性能，这就是伪共享（False Sharing）。</p>
 <p>由于共享变量在 CPU 缓存中的存储是以缓存行为单位，一个缓存行可以存储多个变量（存满当前缓存行的字节数）；而CPU对缓存的修改又是以缓存行为最小单位的，那么就会出现上诉的伪共享问题。直接带来的问题就是性能下降。</p>
 <p>解决方法就是——独占缓存行，以空间换效率。</p>
 <p>Java 8 中已经提供了官方的解决方案，Java 8 中新增了一个注解：<code>@sun.misc.Contended</code>。加上这个注解的类会自动补齐缓存行，需要注意的是此注解默认是无效的，需要在 jvm 启动时设置 <code>-XX:-RestrictContended</code> 才会生效。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@sun.misc.Contended</span>
-<span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">VolatileLong</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">volatile</span> <span class="kt">long</span> <span class="n">value</span> <span class="o">=</span> <span class="n">0L</span><span class="o">;</span>
-    <span class="c1">//public long p1, p2, p3, p4, p5, p6;
-</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@sun.misc.Contended</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">class</span> <span class="nc">VolatileLong</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">volatile</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0L</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//public long p1, p2, p3, p4, p5, p6;</span><span class="w">
+</span></span></span></code></pre></div>
 </section>
 
 
@@ -335,8 +338,6 @@
 </script>
     
 </article>
-
-    
 
     <aside class="related-contents--wrapper">
     
@@ -441,12 +442,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -493,12 +494,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

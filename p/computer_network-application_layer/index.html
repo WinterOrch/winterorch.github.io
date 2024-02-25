@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/computer_network-application_layer/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='计算机网络 - 应用层'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='计算机网络 - 应用层'>
 <meta property='og:description' content='应用层为特定应用程序提供数据传输服务，例如 HTTP，DNS 等协议，数据单位为报文.'>
 <meta property='og:url' content='https://winterorch.github.io/p/computer_network-application_layer/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -420,8 +420,8 @@
 </tbody>
 </table>
 <p>HTTP/1.1 起默认使用长连接，用以保持连接特性，并支持请求的流水线 (Pipelining) 处理。实现长连接需要客户端和服务端都支持长连接。使用长连接的 HTTP 协议会在响应头加入这行代码：</p>
-<div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="err">Connection:keep-alive
-</span></code></pre></div><p>网页打开后，客户端与服务器间用于传输 HTTP 数据的 TCP 连接不会关闭，再次访问服务器时会继续使用。连接的保持时间由服务器设定。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">Connection:keep-alive
+</span></span></span></code></pre></div><p>网页打开后，客户端与服务器间用于传输 HTTP 数据的 TCP 连接不会关闭，再次访问服务器时会继续使用。连接的保持时间由服务器设定。</p>
 <blockquote>
 <p>HTTP 本身是无状态协议，因此 Session 机制通过服务端记录用户状态。服务端为特定用户创建特定 Session 后用以标识和跟踪用户。</p>
 <p>大部分情况下，服务端通过在 Cookie 中附加 Session ID 来跟踪，并将 Session 存在缓存或数据库中。如果 Cookie 被禁用，也可以利用 URL 重写附在 URL 路径后面。</p>
@@ -429,7 +429,8 @@
 </blockquote>
 <blockquote>
 <p>扩展：HTTP 协议的优化</p>
-<p>参考阅读材料： <a href="https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A?">https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A?</a></p>
+<p>参考阅读材料： <a class="link" href="https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A</a>?</p>
 <p>HTTP1.1 引入了更多缓存控制策略，并允许对某个资源的部分请求，新增了 24 个错误状态响应码，请求和响应消息都支持 Host 头域（这使得多个主机可以共享一个IP，一台物理服务器从而可以存在多个虚拟主机），最重要的——支持了<strong>长连接</strong>和请求的<strong>流水线处理</strong></p>
 <p>2012年 Google 提出 SPDY 方案，通过多路复用 (Multiplexing) 提高 TCP 连接利用率（因为浏览器一般对同一域名有最大连接数限制），为每个 <code>Request</code> 设置优先级（展示内容可以优先加载，优化了用户体验），加了首部压缩协议，并强制使用 HTTPS 保障安全，服务端也可以主动推动（例如客户端请求 <code>style.css</code> 文件时，服务端可以将相关的 <code>style.js</code> 也推送过去）。</p>
 <p>SPDY位于HTTP之下，TCP和SSL之上，这样可以轻松兼容老版本的HTTP协议(将HTTP1.x的内容封装成一种新的frame格式)，同时可以使用已有的SSL功能。</p>
@@ -591,8 +592,6 @@
     
 </article>
 
-    
-
     <aside class="related-contents--wrapper">
     
     
@@ -696,12 +695,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -748,12 +747,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

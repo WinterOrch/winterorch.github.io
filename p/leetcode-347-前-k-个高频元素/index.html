@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='LeetCode 347 - 前 K 个高频元素'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LeetCode 347 - 前 K 个高频元素'>
 <meta property='og:description' content='前K高频元素问题.'>
 <meta property='og:url' content='https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -119,10 +119,10 @@
     >LeetCode 347. Top K Frequent Elements</a></h1>
 <p>Given a non-empty array of integers, return the <em>k</em> most frequent elements.</p>
 <p>Example 1:</p>
-<pre><code>Input: nums = [1,1,1,2,2,3], k = 2
+<pre tabindex="0"><code>Input: nums = [1,1,1,2,2,3], k = 2
 Output: [1,2]
 </code></pre><p>Example 2:</p>
-<pre><code>Input: nums = [1], k = 1
+<pre tabindex="0"><code>Input: nums = [1], k = 1
 Output: [1]
 </code></pre><p>Note:</p>
 <ul>
@@ -134,93 +134,93 @@ Output: [1]
 <p>要统计数组中出现频率前<code>k</code>高的数字。从数字到频率，考虑用<code>HashMap</code>来建立映射。然后再处理前<code>k</code>高的问题。</p>
 <p><strong>题解</strong></p>
 <p>首先遍历一遍数组，统计各数字出现次数，确定使用<code>HashMap</code>几乎没什么争议。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java">		<span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">num</span><span class="o">))</span> <span class="o">{</span>
-                <span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-                    <span class="o">++</span><span class="n">v</span><span class="o">;</span>
-                    <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
-                <span class="o">});</span>
-            <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
-                <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-</code></pre></div><p>要取其中出现次数（value）前<code>k</code>高的元素，一定需要进行排序，有两种方法可供选择</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">		</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">containsKey</span><span class="p">(</span><span class="n">num</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">map</span><span class="p">.</span><span class="na">compute</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="o">++</span><span class="n">v</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>要取其中出现次数（value）前<code>k</code>高的元素，一定需要进行排序，有两种方法可供选择</p>
 <hr>
 <h2 id="题解堆排序">题解、堆排序</h2>
 <p>看到第<code>k</code>大\小马上想到的方法，Java实现起来也非常方便。因为前面已经用了<code>Map</code>，这里不需要再引入新的数据结构，直接用<code>Map.Entry</code>建堆就可以了。前<code>k</code>大，所以建一个大顶堆，全部加进去之后<code>poll</code>出<code>k</code>个来就行了。</p>
 <p>时间复杂度$O(n\log n)$</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">k</span><span class="o">];</span>
-
-<span class="c1">//统计出现次数
-</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">num</span><span class="o">))</span> <span class="o">{</span>
-        <span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-            <span class="o">++</span><span class="n">v</span><span class="o">;</span>
-            <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
-        <span class="o">});</span>
-    <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
-        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="c1">//建堆
-</span><span class="c1"></span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">maxHeap</span> <span class="o">=</span>
-        <span class="k">new</span> <span class="n">PriorityQueue</span><span class="o">&lt;&gt;(</span><span class="n">Comparator</span><span class="o">.</span><span class="na">comparingInt</span><span class="o">(</span><span class="n">o</span> <span class="o">-&gt;</span> <span class="o">-</span><span class="n">o</span><span class="o">.</span><span class="na">getValue</span><span class="o">()));</span>
-<span class="n">maxHeap</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">());</span>
-
-<span class="c1">//输出
-</span><span class="c1"></span><span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">k</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span>
-    <span class="n">res</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">maxHeap</span><span class="o">.</span><span class="na">poll</span><span class="o">().</span><span class="na">getKey</span><span class="o">();</span>
-<span class="k">return</span> <span class="n">res</span><span class="o">;</span>
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">k</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//统计出现次数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">containsKey</span><span class="p">(</span><span class="n">num</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">compute</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">++</span><span class="n">v</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//建堆</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">maxHeap</span><span class="w"> </span><span class="o">=</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">Comparator</span><span class="p">.</span><span class="na">comparingInt</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="p">.</span><span class="na">getValue</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">maxHeap</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">entrySet</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//输出</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">k</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">res</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxHeap</span><span class="p">.</span><span class="na">poll</span><span class="p">().</span><span class="na">getKey</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><hr>
 <h2 id="题解计数桶排序">题解、计数（桶）排序</h2>
 <p>我们知道桶排序时间复杂度是$O(n)$，要能派上用场肯定比堆排序好，那用什么建桶呢？用输入数组中的数字不适合直接建桶，因为我们并不关心其大小，需要关心的是<strong>出现次数</strong>。</p>
 <p>长度为<code>nums.length</code>的数组，那出现次数最多也就是<code>nums.length</code>，我们可以跟据出现次数来建桶，每个桶中的数出现次数都相同，这其实就像考生排名次，分数（出现次数）越大的名词数越低（在输出数组中下标越小），那这其实就是一种特殊的桶排序——计数排序，按出现次数进行计数。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">k</span><span class="o">];</span>
-<span class="kt">int</span> <span class="n">resIdx</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-
-<span class="c1">//统计出现次数
-</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span> <span class="o">:</span> <span class="n">nums</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">num</span><span class="o">))</span> <span class="o">{</span>
-        <span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-            <span class="o">++</span><span class="n">v</span><span class="o">;</span>
-            <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
-        <span class="o">});</span>
-    <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
-        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">num</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="c1">//统计每个桶中数据量，即出现次数相同的数字个数，按出现次数存入reference[]中
-</span><span class="c1">//顺便统计一下最大的出现次数
-</span><span class="c1"></span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entrySet</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">();</span>
-<span class="kt">int</span> <span class="n">maxOccurrence</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
-<span class="kt">int</span><span class="o">[]</span> <span class="n">reference</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">nums</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="n">1</span><span class="o">];</span>
-<span class="k">for</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">entrySet</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()]++;</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">maxOccurrence</span> <span class="o">&lt;</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">())</span>
-        <span class="n">maxOccurrence</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
-<span class="o">}</span>
-
-<span class="c1">//将数组每一元素更新为包括自身在内之前所有元素之和，形成索引数组
-</span><span class="c1"></span><span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">maxOccurrence</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">reference</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+=</span> <span class="n">reference</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">1</span><span class="o">];</span>
-<span class="o">}</span>
-
-<span class="c1">//计数排序不可避免的是从小开始，我们要找的是前k大，
-</span><span class="c1">//也就是在最终排序输出数组中位置大于(entrySet.size()-k-1)的部分
-</span><span class="c1"></span><span class="n">k</span> <span class="o">=</span> <span class="n">entrySet</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="n">1</span><span class="o">;</span>
-<span class="k">for</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">entrySet</span><span class="o">)</span> <span class="o">{</span>
-  	<span class="c1">//同一次数，出现多次的，递减以防止重叠
-</span><span class="c1"></span>    <span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()]--;</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()]</span> <span class="o">&gt;</span> <span class="n">k</span><span class="o">)</span>
-        <span class="n">res</span><span class="o">[</span><span class="n">resIdx</span><span class="o">++]</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
-<span class="o">}</span>
-<span class="k">return</span> <span class="n">res</span><span class="o">;</span>
-</code></pre></div><p><code>Entry&lt;Integer, Integer&gt;</code>中的键(Key)是我们最终要输出的原数字，而值(Value)是我们关心的出现次数，如果我们有建立一个从出现次数到原数字的“反向映射”，那也可以对出现次数数组（valueSet）进行进行遍历排序，然后输出对应的键。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">k</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">int</span><span class="w"> </span><span class="n">resIdx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//统计出现次数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">containsKey</span><span class="p">(</span><span class="n">num</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">compute</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">++</span><span class="n">v</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//统计每个桶中数据量，即出现次数相同的数字个数，按出现次数存入reference[]中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//顺便统计一下最大的出现次数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">entrySet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">.</span><span class="na">entrySet</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">int</span><span class="w"> </span><span class="n">maxOccurrence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">reference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">1</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="p">(</span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">entrySet</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">()</span><span class="o">]++</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">maxOccurrence</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">maxOccurrence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//将数组每一元素更新为包括自身在内之前所有元素之和，形成索引数组</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">maxOccurrence</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">reference</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">reference</span><span class="o">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//计数排序不可避免的是从小开始，我们要找的是前k大，</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//也就是在最终排序输出数组中位置大于(entrySet.size()-k-1)的部分</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entrySet</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="p">(</span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">entrySet</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  	</span><span class="c1">//同一次数，出现多次的，递减以防止重叠</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">()</span><span class="o">]--</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">reference</span><span class="o">[</span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">()</span><span class="o">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">res</span><span class="o">[</span><span class="n">resIdx</span><span class="o">++]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p><code>Entry&lt;Integer, Integer&gt;</code>中的键(Key)是我们最终要输出的原数字，而值(Value)是我们关心的出现次数，如果我们有建立一个从出现次数到原数字的“反向映射”，那也可以对出现次数数组（valueSet）进行进行遍历排序，然后输出对应的键。</p>
 <p>但是实际上，Java提供的<code>Entry</code>已经足够好用，建立反向映射需要大量额外空间，但却不能保证带来时间效率的提升，所以直接对<code>Map.EntrySet</code>进行遍历，输出排序结果就行了，这一部分的时间复杂度实际已经低于$O(n)$，是$O(j)$（$j$为<code>nums[]</code>中不同元素个数）。</p>
 <p>总而言之，桶排序的时间复杂度为$O(n)$</p>
 <p>最后，我们知道由于伪泛型设计，Java中的<code>HashMap</code>既没有STL中的Map效率高，用起来也不方便，因此，大部分情况下可以考虑一下用数组代替。然而这道题数字没有给范围，从负数到最大<code>10^5</code>都有可能，用数组不方便，因此作罢。</p>
@@ -281,8 +281,6 @@ Output: [1]
 </script>
     
 </article>
-
-    
 
     <aside class="related-contents--wrapper">
     
@@ -387,12 +385,12 @@ Output: [1]
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -439,12 +437,12 @@ Output: [1]
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

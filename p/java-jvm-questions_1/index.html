@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/java-jvm-questions_1/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Java - JVM 问题集合 (上)'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM 问题集合 (上)'>
 <meta property='og:description' content='翻了几个题库，结合以前笔记整理了JVM相关一些题目的答案.'>
 <meta property='og:url' content='https://winterorch.github.io/p/java-jvm-questions_1/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -211,43 +211,44 @@
 <hr>
 <h3 id="双亲委派机制">双亲委派机制</h3>
 <blockquote>
-<p><a href="https://www.jianshu.com/p/1e4011617650">https://www.jianshu.com/p/1e4011617650</a></p>
+<p><a class="link" href="https://www.jianshu.com/p/1e4011617650"  target="_blank" rel="noopener"
+    >https://www.jianshu.com/p/1e4011617650</a></p>
 </blockquote>
 <p>当某个类加载器需要加载<code>.class</code>文件，首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此如果一个类确实没有被加载过，所有的加载请求最终都应该传送到最顶层的启动类加载器中，只有当父加载器反馈自己无法完成这个加载请求(它的搜索范围中没有找到所需的类)时，子加载器才会尝试自己去完成加载。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">protected</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">loadClass</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">resolve</span><span class="o">)</span>
-            <span class="kd">throws</span> <span class="n">ClassNotFoundException</span>
-    <span class="o">{</span>
-        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">getClassLoadingLock</span><span class="o">(</span><span class="n">name</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c1">// 首先检查这个classsh是否已经加载过了
-</span><span class="c1"></span>            <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">findLoadedClass</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="kt">long</span> <span class="n">t0</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
-                <span class="k">try</span> <span class="o">{</span>
-                    <span class="c1">// c==null表示没有加载，如果有父类的加载器则让父类加载器加载
-</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">parent</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="n">c</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">loadClass</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="c1">//如果父类的加载器为空 则说明递归到bootStrapClassloader了
-</span><span class="c1"></span>                        <span class="c1">//bootStrapClassloader比较特殊无法通过get获取
-</span><span class="c1"></span>                        <span class="n">c</span> <span class="o">=</span> <span class="n">findBootstrapClassOrNull</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ClassNotFoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{}</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">//如果bootstrapClassLoader 仍然没有加载过，则递归回来，尝试自己去加载class
-</span><span class="c1"></span>                    <span class="kt">long</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">findClass</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
-                    <span class="n">sun</span><span class="o">.</span><span class="na">misc</span><span class="o">.</span><span class="na">PerfCounter</span><span class="o">.</span><span class="na">getParentDelegationTime</span><span class="o">().</span><span class="na">addTime</span><span class="o">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="o">);</span>
-                    <span class="n">sun</span><span class="o">.</span><span class="na">misc</span><span class="o">.</span><span class="na">PerfCounter</span><span class="o">.</span><span class="na">getFindClassTime</span><span class="o">().</span><span class="na">addElapsedTimeFrom</span><span class="o">(</span><span class="n">t1</span><span class="o">);</span>
-                    <span class="n">sun</span><span class="o">.</span><span class="na">misc</span><span class="o">.</span><span class="na">PerfCounter</span><span class="o">.</span><span class="na">getFindClasses</span><span class="o">().</span><span class="na">increment</span><span class="o">();</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">resolve</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">resolveClass</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="n">c</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-</code></pre></div><p>源码显示，直到递归到<code>bootStrapClassloader</code>，如果仍没有加载过，就尝试自己去加载<code>class</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">protected</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">loadClass</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">resolve</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">throws</span><span class="w"> </span><span class="n">ClassNotFoundException</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">synchronized</span><span class="w"> </span><span class="p">(</span><span class="n">getClassLoadingLock</span><span class="p">(</span><span class="n">name</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 首先检查这个classsh是否已经加载过了</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findLoadedClass</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="c1">// c==null表示没有加载，如果有父类的加载器则让父类加载器加载</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">parent</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parent</span><span class="p">.</span><span class="na">loadClass</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="c1">//如果父类的加载器为空 则说明递归到bootStrapClassloader了</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="c1">//bootStrapClassloader比较特殊无法通过get获取</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findBootstrapClassOrNull</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">ClassNotFoundException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="c1">//如果bootstrapClassLoader 仍然没有加载过，则递归回来，尝试自己去加载class</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="kt">long</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findClass</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">sun</span><span class="p">.</span><span class="na">misc</span><span class="p">.</span><span class="na">PerfCounter</span><span class="p">.</span><span class="na">getParentDelegationTime</span><span class="p">().</span><span class="na">addTime</span><span class="p">(</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">sun</span><span class="p">.</span><span class="na">misc</span><span class="p">.</span><span class="na">PerfCounter</span><span class="p">.</span><span class="na">getFindClassTime</span><span class="p">().</span><span class="na">addElapsedTimeFrom</span><span class="p">(</span><span class="n">t1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">sun</span><span class="p">.</span><span class="na">misc</span><span class="p">.</span><span class="na">PerfCounter</span><span class="p">.</span><span class="na">getFindClasses</span><span class="p">().</span><span class="na">increment</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">resolve</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">resolveClass</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>源码显示，直到递归到<code>bootStrapClassloader</code>，如果仍没有加载过，就尝试自己去加载<code>class</code>。</p>
 <p>这一机制的作用是防止重复加载同一<code>.class</code>，同时保证核心<code>.class</code>不能被篡改。通过委托方式，即使篡改也不会去加载，即使加载也不会是同一个<code>.class</code>对象了。不同的加载器加载同一个<code>.class</code>也不是同一个<code>Class</code>对象。这样保证了<code>Class</code>执行安全。</p>
 <p><strong>类加载器的类别</strong></p>
 <p><strong>BootstrapClassLoader</strong> 是顶层类加载器，唯一使用C++编写的类加载器，是JVM的一部分，加载核心库<code>java.*</code>（准确的说是负责加载存放在&lt;JAVA_HOME&gt;\lib目录，或者被-Xbootclasspath参数指定的路径中存放的，且是JVM能够识别的类库），同时构造<code>ExtClassLoader</code>和<code>AppClassLoader</code>。涉及虚拟机本地实现细节，开发者无法直接获取启动类加载器引用。</p>
@@ -314,8 +315,6 @@
 </script>
     
 </article>
-
-    
 
     <aside class="related-contents--wrapper">
     
@@ -420,12 +419,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -472,12 +471,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

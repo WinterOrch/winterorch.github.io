@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/python-pyqt_bloody_tips/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Python - PYQT 踩坑记'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Python - PYQT 踩坑记'>
 <meta property='og:description' content='一年里两次用PYQT，满脚是血，记录一些踩过的坑.'>
 <meta property='og:url' content='https://winterorch.github.io/p/python-pyqt_bloody_tips/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -144,22 +144,22 @@
 <li>
 <h4 id="qss-style-sheet-会自动由父框架传递给子框架"><strong>QSS Style Sheet 会自动由父框架传递给子框架</strong></h4>
 <p>什么意思呢？就是说你可能想给 <code>QWidget</code> 设个好看的边框，于是写下这么一段内容：</p>
-<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="nt">QWidget</span> <span class="p">{</span>
-    <span class="k">background</span><span class="p">:</span> <span class="n">lightGray</span><span class="p">;</span>
-    <span class="k">border</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">blue</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div><p>然后发现所有 <code>Widget</code> 下所有的 <code>QLabel</code> 都诡异地多了个框而父框架反而没有。为什么呢？因为 <code>QLabel</code> 也是 <code>QWidget</code> 的一种，<code>QWidget</code> 的样式表会自动传递到它，并且生效。然而 <code>QWidget</code> 自己却不能生效，因为 <code>QWidget</code> 天生无法让自己的显式样式生效，它们只是用来传递给子框架的，换句话说，Qt 就这么设计的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="line"><span class="cl"><span class="nt">QWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">background</span><span class="p">:</span> <span class="n">lightGray</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">border</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">blue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后发现所有 <code>Widget</code> 下所有的 <code>QLabel</code> 都诡异地多了个框而父框架反而没有。为什么呢？因为 <code>QLabel</code> 也是 <code>QWidget</code> 的一种，<code>QWidget</code> 的样式表会自动传递到它，并且生效。然而 <code>QWidget</code> 自己却不能生效，因为 <code>QWidget</code> 天生无法让自己的显式样式生效，它们只是用来传递给子框架的，换句话说，Qt 就这么设计的。</p>
 <p>如果想让父框架有边框之类的设置，请用 <code>QFrame</code> ，它不仅有同样的参数而且几乎能替代 <code>QWidget</code> 。</p>
 <!-- raw HTML omitted -->
 </li>
 <li>
 <h4 id="请尽量使用对象的-objectname-来区分子对象的样式"><strong>请尽量使用对象的 <code>objectName</code> 来区分子对象的样式</strong></h4>
 <p>如果你想要你的设置仅仅对最外层，或子对象中的一个生效，请这么写：</p>
-<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="nt">QWidget</span><span class="o">[</span><span class="nt">objectName</span><span class="o">=</span><span class="s1">&#39;OutsidePanel&#39;</span><span class="o">]</span> <span class="p">{</span>
-    <span class="k">background</span><span class="p">:</span> <span class="n">lightGray</span><span class="p">;</span>
-    <span class="k">border</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">blue</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div><p>那什么是 <code>objectName</code> 呢？它是 <code>QObject</code> 的一个成员变量，没错，PyQt 在最不需要解耦的地方做了一次解耦，让 <code>objectName</code> 需要单独设置。所以接下来，在这个你想让它有边框的 <code>QWidget</code> 的构造函数中写下：<code>self.setObjectName(&quot;OutsidePanel&quot;)</code> 。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="line"><span class="cl"><span class="nt">QWidget</span><span class="o">[</span><span class="nt">objectName</span><span class="o">=</span><span class="s1">&#39;OutsidePanel&#39;</span><span class="o">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">background</span><span class="p">:</span> <span class="n">lightGray</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">border</span><span class="p">:</span> <span class="mi">3</span><span class="kt">px</span> <span class="kc">solid</span> <span class="kc">blue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>那什么是 <code>objectName</code> 呢？它是 <code>QObject</code> 的一个成员变量，没错，PyQt 在最不需要解耦的地方做了一次解耦，让 <code>objectName</code> 需要单独设置。所以接下来，在这个你想让它有边框的 <code>QWidget</code> 的构造函数中写下：<code>self.setObjectName(&quot;OutsidePanel&quot;)</code> 。</p>
 <p>不推荐将组件的样式表颗粒化，在初始化过程中单独 <code>setStyleSheet()</code> ，还是推荐将一整个 Panel 的样式整合成一个文件，在父框架进行设置，而避免在运行过程中还要动态加载。我认为 Qt 的设计者也是这样希望的，应当有相应的优化。</p>
 <p>关于 QSS ，网上其实能查到很多内容，比方有人说可以直接跟据对象名和 CSS 一样用 <code>#</code> 设置对象的样式，实测并不行，推测可能是 PyQt 版本不同，能力也有所不同，很多网上提供的 QSS 属性也并不能生效。虽然 QSS 想让做 GUI 的人尽量用熟悉的方法——CSS来设计，但功能属实有限，不能达到 CSS 的效果不说，还给了有 CSS 使用经验的人过多不切实际的幻想，只能说是将 PyQt 本就有限的样式设置从 GUI 设计中部分解耦出来。</p>
 </li>
@@ -221,8 +221,6 @@
     
 </article>
 
-    
-
     <aside class="related-contents--wrapper">
     
     
@@ -232,12 +230,12 @@
                 
                     
 <article class="has-image">
-    <a href="/p/python-selenium_reserve/">
+    <a href="/p/court_book/">
         
         
             <div class="article-image">
                 
-                    <img src="/images/feature/kora/sunflower.jpg" loading="lazy" data-key="python-selenium_reserve" data-hash="/images/feature/kora/sunflower.jpg"/>
+                    <img src="/images/feature/kora/sunflower.jpg" loading="lazy" data-key="court_book" data-hash="/images/feature/kora/sunflower.jpg"/>
                 
             </div>
         
@@ -254,12 +252,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -306,12 +304,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 

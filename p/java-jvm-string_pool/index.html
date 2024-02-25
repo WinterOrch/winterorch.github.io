@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='https://winterorch.github.io/p/java-jvm-string_pool/'>
 
-<link rel="stylesheet" href="/scss/style.min.c1e43ee1debd75177f8e2fbdbbe231935c24a6006acb364fb160c47623c8aea2.css"><meta property='og:title' content='Java - JVM 字符串'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Java - JVM 字符串'>
 <meta property='og:description' content='JDK7以后的字符串常量池.'>
 <meta property='og:url' content='https://winterorch.github.io/p/java-jvm-string_pool/'>
 <meta property='og:site_name' content='图拉国营噄茶馆'>
@@ -46,7 +46,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="/" class="back-home">
+            <a href="https://winterorch.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -150,29 +150,29 @@
 <!-- raw HTML omitted -->
 <h2 id="intern">intern()</h2>
 <p>JDK7中，<code>intern()</code> 方法将在字符串池中保存堆中的引用并返回（如果已经有则直接返回该引用）。对执行方法的对象本身不会造成任何影响，该指哪指哪。以下为例：</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">s3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">)</span> <span class="o">+</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">);</span>
-<span class="n">s3</span><span class="o">.</span><span class="na">intern</span><span class="o">();</span>
-<span class="n">String</span> <span class="n">s4</span> <span class="o">=</span> <span class="s">&#34;11&#34;</span><span class="o">;</span>
-<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s3</span> <span class="o">==</span> <span class="n">s4</span><span class="o">);</span><span class="c1">//true
-</span></code></pre></div><p><code>s3</code> 实际上在 Heap 上 new 出了一个<code>&quot;11&quot;</code>，且不会保存到常量池中。<code>s3.intern()</code>将这一对象直接保存到了字符串常量池中，<code>s3</code>仍指向这一对象，只是对象本身被保存到了常量池，因此<code>s4</code>显式创建<code>&quot;11&quot;</code>会直接拿常量池中的对象（引用）来用，也就是<code>s3</code>。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">);</span>
-<span class="n">s</span><span class="o">.</span><span class="na">intern</span><span class="o">();</span>
-<span class="n">String</span> <span class="n">s2</span> <span class="o">=</span> <span class="s">&#34;1&#34;</span><span class="o">;</span>
-<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span> <span class="o">==</span> <span class="n">s2</span><span class="o">);</span><span class="c1">//false
-</span></code></pre></div><p>这一段则有很大不同，<code>new String(&quot;1&quot;)</code> 进行了两步操作——在字符串常量池建了<code>&quot;1&quot;</code>，并且还在 Heap 上建了一个额外的 <code>String</code> 对象并赋给 <code>s</code> ，所以<code>s.intern()</code>不会造成任何改变——常量池已经有<code>&quot;1&quot;</code>，而<code>s</code>也还是指向 Heap 上的 <code>String</code> 。因此<code>s2</code> 直接指向常量池中的<code>&quot;1&quot;</code>，<code>s</code>间接指向<code>1</code>,两者自然不是一个引用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">String</span><span class="w"> </span><span class="n">s3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&#34;1&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&#34;1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">s3</span><span class="p">.</span><span class="na">intern</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">s4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;11&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">s3</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s4</span><span class="p">);</span><span class="c1">//true</span><span class="w">
+</span></span></span></code></pre></div><p><code>s3</code> 实际上在 Heap 上 new 出了一个<code>&quot;11&quot;</code>，且不会保存到常量池中。<code>s3.intern()</code>将这一对象直接保存到了字符串常量池中，<code>s3</code>仍指向这一对象，只是对象本身被保存到了常量池，因此<code>s4</code>显式创建<code>&quot;11&quot;</code>会直接拿常量池中的对象（引用）来用，也就是<code>s3</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&#34;1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">s</span><span class="p">.</span><span class="na">intern</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;1&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s2</span><span class="p">);</span><span class="c1">//false</span><span class="w">
+</span></span></span></code></pre></div><p>这一段则有很大不同，<code>new String(&quot;1&quot;)</code> 进行了两步操作——在字符串常量池建了<code>&quot;1&quot;</code>，并且还在 Heap 上建了一个额外的 <code>String</code> 对象并赋给 <code>s</code> ，所以<code>s.intern()</code>不会造成任何改变——常量池已经有<code>&quot;1&quot;</code>，而<code>s</code>也还是指向 Heap 上的 <code>String</code> 。因此<code>s2</code> 直接指向常量池中的<code>&quot;1&quot;</code>，<code>s</code>间接指向<code>1</code>,两者自然不是一个引用。</p>
 <!-- raw HTML omitted -->
 <hr>
 <h2 id="综合案例">综合案例</h2>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">NewTest1</span><span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">s1</span><span class="o">=</span><span class="s">&#34;static&#34;</span><span class="o">;</span>  <span class="c1">// 第一句
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">String</span> <span class="n">s1</span><span class="o">=</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;he&#34;</span><span class="o">)+</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;llo&#34;</span><span class="o">);</span> <span class="c1">//第二句
-</span><span class="c1"></span>        <span class="n">s1</span><span class="o">.</span><span class="na">intern</span><span class="o">();</span>   <span class="c1">// 第三句
-</span><span class="c1"></span>        <span class="n">String</span> <span class="n">s2</span><span class="o">=</span><span class="s">&#34;hello&#34;</span><span class="o">;</span>  <span class="c1">//第四句
-</span><span class="c1"></span>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">==</span><span class="n">s2</span><span class="o">);</span><span class="c1">//第五句，输出是true。
-</span><span class="c1"></span>    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div><p>如图，类初始阶段会初始化 <code>s1</code> ，所以在 <code>main()</code> 运行之前字符串常量池里已经有 <code>&quot;static&quot;</code> 。局部变量 <code>s1</code> 由两个字符串拼接而成，拼接过程实际是 <code>StringBuilder</code> 的 <code>append</code>，最后会通过 <code>toString()</code> 方法<!-- raw HTML omitted --><strong>new一个 <code>String</code> 对象，且不会放入字符串常量池</strong><!-- raw HTML omitted -->。在<code>intern()</code>时才会被放入字符串常量池。<code>s2</code>显式创建，发现字符串常量池中已有，因此直接使用，两者就是同一对象，<code>s1==s2</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">NewTest1</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">s1</span><span class="o">=</span><span class="s">&#34;static&#34;</span><span class="p">;</span><span class="w">  </span><span class="c1">// 第一句</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">s1</span><span class="o">=</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&#34;he&#34;</span><span class="p">)</span><span class="o">+</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&#34;llo&#34;</span><span class="p">);</span><span class="w"> </span><span class="c1">//第二句</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">s1</span><span class="p">.</span><span class="na">intern</span><span class="p">();</span><span class="w">   </span><span class="c1">// 第三句</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">s2</span><span class="o">=</span><span class="s">&#34;hello&#34;</span><span class="p">;</span><span class="w">  </span><span class="c1">//第四句</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">s1</span><span class="o">==</span><span class="n">s2</span><span class="p">);</span><span class="c1">//第五句，输出是true。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>如图，类初始阶段会初始化 <code>s1</code> ，所以在 <code>main()</code> 运行之前字符串常量池里已经有 <code>&quot;static&quot;</code> 。局部变量 <code>s1</code> 由两个字符串拼接而成，拼接过程实际是 <code>StringBuilder</code> 的 <code>append</code>，最后会通过 <code>toString()</code> 方法<!-- raw HTML omitted --><strong>new一个 <code>String</code> 对象，且不会放入字符串常量池</strong><!-- raw HTML omitted -->。在<code>intern()</code>时才会被放入字符串常量池。<code>s2</code>显式创建，发现字符串常量池中已有，因此直接使用，两者就是同一对象，<code>s1==s2</code>。</p>
 <!-- raw HTML omitted -->
 <hr>
 <h2 id="oracle-jdk-8u20-后的新特性">Oracle JDK 8u20 后的新特性</h2>
@@ -232,8 +232,6 @@
 </script>
     
 </article>
-
-    
 
     <aside class="related-contents--wrapper">
     
@@ -338,12 +336,12 @@
 </aside>
 
      
-    
+     
         
     <div class="disqus-container">
     <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -390,12 +388,12 @@
         
             2020 - 
         
-        2022 图拉国营噄茶馆
+        2024 图拉国营噄茶馆
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.6.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+         <br />
+        
     </section>
 </footer>
 
