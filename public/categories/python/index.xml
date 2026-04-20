@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on 图拉国营噄茶馆</title><link>https://winterorch.github.io/categories/python/</link><description>Recent content in Python on 图拉国营噄茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 06 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Python - 用Selenium抢体育场地</title><link>https://winterorch.github.io/p/court_book/</link><pubDate>Mon, 06 Jun 2022 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/court_book/</guid><description>学校用来预约场地的服务器实在承载能力有限。八点钟登上去，起码要八点零五才能第一次刷新成功，加上一般就开放五六片场地，根本不可能抢不到
+那么，就只能用科技对付科技了，也好让我早上多睡会好歹脚本抢不到没有拼手速被服务器gank那么气
+一、安装Chrome 先将Chrome RPM包下载下来
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm 安装两个依赖包
+yum install -y lsb yum install -y libXScrnSaver 从已下载到本地的RPM包安装Chrome
+yum localinstall -y google-chrome-stable_current_x86_64.rpm image-20220601154438196
+2022年六月，安装的版本是102.0.5005.61
+二、安装chromedriver 从淘宝镜像库找对应Chrome版本的驱动 http://npm.taobao.org/mirrors/chromedriver/
+wget https://registry.npmmirror.com/-/binary/chromedriver/102.0.5005.61/chromedriver_linux64.zip unzip chromedriver_linux64.zip mv chromedriver /usr/bin/ chromedriver --version 只提供了zip包，如果系统没有装unzip zip的话一并装了就行了yum install -y unzip zip
+最后通过chromedriver --version验证安装版本
+image-20220601160030594
+三、安装Python3 Centos7本身是有Python2.7的，但是因为yum依赖于Python2.7，直接卸载旧版本换新的会有很多问题所以还是比较建议装新版本时候软链接用/usr/bin/python3而不是直接写python，毕竟python本身就存在2和3不兼容问题，好区分一点
+安装依赖
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc* make -y 下载安装包</description></item><item><title>Python - PYQT 踩坑记</title><link>https://winterorch.github.io/p/python-pyqt_bloody_tips/</link><pubDate>Fri, 25 Jun 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/python-pyqt_bloody_tips/</guid><description>首先要踩一下 PYQT，如果使用 Python 过程中有 GUI 方面的需求，请一定一定先看有没有 QT 之外的选择 （Django不好吗？）。用过 PYQT 的都知道，QT 提供的不仅仅是 GUI 组件库，而是从线程到网络通信的一整套 QObject ，个人认为对于 Python 而言这实在是过于不实际了，我觉得大多数人对于 Python 开发的期望都是每一个模块各司其职，项目能够“高内聚，低耦合”，Python 在这方面也是非常令人满意的，然而在 QT 中除外。
+PYQT 来源于 C++ QT，其理念就是将众多组件耦合到一起，如果你在一个团队中进行开发，这会导致——无论是图形界面方面的责任，还是业务逻辑方面的问题都会堆到你这里，成为你的压力，而如果你作为个人进行开发，这会使你写 GUI 的时候无时无刻不得顾及业务需求，两边都得顾得上，两边都得一起调。出了问题的话，非常不幸，网上能找到的 PYQT 资料非常之有限，甚至官方文档中都有大量的 TODO ，且完全没有要补上的迹象，我写代码过程中基本都只能参考 QT 的官方文档，因为他实在是比 PyQt 官方提供的要友好得多。
+如果在确认了这些问题之后，还是要入门 PYQT，推荐几个 Github：PyQt Examples 提供了大部分常用 GUI 组件的使用 Deemo，虽然 PyQt 对于这些组件基本都有大量复杂数倍的替代品，供你完成非常繁杂的需求，但是，没有谁想从那入手的。
+顺便提一下，有个非常不错（指功能上）的 PyQt 音乐播放器 FeelUOwn 项目。当时看到这个小项目是很感动的，非常兴奋地下下来源码，然后确信自己看的是天书——项目代码不是给人读的，PyQt 极大放大了代码可读性差的问题
+接下来是正片——
+开始 PyQt 项目，你要知道这些 如果用 PyCharm 构建 PyQt 项目，你在点下 Run/Debug 之前请务必检查一下 Debug 配置</description></item></channel></rss>
