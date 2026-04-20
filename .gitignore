@@ -1,0 +1,12 @@
+# Hugo
+.hugo_build.lock
+resources/_gen/
+
+# Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
