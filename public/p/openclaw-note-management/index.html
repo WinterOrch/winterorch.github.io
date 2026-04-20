@@ -1,0 +1,603 @@
+<!doctype html><html lang=zh-cn>
+<head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="记录使用 OpenClaw 管理笔记仓库的完整实践，包括 fast-note-sync 部署、ngrok 远程访问和 knowledge-pipeline 技能开发."><title>OpenClaw + Obsidian 构建个人知识管理系统</title>
+<link rel=canonical href=https://winterorch.github.io/p/openclaw-note-management/>
+<link rel=stylesheet href=/scss/style.min.css><meta property="og:title" content="OpenClaw + Obsidian 构建个人知识管理系统">
+<meta property="og:description" content="记录使用 OpenClaw 管理笔记仓库的完整实践，包括 fast-note-sync 部署、ngrok 远程访问和 knowledge-pipeline 技能开发.">
+<meta property="og:url" content="https://winterorch.github.io/p/openclaw-note-management/">
+<meta property="og:site_name" content="图拉国营噄茶馆">
+<meta property="og:type" content="article"><meta property="article:section" content="Post"><meta property="article:tag" content="OpenClaw"><meta property="article:tag" content="Obsidian"><meta property="article:tag" content="知识管理"><meta property="article:tag" content="fast-note-sync"><meta property="article:published_time" content="2026-04-01T00:00:00+00:00"><meta property="article:modified_time" content="2026-04-01T00:00:00+00:00"><meta property="og:image" content="https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg">
+<meta name=twitter:title content="OpenClaw + Obsidian 构建个人知识管理系统">
+<meta name=twitter:description content="记录使用 OpenClaw 管理笔记仓库的完整实践，包括 fast-note-sync 部署、ngrok 远程访问和 knowledge-pipeline 技能开发."><meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://winterorch.github.io/images/feature/ArseniXC/Harbor.jpg">
+</head>
+<body class="article-page has-toc">
+<script>(function(){const a='StackColorScheme';localStorage.getItem(a)||localStorage.setItem(a,"auto")})()</script><script>(function(){const b='StackColorScheme',a=localStorage.getItem(b),c=window.matchMedia('(prefers-color-scheme: dark)').matches===!0;a=='dark'||a==='auto'&&c?document.documentElement.dataset.scheme='dark':document.documentElement.dataset.scheme='light'})()</script>
+<div class="container main-container flex
+extended">
+<div id=article-toolbar>
+<a href=https://winterorch.github.io class=back-home><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="15 6 9 12 15 18"/></svg>
+<span>返回</span>
+</a>
+</div>
+<main class="main full-width">
+<article class="has-image main-article">
+<header class=article-header>
+<div class=article-image>
+<a href=/p/openclaw-note-management/>
+<img src=/images/feature/ArseniXC/Harbor.jpg loading=lazy alt="Featured image of post OpenClaw + Obsidian 构建个人知识管理系统">
+</a>
+</div>
+<div class=article-details>
+<header class=article-category>
+<a href=/categories/openclaw/>
+OpenClaw
+</a>
+<a href=/categories/%E5%B7%A5%E5%85%B7/>
+工具
+</a>
+</header>
+<h2 class=article-title>
+<a href=/p/openclaw-note-management/>OpenClaw + Obsidian 构建个人知识管理系统</a>
+</h2>
+<h3 class=article-subtitle>
+记录使用 OpenClaw 管理笔记仓库的完整实践，包括 fast-note-sync 部署、ngrok 远程访问和 knowledge-pipeline 技能开发.
+</h3>
+<footer class=article-time>
+<div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Apr 01, 2026</time>
+</div>
+</footer>
+</div>
+</header>
+<section class=article-content>
+<p>本文记录了使用 OpenClaw 管理笔记仓库的完整实践，包括工具配置、部署方案、远程访问和技能开发。通过这套方案，可以实现：</p>
+<ul>
+<li><strong>自动化记录</strong> — 通过 Memo 命令快速保存临时想法</li>
+<li><strong>结构化整理</strong> — 自动分类到 Inbox/Tasks/Notes/Resources</li>
+<li><strong>远程访问</strong> — 配合 ngrok 实现外网访问</li>
+<li><strong>技能扩展</strong> — 基于 OpenClaw AgentSkills 规范开发自定义技能</li>
+</ul>
+<hr>
+<h2 id=一工具配置>一、工具配置</h2>
+<h3 id=客户端obsidian>客户端：Obsidian</h3>
+<ul>
+<li>跨平台笔记客户端，支持 Markdown</li>
+<li>本地存储，数据完全掌控</li>
+<li>丰富的插件生态</li>
+<li>官网：https://obsidian.md</li>
+</ul>
+<h3 id=服务端fast-note-sync>服务端：fast-note-sync</h3>
+<ul>
+<li>自托管笔记同步服务</li>
+<li>提供 API 接口进行笔记管理</li>
+<li>支持多设备同步</li>
+<li>GitHub: <a class=link href=https://github.com/llm-red-team/fast-note-sync target=_blank rel=noopener>https://github.com/llm-red-team/fast-note-sync</a></li>
+</ul>
+<h3 id=api-配置>API 配置</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
+  <span class=nt>&#34;api&#34;</span><span class=p>:</span> <span class=s2>&#34;http://127.0.0.1:9000&#34;</span><span class=p>,</span>
+  <span class=nt>&#34;apiToken&#34;</span><span class=p>:</span> <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...&#34;</span><span class=p>,</span>
+  <span class=nt>&#34;vault&#34;</span><span class=p>:</span> <span class=s2>&#34;图拉国营噄茶馆&#34;</span>
+<span class=p>}</span>
+</code></pre></div><h3 id=目录结构>目录结构</h3>
+<pre tabindex=0><code>图拉国营喫茶茶馆/
+├── Inbox/          # 随手记录，还没整理的
+├── Tasks/          # 待办任务
+├── Notes/          # 整理好的笔记
+└── Resources/      # 链接和资源收藏
+</code></pre><hr>
+<h2 id=二fast-note-sync-部署方案>二、fast-note-sync 部署方案</h2>
+<h3 id=方案一docker-部署推荐>方案一：Docker 部署（推荐）</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 1. 创建数据目录</span>
+mkdir -p ~/fast-note-sync/data
+
+<span class=c1># 2. 启动容器</span>
+docker run -d <span class=se>\
+</span><span class=se></span>  --name fast-note-sync <span class=se>\
+</span><span class=se></span>  -p 9000:9000 <span class=se>\
+</span><span class=se></span>  -v ~/fast-note-sync/data:/app/data <span class=se>\
+</span><span class=se></span>  -e <span class=nv>JWT_SECRET</span><span class=o>=</span><span class=s1>&#39;your-secret-key&#39;</span> <span class=se>\
+</span><span class=se></span>  -e <span class=nv>VAULT_NAME</span><span class=o>=</span><span class=s1>&#39;图拉国营噄茶馆&#39;</span> <span class=se>\
+</span><span class=se></span>  llmredteam/fast-note-sync:latest
+
+<span class=c1># 3. 检查状态</span>
+docker logs -f fast-note-sync
+</code></pre></div><h3 id=方案二源码部署>方案二：源码部署</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 1. 克隆项目</span>
+git clone https://github.com/llm-red-team/fast-note-sync.git
+<span class=nb>cd</span> fast-note-sync
+
+<span class=c1># 2. 安装依赖</span>
+npm install
+
+<span class=c1># 3. 配置环境变量</span>
+cp .env.example .env
+<span class=c1># 编辑 .env 文件，设置 JWT_SECRET、VAULT_NAME 等</span>
+
+<span class=c1># 4. 启动服务</span>
+npm start
+<span class=c1># 或使用 PM2</span>
+pm2 start npm --name fast-note-sync -- start
+</code></pre></div><h3 id=配置文件示例-env>配置文件示例 (.env)</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-env data-lang=env><span class=c1># 服务配置</span>
+<span class=nv>PORT</span><span class=o>=</span><span class=m>9000</span>
+<span class=nv>HOST</span><span class=o>=</span>0.0.0.0
+
+<span class=c1># JWT 配置</span>
+<span class=nv>JWT_SECRET</span><span class=o>=</span>your-secret-key-here
+<span class=nv>JWT_EXPIRES_IN</span><span class=o>=</span>365d
+
+<span class=c1># Vault 配置</span>
+<span class=nv>VAULT_NAME</span><span class=o>=</span>图拉国营噄茶馆
+<span class=nv>VAULT_PATH</span><span class=o>=</span>/path/to/your/vault
+
+<span class=c1># 安全配置</span>
+<span class=nv>ALLOWED_ORIGINS</span><span class=o>=</span>http://localhost:3000,http://127.0.0.1:3000
+</code></pre></div><hr>
+<h2 id=三远程访问ngrok-内网穿透>三、远程访问：ngrok 内网穿透</h2>
+<h3 id=什么是-ngrok>什么是 ngrok？</h3>
+<p><strong>ngrok</strong> 是一款开源的内网穿透工具，通过反向代理在公共端点和本地服务之间建立安全隧道。</p>
+<p><strong>核心功能：</strong></p>
+<ul>
+<li>将本地/内网服务暴露到公网</li>
+<li>自动生成临时公网域名</li>
+<li>支持 HTTP/HTTPS/TCP 协议</li>
+<li>加密传输，安全可靠</li>
+</ul>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>开发调试：让外部访问本地开发环境</li>
+<li>远程演示：无需部署服务器即可展示项目</li>
+<li>临时 API 服务：快速搭建可公网访问的接口</li>
+<li>移动/远程办公：在外访问家中/公司内网服务</li>
+</ul>
+<h3 id=ngrok-配合-fast-note-sync-使用>ngrok 配合 fast-note-sync 使用</h3>
+<h4 id=1-注册-ngrok-账号>1. 注册 ngrok 账号</h4>
+<p>访问 <a class=link href=https://ngrok.com target=_blank rel=noopener>https://ngrok.com</a> 注册免费账号，获取 Authtoken。</p>
+<h4 id=2-安装-ngrok>2. 安装 ngrok</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># Linux</span>
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc <span class=se>\
+</span><span class=se></span>  <span class=p>|</span> sudo tee /etc/apt/trusted.gpg.d/ngrok.asc &gt;/dev/null <span class=se>\
+</span><span class=se></span>  <span class=o>&amp;&amp;</span> <span class=nb>echo</span> <span class=s2>&#34;deb https://ngrok-agent.s3.amazonaws.com buster main&#34;</span> <span class=se>\
+</span><span class=se></span>  <span class=p>|</span> sudo tee /etc/apt/sources.list.d/ngrok.list <span class=se>\
+</span><span class=se></span>  <span class=o>&amp;&amp;</span> sudo apt update <span class=se>\
+</span><span class=se></span>  <span class=o>&amp;&amp;</span> sudo apt install ngrok
+
+<span class=c1># macOS</span>
+brew install ngrok/ngrok/ngrok
+</code></pre></div><h4 id=3-配置-authtoken>3. 配置 Authtoken</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>ngrok config add-authtoken &lt;your-authtoken&gt;
+</code></pre></div><h4 id=4-启动隧道>4. 启动隧道</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 方式一：暴露 fast-note-sync 的 9000 端口</span>
+ngrok http <span class=m>9000</span>
+
+<span class=c1># 方式二：指定域名（付费功能）</span>
+ngrok http <span class=m>9000</span> --domain<span class=o>=</span>your-domain.ngrok.io
+</code></pre></div><p>启动后会显示：</p>
+<pre tabindex=0><code>Forwarding: https://abc123.ngrok.io -&gt; http://localhost:9000
+</code></pre><h4 id=5-更新-api-配置>5. 更新 API 配置</h4>
+<p>将 API 地址改为 ngrok 提供的公网地址：</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
+  <span class=nt>&#34;api&#34;</span><span class=p>:</span> <span class=s2>&#34;https://abc123.ngrok.io&#34;</span><span class=p>,</span>
+  <span class=nt>&#34;apiToken&#34;</span><span class=p>:</span> <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...&#34;</span><span class=p>,</span>
+  <span class=nt>&#34;vault&#34;</span><span class=p>:</span> <span class=s2>&#34;图拉国营噄茶馆&#34;</span>
+<span class=p>}</span>
+</code></pre></div><h4 id=6-ngrok-配置文件示例-ngrokyml>6. ngrok 配置文件示例 (ngrok.yml)</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span><span class=w></span><span class=nt>authtoken</span><span class=p>:</span><span class=w> </span><span class=l>your-authtoken-here</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>tunnels</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>fast-note-sync</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>proto</span><span class=p>:</span><span class=w> </span><span class=l>http</span><span class=w>
+</span><span class=w>    </span><span class=nt>addr</span><span class=p>:</span><span class=w> </span><span class=m>9000</span><span class=w>
+</span><span class=w>    </span><span class=nt>domain</span><span class=p>:</span><span class=w> </span><span class=l>your-domain.ngrok.io </span><span class=w> </span><span class=c># 可选，付费功能</span><span class=w>
+</span></code></pre></div><h3 id=注意事项>注意事项</h3>
+<ol>
+<li><strong>免费限制</strong>：ngrok 免费版每次重启会变更域名，适合临时使用</li>
+<li><strong>稳定性</strong>：生产环境建议使用固定域名或自建 frp/nps 等方案</li>
+<li><strong>安全性</strong>：
+<ul>
+<li>确保 fast-note-sync 的 JWT_SECRET 足够复杂</li>
+<li>考虑配置 IP 白名单</li>
+<li>定期更新 API Token</li>
+</ul>
+</li>
+<li><strong>替代方案</strong>：
+<ul>
+<li><strong>frp</strong>：开源可自建，适合长期使用</li>
+<li><strong>Cloudflare Tunnel</strong>：免费，安全性高</li>
+<li><strong>Tailscale</strong>：组网方案，适合私人访问</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id=四knowledge-pipeline-技能开发>四、knowledge-pipeline 技能开发</h2>
+<h3 id=技能概述>技能概述</h3>
+<p><strong>名称</strong>: knowledge-pipeline<br>
+<strong>描述</strong>: 当用户说 Memo:开头的话，或需要保存信息到笔记库时使用。支持实时记录、知识入库、待办管理。<br>
+<strong>类型</strong>: 工具型技能<br>
+<strong>核心功能</strong>: 将用户的临时记录、待办事项、知识片段自动保存到 Obsidian 笔记库</p>
+<h3 id=技能结构>技能结构</h3>
+<pre tabindex=0><code>knowledge-pipeline/
+├── SKILL.md              # 技能定义文件（必需）
+├── scripts/
+│   ├── save_memo.py      # 核心脚本：保存笔记到 Obsidian
+│   └── quanzhou_trip.md  # 示例笔记（演示输出格式）
+└── references/           # 参考资料（可选）
+</code></pre><h3 id=skillmd-编写规范>SKILL.md 编写规范</h3>
+<h4 id=1-front-matter必需>1. Front Matter（必需）</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nn>---</span><span class=w>
+</span><span class=w></span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>knowledge-pipeline</span><span class=w>
+</span><span class=w></span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>当用户说 Memo:开头的话，或需要保存信息到笔记库时使用。支持实时记录、知识入库、待办管理。</span><span class=w>
+</span><span class=w></span><span class=nn>---</span><span class=w>
+</span></code></pre></div><h4 id=2-触发条件>2. 触发条件</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=gu>## 触发条件
+</span><span class=gu></span>
+使用此技能当用户：
+<span class=k>1.</span> 发送以 <span class=sb>`Memo:`</span> 开头的消息
+<span class=k>2.</span> 明确要求保存信息到笔记库
+<span class=k>3.</span> 需要创建待办任务或整理笔记
+</code></pre></div><h4 id=3-处理流程>3. 处理流程</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=gu>## 实时记录规则
+</span><span class=gu></span>
+当用户说 <span class=sb>`Memo:`</span> 开头的消息时：
+
+<span class=k>1.</span> <span class=gs>**提取关键信息**</span> — 识别核心内容、标签、分类
+<span class=k>2.</span> <span class=gs>**选择目录**</span> — 根据内容类型决定放入 Inbox/Tasks/Notes/Resources
+<span class=k>3.</span> <span class=gs>**写入文件**</span> — 调用 <span class=sb>`scripts/save_memo.py`</span> 脚本
+<span class=k>4.</span> <span class=gs>**回复确认**</span> — 告知用户已保存的位置和摘要
+</code></pre></div><h4 id=4-文件命名规范>4. 文件命名规范</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=gu>## 文件命名规范
+</span><span class=gu></span>
+<span class=k>-</span> **Inbox**: <span class=sb>`Inbox/YYYY-MM-DD.md`</span>（按日期归档，同一天多条则追加内容）
+<span class=k>-</span> **Tasks**: <span class=sb>`Tasks/任务名称.md`</span> 或 <span class=sb>`Tasks/YYYY-MM-DD-任务.md`</span>
+<span class=k>-</span> **Notes**: <span class=sb>`Notes/主题名称.md`</span>
+<span class=k>-</span> **Resources**: <span class=sb>`Resources/资源名称.md`</span>
+</code></pre></div><h3 id=核心脚本save_memopy>核心脚本：save_memo.py</h3>
+<p>功能：通过 Fast Note Sync Service API 将笔记保存到 Obsidian Vault。</p>
+<p>命令行参数：</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>python scripts/save_memo.py --folder Inbox --content <span class=s2>&#34;内容&#34;</span> --title <span class=s2>&#34;标题&#34;</span> --append
+</code></pre></div><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>必需</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--folder</code></td>
+<td>是</td>
+<td>目标文件夹 (Inbox/Tasks/Notes/Resources)</td>
+</tr>
+<tr>
+<td><code>--content</code></td>
+<td>是</td>
+<td>Markdown 格式的内容</td>
+</tr>
+<tr>
+<td><code>--title</code></td>
+<td>否</td>
+<td>笔记标题，默认使用日期</td>
+</tr>
+<tr>
+<td><code>--append</code></td>
+<td>否</td>
+<td>是否追加到现有文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id=api-调用>API 调用</h3>
+<h4 id=保存笔记>保存笔记</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>payload</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=s2>&#34;vault&#34;</span><span class=p>:</span> <span class=n>VAULT</span><span class=p>,</span>
+    <span class=s2>&#34;path&#34;</span><span class=p>:</span> <span class=n>path</span><span class=p>,</span>
+    <span class=s2>&#34;content&#34;</span><span class=p>:</span> <span class=n>full_content</span>
+<span class=p>}</span>
+
+<span class=n>response</span> <span class=o>=</span> <span class=n>requests</span><span class=o>.</span><span class=n>post</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>API_BASE</span><span class=si>}</span><span class=s2>/api/note&#34;</span><span class=p>,</span> <span class=n>headers</span><span class=o>=</span><span class=n>HEADERS</span><span class=p>,</span> <span class=n>json</span><span class=o>=</span><span class=n>payload</span><span class=p>)</span>
+</code></pre></div><h4 id=读取现有笔记追加模式>读取现有笔记（追加模式）</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>payload</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=s2>&#34;vault&#34;</span><span class=p>:</span> <span class=n>VAULT</span><span class=p>,</span>
+    <span class=s2>&#34;path&#34;</span><span class=p>:</span> <span class=n>path</span>
+<span class=p>}</span>
+
+<span class=n>response</span> <span class=o>=</span> <span class=n>requests</span><span class=o>.</span><span class=n>post</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>API_BASE</span><span class=si>}</span><span class=s2>/api/note/get&#34;</span><span class=p>,</span> <span class=n>headers</span><span class=o>=</span><span class=n>HEADERS</span><span class=p>,</span> <span class=n>json</span><span class=o>=</span><span class=n>payload</span><span class=p>)</span>
+</code></pre></div><hr>
+<h2 id=五使用示例>五、使用示例</h2>
+<h3 id=示例-1保存临时记录memo>示例 1：保存临时记录（Memo）</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>python scripts/save_memo.py --folder Inbox --content <span class=s2>&#34;今天学习了 OpenClaw 技能开发&#34;</span>
+</code></pre></div><p>输出：</p>
+<pre tabindex=0><code>✅ Saved to Inbox/2026-04-01.md
+</code></pre><h3 id=示例-2创建待办任务>示例 2：创建待办任务</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>python scripts/save_memo.py --folder Tasks --title <span class=s2>&#34;完成技能开发&#34;</span> --content <span class=s2>&#34;- [ ] 编写 SKILL.md\n- [ ] 测试 API 调用&#34;</span>
+</code></pre></div><p>输出：</p>
+<pre tabindex=0><code>✅ Saved to Tasks/完成技能开发.md
+</code></pre><h3 id=示例-3整理知识笔记>示例 3：整理知识笔记</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>python scripts/save_memo.py --folder Notes --title <span class=s2>&#34;OpenClaw 技能规范&#34;</span> --content <span class=s2>&#34;## 技能结构\n\n技能目录包含...&#34;</span>
+</code></pre></div><h3 id=示例-4追加内容到现有笔记>示例 4：追加内容到现有笔记</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>python scripts/save_memo.py --folder Inbox --content <span class=s2>&#34;补充内容&#34;</span> --append
+</code></pre></div><h3 id=示例-5旅行规划完整笔记>示例 5：旅行规划（完整笔记）</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=gh># 泉州四日游行程规划 (2026.4.3-4.6)
+</span><span class=gh></span>
+<span class=gu>## 行程概览
+</span><span class=gu></span>
+<span class=k>-</span> **到达**: 4 月 3 日 16:00 泉州站
+<span class=k>-</span> **离开**: 4 月 6 日 16:00 泉州站
+<span class=k>-</span> **住宿建议**: 西街附近（鲤城区）
+
+---
+
+<span class=gu>## Day 1 - 4 月 3 日 (周五) 到达日
+</span><span class=gu></span>
+<span class=gu>### 下午
+</span><span class=gu></span><span class=k>-</span> **16:00** 到达泉州站
+<span class=k>-</span> **16:30-17:30** 前往酒店办理入住
+
+<span class=gu>### 晚上
+</span><span class=gu></span><span class=k>-</span> **19:00-20:30** 西街晚餐
+
+---
+
+<span class=gu>## 实用信息
+</span><span class=gu></span>
+<span class=gu>### 交通
+</span><span class=gu></span><span class=k>-</span> 泉州站 → 西街：打车约 30 分钟
+
+<span class=gu>### 美食推荐
+</span><span class=gu></span>| 类型 | 推荐 |
+|------|------|
+| 早餐 | 面线糊、花生汤 |
+| 正餐 | 姜母鸭、牛排馆 |
+
+---
+
+<span class=ge>*Created: 2026-03-18*</span>
+</code></pre></div><hr>
+<h2 id=六开发技巧>六、开发技巧</h2>
+<h3 id=1-内容格式化>1. 内容格式化</h3>
+<ul>
+<li>使用 Markdown 语法</li>
+<li>自动添加时间戳</li>
+<li>支持追加模式更新</li>
+</ul>
+<h3 id=2-错误处理>2. 错误处理</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>if</span> <span class=n>result</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;status&#34;</span><span class=p>):</span>
+    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;✅ Saved to </span><span class=si>{</span><span class=n>result</span><span class=p>[</span><span class=s1>&#39;data&#39;</span><span class=p>][</span><span class=s1>&#39;path&#39;</span><span class=p>]</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+<span class=k>else</span><span class=p>:</span>
+    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;❌ Failed: </span><span class=si>{</span><span class=n>result</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s1>&#39;message&#39;</span><span class=p>,</span> <span class=s1>&#39;Unknown error&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+    <span class=n>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</code></pre></div><h3 id=3-路径处理>3. 路径处理</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># 确保标题有.md 后缀</span>
+<span class=k>if</span> <span class=ow>not</span> <span class=n>title</span><span class=o>.</span><span class=n>endswith</span><span class=p>(</span><span class=s2>&#34;.md&#34;</span><span class=p>):</span>
+    <span class=n>title</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>title</span><span class=si>}</span><span class=s2>.md&#34;</span>
+
+<span class=c1># 构建完整路径</span>
+<span class=n>path</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>folder</span><span class=si>}</span><span class=s2>/</span><span class=si>{</span><span class=n>title</span><span class=si>}</span><span class=s2>&#34;</span>
+</code></pre></div><h3 id=4-时间戳管理>4. 时间戳管理</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>today</span> <span class=o>=</span> <span class=n>datetime</span><span class=o>.</span><span class=n>now</span><span class=p>()</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s2>&#34;%Y-%m-</span><span class=si>%d</span><span class=s2>&#34;</span><span class=p>)</span>
+<span class=n>timestamp</span> <span class=o>=</span> <span class=n>datetime</span><span class=o>.</span><span class=n>now</span><span class=p>()</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s2>&#34;%Y-%m-</span><span class=si>%d</span><span class=s2> %H:%M:%S&#34;</span><span class=p>)</span>
+
+<span class=n>full_content</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;# </span><span class=si>{</span><span class=n>title</span><span class=si>}</span><span class=se>\n\n</span><span class=si>{</span><span class=n>content</span><span class=si>}</span><span class=se>\n\n</span><span class=s2>---</span><span class=se>\n</span><span class=s2>*Created: </span><span class=si>{</span><span class=n>timestamp</span><span class=si>}</span><span class=s2>*</span><span class=se>\n</span><span class=s2>&#34;</span>
+</code></pre></div><hr>
+<h2 id=七扩展方向>七、扩展方向</h2>
+<h3 id=可能的改进>可能的改进</h3>
+<ol>
+<li><strong>标签系统</strong> — 自动提取和添加标签</li>
+<li><strong>双向链接</strong> — 识别并创建笔记间的链接</li>
+<li><strong>模板系统</strong> — 为不同类型的笔记提供模板</li>
+<li><strong>批量导入</strong> — 支持从其他工具导入笔记</li>
+<li><strong>智能分类</strong> — 使用 AI 自动判断笔记类型</li>
+</ol>
+<h3 id=与其他技能集成>与其他技能集成</h3>
+<ul>
+<li><strong>calendar</strong> — 将日程自动保存为任务</li>
+<li><strong>web-search</strong> — 保存搜索结果到 Resources</li>
+<li><strong>tavily</strong> — 将研究结果整理为 Notes</li>
+</ul>
+<hr>
+<h2 id=八注意事项>八、注意事项</h2>
+<ol>
+<li><strong>API Token 安全</strong> — 不要将 Token 提交到公开仓库</li>
+<li><strong>Vault 路径</strong> — 确保 fast-note-sync 有读写权限</li>
+<li><strong>编码问题</strong> — 使用 UTF-8 编码，避免中文乱码</li>
+<li><strong>网络依赖</strong> — 确保 fast-note-sync 服务运行正常</li>
+<li><strong>并发写入</strong> — 同一文件避免同时写入</li>
+<li><strong>JWT Token 有效期</strong> — 默认 365 天，过期需重新获取</li>
+<li><strong>ngrok 限制</strong> — 免费版域名会变更，生产环境建议自建 frp</li>
+</ol>
+<hr>
+<h2 id=九参考资料>九、参考资料</h2>
+<ul>
+<li><a class=link href=https://docs.openclaw.ai target=_blank rel=noopener>OpenClaw AgentSkills 规范</a></li>
+<li><a class=link href=https://github.com/llm-red-team/fast-note-sync target=_blank rel=noopener>Fast Note Sync Service</a></li>
+<li><a class=link href=https://obsidian.md target=_blank rel=noopener>Obsidian 官网</a></li>
+<li><a class=link href=https://ngrok.com target=_blank rel=noopener>ngrok 官网</a></li>
+<li><a class=link href=https://zhuanlan.zhihu.com/p/2019849128671204792 target=_blank rel=noopener>部署教程：知乎</a></li>
+</ul>
+<hr>
+<p><em>本文整合了 OpenClaw 笔记管理的完整实践</em></p>
+</section>
+<footer class=article-footer>
+<section class=article-tags>
+<a href=/tags/openclaw/>OpenClaw</a>
+<a href=/tags/obsidian/>Obsidian</a>
+<a href=/tags/%E7%9F%A5%E8%AF%86%E7%AE%A1%E7%90%86/>知识管理</a>
+<a href=/tags/fast-note-sync/>fast-note-sync</a>
+</section>
+<section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span>
+</section>
+</footer>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css integrity=sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js integrity=sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.querySelector(`.article-content`),{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script>
+</article>
+<aside class=related-contents--wrapper>
+<h2 class=section-title>相关文章</h2>
+<div class=related-contents>
+<div class="flex article-list--tile">
+<article class=has-image>
+<a href=/p/openclaw-hugo-integration/>
+<div class=article-image>
+<img src=/images/feature/scenes/Stars.jpg loading=lazy data-key=openclaw-hugo-integration data-hash=/images/feature/scenes/Stars.jpg>
+</div>
+<div class=article-details>
+<h2 class=article-title>OpenClaw + Hugo 构建 AI 辅助博客工作流</h2>
+</div>
+</a>
+</article>
+</div>
+</div>
+</aside>
+<div class=disqus-container>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//winterorchoir.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</div>
+<style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style>
+<script>window.addEventListener('onColorSchemeChange',a=>{DISQUS&&DISQUS.reset({reload:!0})})</script>
+<footer class=site-footer>
+<section class=copyright>
+&copy;
+2020 -
+2026 图拉国营噄茶馆
+</section>
+<section class=powerby>
+Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> <br>
+Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.2.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a>
+</section>
+</footer>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css integrity="sha256-c0uckgykQ9v5k+IqViZOZKc47Jn7KQil4/MP3ySA3F8=" crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE=" crossorigin=anonymous>
+</main>
+<aside class="sidebar right-sidebar sticky">
+<section class="widget archives">
+<div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
+</div>
+<h2 class="widget-title section-title">目录</h2>
+<div class=widget--toc>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#一工具配置>一、工具配置</a>
+<ul>
+<li><a href=#客户端obsidian>客户端：Obsidian</a></li>
+<li><a href=#服务端fast-note-sync>服务端：fast-note-sync</a></li>
+<li><a href=#api-配置>API 配置</a></li>
+<li><a href=#目录结构>目录结构</a></li>
+</ul>
+</li>
+<li><a href=#二fast-note-sync-部署方案>二、fast-note-sync 部署方案</a>
+<ul>
+<li><a href=#方案一docker-部署推荐>方案一：Docker 部署（推荐）</a></li>
+<li><a href=#方案二源码部署>方案二：源码部署</a></li>
+<li><a href=#配置文件示例-env>配置文件示例 (.env)</a></li>
+</ul>
+</li>
+<li><a href=#三远程访问ngrok-内网穿透>三、远程访问：ngrok 内网穿透</a>
+<ul>
+<li><a href=#什么是-ngrok>什么是 ngrok？</a></li>
+<li><a href=#ngrok-配合-fast-note-sync-使用>ngrok 配合 fast-note-sync 使用</a>
+<ul>
+<li><a href=#1-注册-ngrok-账号>1. 注册 ngrok 账号</a></li>
+<li><a href=#2-安装-ngrok>2. 安装 ngrok</a></li>
+<li><a href=#3-配置-authtoken>3. 配置 Authtoken</a></li>
+<li><a href=#4-启动隧道>4. 启动隧道</a></li>
+<li><a href=#5-更新-api-配置>5. 更新 API 配置</a></li>
+<li><a href=#6-ngrok-配置文件示例-ngrokyml>6. ngrok 配置文件示例 (ngrok.yml)</a></li>
+</ul>
+</li>
+<li><a href=#注意事项>注意事项</a></li>
+</ul>
+</li>
+<li><a href=#四knowledge-pipeline-技能开发>四、knowledge-pipeline 技能开发</a>
+<ul>
+<li><a href=#技能概述>技能概述</a></li>
+<li><a href=#技能结构>技能结构</a></li>
+<li><a href=#skillmd-编写规范>SKILL.md 编写规范</a>
+<ul>
+<li><a href=#1-front-matter必需>1. Front Matter（必需）</a></li>
+<li><a href=#2-触发条件>2. 触发条件</a></li>
+<li><a href=#3-处理流程>3. 处理流程</a></li>
+<li><a href=#4-文件命名规范>4. 文件命名规范</a></li>
+</ul>
+</li>
+<li><a href=#核心脚本save_memopy>核心脚本：save_memo.py</a></li>
+<li><a href=#api-调用>API 调用</a>
+<ul>
+<li><a href=#保存笔记>保存笔记</a></li>
+<li><a href=#读取现有笔记追加模式>读取现有笔记（追加模式）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#五使用示例>五、使用示例</a>
+<ul>
+<li><a href=#示例-1保存临时记录memo>示例 1：保存临时记录（Memo）</a></li>
+<li><a href=#示例-2创建待办任务>示例 2：创建待办任务</a></li>
+<li><a href=#示例-3整理知识笔记>示例 3：整理知识笔记</a></li>
+<li><a href=#示例-4追加内容到现有笔记>示例 4：追加内容到现有笔记</a></li>
+<li><a href=#示例-5旅行规划完整笔记>示例 5：旅行规划（完整笔记）</a></li>
+</ul>
+</li>
+<li><a href=#六开发技巧>六、开发技巧</a>
+<ul>
+<li><a href=#1-内容格式化>1. 内容格式化</a></li>
+<li><a href=#2-错误处理>2. 错误处理</a></li>
+<li><a href=#3-路径处理>3. 路径处理</a></li>
+<li><a href=#4-时间戳管理>4. 时间戳管理</a></li>
+</ul>
+</li>
+<li><a href=#七扩展方向>七、扩展方向</a>
+<ul>
+<li><a href=#可能的改进>可能的改进</a></li>
+<li><a href=#与其他技能集成>与其他技能集成</a></li>
+</ul>
+</li>
+<li><a href=#八注意事项>八、注意事项</a></li>
+<li><a href=#九参考资料>九、参考资料</a></li>
+</ul>
+</nav>
+</div>
+</section>
+</aside>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin=anonymous defer></script><script type=text/javascript src=/ts/main.js defer></script>
+<script>(function(){const a=document.createElement('link');a.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",a.type="text/css",a.rel="stylesheet",document.head.appendChild(a)})()</script>
+</body>
+</html>
