@@ -1,62 +1,154 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leetcode on 图拉国营噄茶馆</title><link>https://winterorch.github.io/categories/leetcode/</link><description>Recent content in Leetcode on 图拉国营噄茶馆</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 12 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml"/><item><title>LeetCode - 双指针解法在数组中的应用</title><link>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link><pubDate>Mon, 12 Jul 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid><description>数组中的双指针解法，链表中快慢指针的解法放到链表专题。
-双指针滑动窗口问题 N-Sum问题的双指针解法 题目 描述 Leet 11 盛最多水的容器 壁高序列注水问题 Leet 3 无重复字符的最长子串 经典的双指针滑动窗口问题 Leet 16 最接近的三数之和 三数和问题 Leet 992 K 个不同整数的子数组 含有 K 个不同元素的窗口 双指针滑动窗口 Leet 3 无重复字符的最长子串，Leet 424 替换后的最长重复字符, Leet 978 最长湍流子数组, Leet 992 K 个不同整数的子数组, Leet 1004 最大连续1的个数 III, Leet 1040 移动石子直到连续 II
-常见形式： 右指针不断右移，直到窗口不符合要求，然后开始调整左指针，释放部分窗口左边界以使窗口满足要求，继续移动右指针。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Leetcode on 图拉国营噄茶馆</title>
+    <link>https://winterorch.github.io/categories/leetcode/</link>
+    <description>Recent content in Leetcode on 图拉国营噄茶馆</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 12 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://winterorch.github.io/categories/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode - 双指针解法在数组中的应用</title>
+      <link>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 12 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-%E5%8F%8C%E6%8C%87%E9%92%88%E8%A7%A3%E6%B3%95%E5%9C%A8%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>数组中的双指针解法，链表中快慢指针的解法放到链表专题。
+ 双指针滑动窗口问题 N-Sum问题的双指针解法     题目 描述     Leet 11 盛最多水的容器 壁高序列注水问题   Leet 3 无重复字符的最长子串 经典的双指针滑动窗口问题   Leet 16 最接近的三数之和 三数和问题   Leet 992 K 个不同整数的子数组 含有 K 个不同元素的窗口     双指针滑动窗口  Leet 3 无重复字符的最长子串，Leet 424 替换后的最长重复字符, Leet 978 最长湍流子数组, Leet 992 K 个不同整数的子数组, Leet 1004 最大连续1的个数 III, Leet 1040 移动石子直到连续 II
+ 常见形式： 右指针不断右移，直到窗口不符合要求，然后开始调整左指针，释放部分窗口左边界以使窗口满足要求，继续移动右指针。
 例题、
-Leet 3.</description></item><item><title>LeetCode 347 - 前 K 个高频元素</title><link>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</link><pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</guid><description>LeetCode 347. Top K Frequent Elements Given a non-empty array of integers, return the k most frequent elements.
+Leet 3.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 347 - 前 K 个高频元素</title>
+      <link>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-347-%E5%89%8D-k-%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0/</guid>
+      <description>LeetCode 347. Top K Frequent Elements Given a non-empty array of integers, return the k most frequent elements.
 Example 1:
-Input: nums = [1,1,1,2,2,3], k = 2
-Output: [1,2]
-Example 2:
-Input: nums = [1], k = 1
-Output: [1]
-Note:
-You may assume k is always valid, 1 ≤ k ≤ number of unique elements. Your algorithm&amp;rsquo;s time complexity must be better than O( n log n ), where n is the array&amp;rsquo;s size.</description></item><item><title>LeetCode 451 - 根据字符出现频率排序</title><link>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</link><pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</guid><description>[LeetCode] 451. Sort Characters By Frequency 题目： 给定一个字符串，请将字符串里的字符按照出现的频率降序排列。
+Input: nums = [1,1,1,2,2,3], k = 2Output: [1,2]Example 2:
+Input: nums = [1], k = 1Output: [1]Note:
+ You may assume k is always valid, 1 ≤ k ≤ number of unique elements. Your algorithm&amp;rsquo;s time complexity must be better than O( n log n ), where n is the array&amp;rsquo;s size.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 451 - 根据字符出现频率排序</title>
+      <link>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-451-%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F/</guid>
+      <description>[LeetCode] 451. Sort Characters By Frequency 题目： 给定一个字符串，请将字符串里的字符按照出现的频率降序排列。
 示例 1:
-输入: &amp;ldquo;tree&amp;rdquo;
+ 输入: &amp;ldquo;tree&amp;rdquo;
 输出: &amp;ldquo;eert&amp;rdquo;
 解释: &amp;lsquo;e&amp;rsquo;出现两次，&amp;lsquo;r&amp;rsquo;和&amp;rsquo;t&amp;rsquo;都只出现一次。 因此&amp;rsquo;e&amp;rsquo;必须出现在&amp;rsquo;r&amp;rsquo;和&amp;rsquo;t&amp;rsquo;之前。此外，&amp;ldquo;eetr&amp;quot;也是一个有效的答案。
-示例2：
-输入: &amp;ldquo;cccaaa&amp;rdquo;
+ 示例2：
+ 输入: &amp;ldquo;cccaaa&amp;rdquo;
 输出: &amp;ldquo;cccaaa&amp;rdquo;
 解释: &amp;lsquo;c&amp;rsquo;和&amp;rsquo;a&amp;rsquo;都出现三次。此外，&amp;ldquo;aaaccc&amp;quot;也是有效的答案。 注意&amp;quot;cacaca&amp;quot;是不正确的，因为相同的字母必须放在一起。
-示例3：
-输入: &amp;ldquo;Aabb&amp;rdquo;
+ 示例3：
+ 输入: &amp;ldquo;Aabb&amp;rdquo;
 输出: &amp;ldquo;bbAa&amp;rdquo;
 解释: 此外，&amp;ldquo;bbaA&amp;quot;也是一个有效的答案，但&amp;quot;Aabb&amp;quot;是不正确的。 注意&amp;rsquo;A&amp;rsquo;和&amp;rsquo;a&amp;rsquo;被认为是两种不同的字符。
-题解 思路1：HashMap计数+排序 字符串里的字符和出现频率形成一对K-V组合，解决按频率排序题目的第一思路是建一个HashMap统计出现频率，跟据一个从频率(Map的value)到原字符(Map的key)的反向映射，通过排序输出，主要步骤抽象如下：
-使用HashMap记录字符出现的频率 将HashMap转化成List按value进行降序排序 遍历List，将字符按出现次数降序放入答案中 代码如下：
-class Solution { public String frequencySort(String s) { StringBuilder sb = new StringBuilder(); // 1. 使用HashMap记录字符出现的频率 Map&amp;lt;Character, Integer&amp;gt; map = new HashMap&amp;lt;&amp;gt;(); for(int i = 0; i &amp;lt; s.</description></item><item><title>LeetCode 645 - 错误的集合</title><link>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</link><pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</guid><description>645. Set Mismatch 题目 集合 s 包含从 1 到 n 的整数。不幸的是，因为数据错误，导致集合里面某一个数字复制了成了集合里面的另外一个数字的值，导致集合 丢失了一个数字 并且 有一个数字重复 。
+  题解 思路1：HashMap计数+排序 字符串里的字符和出现频率形成一对K-V组合，解决按频率排序题目的第一思路是建一个HashMap统计出现频率，跟据一个从频率(Map的value)到原字符(Map的key)的反向映射，通过排序输出，主要步骤抽象如下：
+ 使用HashMap记录字符出现的频率 将HashMap转化成List按value进行降序排序 遍历List，将字符按出现次数降序放入答案中  代码如下：
+class Solution { public String frequencySort(String s) { StringBuilder sb = new StringBuilder(); // 1. 使用HashMap记录字符出现的频率  Map&amp;lt;Character, Integer&amp;gt; map = new HashMap&amp;lt;&amp;gt;(); for(int i = 0; i &amp;lt; s.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 645 - 错误的集合</title>
+      <link>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-645-%E9%94%99%E8%AF%AF%E7%9A%84%E9%9B%86%E5%90%88/</guid>
+      <description>645. Set Mismatch 题目  集合 s 包含从 1 到 n 的整数。不幸的是，因为数据错误，导致集合里面某一个数字复制了成了集合里面的另外一个数字的值，导致集合 丢失了一个数字 并且 有一个数字重复 。
 给定一个数组 nums 代表了集合 S 发生错误后的结果。
 请你找出重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。
-示例 1：
-输入：nums = [1,2,2,4]
-输出：[2,3]
-示例 2：
-输入：nums = [1,1]
-输出：[1,2]
-提示：
-2 &amp;lt;= nums.length &amp;lt;= 104 1 &amp;lt;= nums[i] &amp;lt;= 104 题解 思路1：哈希表 以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。
-在[LeetCode 451 - 根据字符出现频率排序]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。</description></item><item><title>LeetCode LCP 07 - 传递信息</title><link>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</link><pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</guid><description>LCP 07. 传递信息 题目： 小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
-有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人 给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
-示例1：
-示例 1：
+ 示例 1：
+输入：nums = [1,2,2,4]输出：[2,3]示例 2：
+输入：nums = [1,1]输出：[1,2]提示：
+ 2 &amp;lt;= nums.length &amp;lt;= 104 1 &amp;lt;= nums[i] &amp;lt;= 104  题解 思路1：哈希表 以数字的值为 key，以数字是否出现过为 value，存入哈希表中。在存储的过程中若发现该 key 对应的 value 已经为 true，则该 key 为重复的数字。存储完成后遍历哈希表，如果某个 key 对应的 value 为 false，则该 key 为丢失的数字。
+在[LeetCode 451 - 根据字符出现频率排序]中介绍了使用数组模拟Map的方法，此例中该方法依然适用。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode LCP 07 - 传递信息</title>
+      <link>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-lcp-07-%E4%BC%A0%E9%80%92%E4%BF%A1%E6%81%AF/</guid>
+      <description>LCP 07. 传递信息 题目：  小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+ 有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人  给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
+ 示例1：
+ 示例 1：
 输入：n = 5, relation = [[0,2],[2,1],[3,4],[2,3],[1,4],[2,0],[0,4]], k = 3
 输出：3
-解释：信息从小 A 编号 0 处开始，经 3 轮传递，到达编号 4。共有 3 种方案，分别是 0-&amp;gt;2-&amp;gt;0-&amp;gt;4， 0-&amp;gt;2-&amp;gt;1-&amp;gt;4， 0-&amp;gt;2-&amp;gt;3-&amp;gt;4。</description></item><item><title>LeetCode 815 - 公交路线</title><link>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</link><pubDate>Sun, 27 Jun 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</guid><description>[LeetCode] 815. Bus Routes We have a list of bus routes. Each routes[i] is a bus route that the i-th bus repeats forever. For example if routes[0] = [1, 5, 7], this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.
-We start at bus stop S (initially not on a bus), and we want to go to bus stop T. Travelling by buses only, what is the least number of buses we must take to reach our destination?</description></item><item><title>LeetCode 752 - 打开转盘锁</title><link>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</link><pubDate>Thu, 24 Jun 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</guid><description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'. The wheels can rotate freely and wrap around: for example we can turn '9' to be '0', or '0' to be '9'. Each move consists of turning one wheel one slot.
-The lock initially starts at '0000', a string representing the state of the 4 wheels.</description></item><item><title>剑指 Offer 56 - I. 数组中数字出现的次数</title><link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</link><pubDate>Sun, 20 Jun 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</guid><description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+解释：信息从小 A 编号 0 处开始，经 3 轮传递，到达编号 4。共有 3 种方案，分别是 0-&amp;gt;2-&amp;gt;0-&amp;gt;4， 0-&amp;gt;2-&amp;gt;1-&amp;gt;4， 0-&amp;gt;2-&amp;gt;3-&amp;gt;4。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 815 - 公交路线</title>
+      <link>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</link>
+      <pubDate>Sun, 27 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-815-%E5%85%AC%E4%BA%A4%E8%B7%AF%E7%BA%BF/</guid>
+      <description>[LeetCode] 815. Bus Routes We have a list of bus routes. Each routes[i] is a bus route that the i-th bus repeats forever. For example if routes[0] = [1, 5, 7], this means that the first bus (0-th indexed) travels in the sequence 1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;5-&amp;gt;7-&amp;gt;1-&amp;gt;&amp;hellip; forever.
+We start at bus stop S (initially not on a bus), and we want to go to bus stop T. Travelling by buses only, what is the least number of buses we must take to reach our destination?</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 752 - 打开转盘锁</title>
+      <link>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</link>
+      <pubDate>Thu, 24 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-752-%E6%89%93%E5%BC%80%E8%BD%AC%E7%9B%98%E9%94%81/</guid>
+      <description>[LeetCode] 752. Open the Lock You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;. The wheels can rotate freely and wrap around: for example we can turn &#39;9&#39; to be &#39;0&#39;, or &#39;0&#39; to be &#39;9&#39;. Each move consists of turning one wheel one slot.
+The lock initially starts at &#39;0000&#39;, a string representing the state of the 4 wheels.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 56 - I. 数组中数字出现的次数</title>
+      <link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</link>
+      <pubDate>Sun, 20 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-56-i.-%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/</guid>
+      <description>剑指 Offer 56 - I. 数组中数字出现的次数 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
 示例 1：
-输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]
-示例 2：
-输入：nums = [1,2,10,4,1,4,3,3] 输出：[2,10] 或 [10,2]
-限制：
-2 &amp;lt;= nums.length &amp;lt;= 10000
-题解 时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字
+ 输入：nums = [4,1,4,6] 输出：[1,6] 或 [6,1]
+ 示例 2：
+ 输入：nums = [1,2,10,4,1,4,3,3] 输出：[2,10] 或 [10,2]
+ 限制：
+ 2 &amp;lt;= nums.length &amp;lt;= 10000
+  题解 时空复杂度已经很明显提示了，要用位运算，异或消除掉出现过两次的数字
 for(int num : nums) n ^= num; 如果只有一个出现一次的数字，那答案已经出来了。然而这题有两个数字 x, y，得到的 n 是两者的异或 n = x ^ y 。因为 x != y ，n 必定有至少一个非零位，接下来肯定得围绕着这个非零位作文章。
-而这个非零位有什么用呢？它告诉我们，x 和 y 中有一个 (x) 在该比特位上非零，另一个 (y) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 n 最低非零位上是否为零。</description></item><item><title>剑指 Offer 59 - I. 滑动窗口的最大值</title><link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</link><pubDate>Tue, 01 Jun 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</guid><description>剑指 Offer 59 - I. 滑动窗口的最大值 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+而这个非零位有什么用呢？它告诉我们，x 和 y 中有一个 (x) 在该比特位上非零，另一个 (y) 为零。前面知道，通过异或只能得出唯一一个出现一次的数字，而现在有两个数字，那思路应当是——把这两个数字区分开来，分成具有不同特点的两组，这样就能分别求出这两个数字了。而现在，这个用来区分的特点有了——在 n 最低非零位上是否为零。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 59 - I. 滑动窗口的最大值</title>
+      <link>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</link>
+      <pubDate>Tue, 01 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/%E5%89%91%E6%8C%87-offer-59-i.-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC/</guid>
+      <description>剑指 Offer 59 - I. 滑动窗口的最大值 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
 示例 1：
-输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3 输出: [3,3,5,5,6,7] 解释:
+ 输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3 输出: [3,3,5,5,6,7] 解释:
 滑动窗口的位置 最大值
-[1 3 -1] -3 5 3 6 7 3 1 [3 -1 -3] 5 3 6 7 3 1 3 [-1 -3 5] 3 6 7 5 1 3 -1 [-3 5 3] 6 7 5 1 3 -1 -3 [5 3 6] 7 6 1 3 -1 -3 5 [3 6 7] 7</description></item><item><title>LeetCode 354 - 俄罗斯套娃信封问题</title><link>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</link><pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate><guid>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</guid><description>LeetCode 354. Russian Doll Envelopes You have a number of envelopes with widths and heights given as a pair of integers (w, h). One envelope can fit into another if and only if both the width and height of one envelope is greater than the width and height of the other envelope.
+ [1 3 -1] -3 5 3 6 7 3 1 [3 -1 -3] 5 3 6 7 3 1 3 [-1 -3 5] 3 6 7 5 1 3 -1 [-3 5 3] 6 7 5 1 3 -1 -3 [5 3 6] 7 6 1 3 -1 -3 5 [3 6 7] 7</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 354 - 俄罗斯套娃信封问题</title>
+      <link>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://winterorch.github.io/p/leetcode-354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/</guid>
+      <description>LeetCode 354. Russian Doll Envelopes You have a number of envelopes with widths and heights given as a pair of integers (w, h). One envelope can fit into another if and only if both the width and height of one envelope is greater than the width and height of the other envelope.
 What is the maximum number of envelopes can you Russian doll? (put one inside other)
-Example: Given envelopes = [[5,4],[6,4],[6,7],[2,3]], the maximum number of envelopes you can Russian doll is 3 ([2,3] =&amp;gt; [5,4] =&amp;gt; [6,7]).</description></item></channel></rss>
+Example: Given envelopes = [[5,4],[6,4],[6,7],[2,3]], the maximum number of envelopes you can Russian doll is 3 ([2,3] =&amp;gt; [5,4] =&amp;gt; [6,7]).</description>
+    </item>
+    
+  </channel>
+</rss>
